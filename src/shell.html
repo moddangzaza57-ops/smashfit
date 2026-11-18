@@ -40,7 +40,7 @@
   --tx:#fff;--tx2:#98989f;
   --ac:#30d158;--ac-tx:#00210d;--ac-soft:rgba(48,209,88,.16);--ac-ink:#30d158;
   --game:#409cff;--game-soft:rgba(64,156,255,.2);
-  --warn:#ffb340;--warn-soft:rgba(255,179,64,.16);--bad:#ff6961;--bad-soft:rgba(255,105,97,.16);
+  --warn:#ffb340;--warn-soft:rgba(255,179,64,.16);--bad:#ff6961;--bad-soft:rgba(255,105,97,.16);--bad-tx:#2b0000;
   --seg-on:#636366;--seg-sh:none;--sheet-sh:none;
   --fig-near:#f2f2f7;--fig-far:#8e8e93;--fig-db:#30d158;--fig-rk:#409cff;--fig-gr:#3a3a3c;--fig-pr:#48484a;--fig-bg:#1c1c1e;
 }}
@@ -49,7 +49,7 @@
   --tx:#fff;--tx2:#98989f;
   --ac:#30d158;--ac-tx:#00210d;--ac-soft:rgba(48,209,88,.16);--ac-ink:#30d158;
   --game:#409cff;--game-soft:rgba(64,156,255,.2);
-  --warn:#ffb340;--warn-soft:rgba(255,179,64,.16);--bad:#ff6961;--bad-soft:rgba(255,105,97,.16);
+  --warn:#ffb340;--warn-soft:rgba(255,179,64,.16);--bad:#ff6961;--bad-soft:rgba(255,105,97,.16);--bad-tx:#2b0000;
   --seg-on:#636366;--seg-sh:none;--sheet-sh:none;
   --fig-near:#f2f2f7;--fig-far:#8e8e93;--fig-db:#30d158;--fig-rk:#409cff;--fig-gr:#3a3a3c;--fig-pr:#48484a;--fig-bg:#1c1c1e;
 }
@@ -124,6 +124,14 @@ button.row:active,label.row:active{background:var(--fill)}
 .btn:active{transform:scale(.98);opacity:.85}
 .btn.tint{background:var(--ac-soft);color:var(--ac-ink)}
 .btn.plain{background:var(--fill);color:var(--tx)}
+.btn.red{background:var(--bad);color:var(--bad-tx,#fff)}
+.brow{display:flex;gap:10px}
+.brow .btn.red{flex:0 0 auto;width:auto;padding-left:18px;padding-right:20px}
+.brow .btn:not(.red){flex:1;white-space:nowrap}
+.f-timer .acts .btn{white-space:nowrap;padding-left:8px;padding-right:8px}
+.f-timer.paused .ft{color:var(--tx2)}
+.f-timer.paused .fb i{background:var(--tx2)}
+.timer .btn.sm{min-width:52px;padding:6px 10px}
 .btn.sm{width:auto;min-height:36px;padding:6px 14px;font-size:15px;border-radius:999px}
 .btn[disabled]{opacity:.45;pointer-events:none}
 .tip{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;margin:-6px -4px -6px 0;color:var(--ac-ink);vertical-align:middle}
@@ -379,7 +387,7 @@ details[open] .chev{transform:rotate(90deg)}
 <main id="app"></main>
 <div class="timer" id="timer" role="status" aria-live="polite">
   <div style="flex:1;min-width:0"><div class="tl" id="tl">พัก</div><div class="tt num" id="tt">0:00</div></div>
-  <button class="btn sm plain" data-act="t15">+15 วิ</button><button class="btn sm" data-act="tskip">ข้าม</button>
+  <button class="btn sm red" data-act="tpause" id="tpb">พัก</button><button class="btn sm plain" data-act="t15">+15</button><button class="btn sm plain" data-act="tskip">ข้าม</button>
   <div class="tb"><i id="tb"></i></div>
 </div>
 <div class="focus" id="focus" role="dialog" aria-modal="true" aria-label="โหมดโฟกัส" tabindex="-1"></div>

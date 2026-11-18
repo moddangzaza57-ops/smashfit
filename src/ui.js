@@ -45,7 +45,8 @@ const IC={
   bed:'<path d="M3 18.5V7M3 14h18v4.5M21 14v-2.5a3 3 0 0 0-3-3h-7V14"/><circle cx="7" cy="11" r="1.8"/>',
   trash:'<path d="M4.5 7h15M9.5 7V4.5h5V7M6.5 7l1 13h9l1-13"/>',
   undo:'<path d="M9 7 4.5 11.5 9 16"/><path d="M5 11.5h9.5a5 5 0 0 1 0 10H12"/>',
-  next:'<path d="M5 5.5v13l9-6.5zM18.5 5.5v13"/>'
+  next:'<path d="M5 5.5v13l9-6.5zM18.5 5.5v13"/>',
+  pause:'<rect class="fill" x="6.5" y="5" width="4" height="14" rx="1.2"/><rect class="fill" x="13.5" y="5" width="4" height="14" rx="1.2"/>'
 };
 const ic=(n,c)=>`<svg class="i ${c||''}" viewBox="0 0 24 24" aria-hidden="true">${IC[n]||''}</svg>`;
 const TIC={game:'shuttle',lower:'steps',upper:'dumbbell',full:'body',power:'bolt',footwork:'feet',cardio:'pulse',prehab:'shield',mobility:'wave',rest:'moon',desk:'chair'};
@@ -277,25 +278,28 @@ function refreshCtl(){
   $('#fsets').innerHTML=a.map((d,j)=>`<button class="sc${d?' f':''}${j===F.set?' cur':''}" data-act="fset" data-i="${j}" aria-label="เซ็ต ${j+1}${d?' ทำแล้ว':''}" ${j===F.set?'aria-current="step"':''}>${d?ic('check'):j+1}</button>`).join('');
   const pr=$('.f-prog i');if(pr){const {tot,dn}=sessionCount(cur);pr.style.width=(tot?dn/tot*100:0)+'%'}
   let h='';
+  // ปุ่มแดง "พัก": ระหว่างจับเวลา = หยุดเวลาชั่วคราว · ไม่มีเวลาเดิน = เริ่มพักตามเวลาพักของท่า
+  const restBtn=`<button class="btn red" data-act="frest" aria-label="พัก ${it.rest||60} วินาที">${ic('pause')}พัก</button>`;
   if(T){
-    h=`<div class="f-timer" role="timer"><div class="fl" id="fL">${esc(T.label)}</div><div class="ft" id="fT">${fmtClock(Math.ceil(Math.max(0,(T.end-Date.now())/1000)))}</div><div class="fb"><i id="fB"></i></div><div class="acts"><button class="btn plain" data-act="t15">+15 วิ</button><button class="btn" data-act="tskip">${T.isRest?'ข้ามการพัก':'จบเซ็ตนี้เลย'}</button></div></div>`;
+    const left=T.paused?T.left/1000:Math.max(0,(T.end-Date.now())/1000);
+    h=`<div class="f-timer${T.paused?' paused':''}" role="timer"><div class="fl" id="fL">${T.paused?'หยุดชั่วคราว · ':''}${esc(T.label)}</div><div class="ft" id="fT">${fmtClock(Math.ceil(left))}</div><div class="fb"><i id="fB" style="width:${Math.min(100,100-left/T.total*100)}%"></i></div><div class="acts">${T.paused?`<button class="btn" data-act="tresume">${ic('play')}ทำต่อ</button>`:`<button class="btn red" data-act="tpause">${ic('pause')}พัก</button>`}<button class="btn plain" data-act="t15">+15 วิ</button><button class="btn plain" data-act="tskip">${T.isRest?'ข้าม':'จบเซ็ต'}</button></div></div>`;
   }else if(all&&!isLogged(cur.date,cur.type)&&cur.type!=='game'){
     h=`<div class="f-done"><div class="mark">${ic('check')}</div><h2>ครบทุกเซ็ตแล้ว</h2><p class="meta" style="margin:4px 0 16px">บันทึกเวลาและความเหนื่อย แล้วดูความต่อเนื่องของคุณ</p><button class="btn" data-act="finish">จบเซสชันและบันทึก</button></div>`;
   }else if(all){
     h=`<div class="f-done"><div class="mark">${ic('check')}</div><h2>${cur.type==='game'?'วอร์มอัพ/คูลดาวน์ครบ':'ทำครบแล้ว'}</h2><p class="meta" style="margin:4px 0 16px">${cur.type==='game'?'อย่าลืมบันทึกผลเกมในหน้าวันนี้':'เซสชันนี้บันทึกไว้แล้ว'}</p><button class="btn tint" data-act="fclose">กลับหน้าวันนี้</button></div>`;
   }else if(it.id==='rand_corner'){
-    h=`<button class="btn" data-act="rcstart" data-k="${it.slot}">${ic('target')}เริ่มสุ่มมุม ${it.sets} รอบ × ${fmtSec(it.v)}</button>`;
+    h=`<div class="brow">${restBtn}<button class="btn" data-act="rcstart" data-k="${it.slot}">${ic('target')}เริ่มสุ่มมุม ${it.sets}×${fmtSec(it.v)}</button></div>`;
   }else if(a[F.set]){
-    h=`<p class="meta" style="text-align:center;margin-bottom:12px">เซ็ต ${F.set+1} ทำแล้ว${(()=>{const x=(getDraft(cur.date,cur.type).data[it.slot]||[])[F.set]||{};return x.r?` · ${x.w?esc(x.w)+' กก. × ':''}${esc(x.r)} ครั้ง`:''})()}</p><button class="btn plain" data-act="fundo">${ic('undo')}ยกเลิกเซ็ตนี้</button>`;
+    h=`<p class="meta" style="text-align:center;margin-bottom:12px">เซ็ต ${F.set+1} ทำแล้ว${(()=>{const x=(getDraft(cur.date,cur.type).data[it.slot]||[])[F.set]||{};return x.r?` · ${x.w?esc(x.w)+' กก. × ':''}${esc(x.r)} ครั้ง`:''})()}</p><div class="brow">${restBtn}<button class="btn plain" data-act="fundo">${ic('undo')}ยกเลิกเซ็ตนี้</button></div>`;
   }else if(f.t){
-    h=`<div class="big-time num">${fmtClock(it.v)}<span class="meta" style="font-size:17px">${f.u?' /ข้าง':''}</span></div><button class="btn" data-act="fplay">${ic('play')}เริ่มจับเวลาเซ็ต ${F.set+1}</button>`;
+    h=`<div class="big-time num">${fmtClock(it.v)}<span class="meta" style="font-size:17px">${f.u?' /ข้าง':''}</span></div><div class="brow">${restBtn}<button class="btn" data-act="fplay">${ic('play')}เริ่มจับเวลาเซ็ต ${F.set+1}</button></div>`;
   }else{
     const d=getDraft(cur.date,cur.type).data[it.slot]||[],x=d[F.set]||{},prev=F.set>0?(d[F.set-1]||{}):{};
     const sw=it.db?suggestW(it.id,cur.ph,it):null;
     const wv=esc(x.w??prev.w??(sw?sw.w:'')),rv=esc(x.r??prev.r??it.v);
     h=`<div class="steps">${it.db?`<div class="step"><span class="lb">น้ำหนัก<br>${f.u?'ต่อมือ':'ต่อข้าง'}</span><button data-act="wstep" data-v="-1" aria-label="ลดน้ำหนัก">${ic('minus')}</button><input id="fw" inputmode="decimal" value="${wv}" placeholder="–" aria-label="น้ำหนัก กิโลกรัม"><span class="u">กก.</span><button data-act="wstep" data-v="1" aria-label="เพิ่มน้ำหนัก">${ic('plus')}</button></div>`:''}
       <div class="step"><span class="lb">จำนวน<br>ครั้ง${f.u?'/ข้าง':''}</span><button data-act="rstep" data-v="-1" aria-label="ลดจำนวนครั้ง">${ic('minus')}</button><input id="fr" inputmode="numeric" value="${rv}" aria-label="จำนวนครั้ง"><span class="u">ครั้ง</span><button data-act="rstep" data-v="1" aria-label="เพิ่มจำนวนครั้ง">${ic('plus')}</button></div></div>
-      <button class="btn" data-act="flog">${ic('check')}บันทึกเซ็ต ${F.set+1}${it.hi?` · เป้า ${it.v}–${it.hi} ครั้ง`:''}</button>`;
+      <div class="brow">${restBtn}<button class="btn" data-act="flog">${ic('check')}บันทึกเซ็ต ${F.set+1}</button></div>`;
   }
   $('#fctl').innerHTML=h;
 }
@@ -597,12 +601,17 @@ function releaseAwake(){try{if(wl){wl.release();wl=null}}catch(e){}}
 function startTimer(label,sec,done,isRest){
   unlockAudio();if(T)clearInterval(T.iv);
   T={label,end:Date.now()+sec*1000,total:sec,done,last:null,isRest};
-  $('#tl').textContent=label;$('#timer').classList.add('show');
+  $('#timer').classList.add('show');updPill();
   refreshCtl();T.iv=setInterval(tick,200);tick();keepAwake();
   if(!isRest)say('start');
 }
+/* หยุดเวลาชั่วคราว / ทำต่อ */
+function stopVoice(){try{if(vsrc)vsrc.stop()}catch(e){}try{speechSynthesis.cancel()}catch(e){}}
+function pauseTimer(){if(!T||T.paused)return;T.paused=true;T.left=Math.max(0,T.end-Date.now());stopVoice();updPill();refreshCtl()}
+function resumeTimer(){if(!T||!T.paused)return;T.paused=false;T.end=Date.now()+T.left;T.last=Math.ceil(T.left/1000);updPill();refreshCtl();tick()}
+function updPill(){const b=$('#tpb');if(!b||!T)return;b.dataset.act=T.paused?'tresume':'tpause';b.innerHTML=T.paused?ic('play')+'ทำต่อ':ic('pause')+'พัก';b.className='btn sm '+(T.paused?'':'red');$('#tl').textContent=(T.paused?'หยุดชั่วคราว · ':'')+T.label}
 function tick(){
-  if(!T)return;const left=Math.max(0,(T.end-Date.now())/1000),s=Math.ceil(left),pct=Math.min(100,100-left/T.total*100)+'%';
+  if(!T||T.paused)return;const left=Math.max(0,(T.end-Date.now())/1000),s=Math.ceil(left),pct=Math.min(100,100-left/T.total*100)+'%';
   $('#tt').textContent=fmtClock(s);$('#tb').style.width=pct;
   const fT=$('#fT');if(fT){fT.textContent=fmtClock(s);$('#fB').style.width=pct}
   // ติ๊กทุกวินาที → นับถอยหลังด้วยเสียง 5-4-3-2-1 → บี๊บตอนหมดเวลา
@@ -678,7 +687,10 @@ document.addEventListener('click',e=>{
     case 'rcstart':{const it=itemByKey(k);rtStart(it.sets,it.v,it.rest,()=>{for(let j=0;j<it.sets;j++)markDone(k,j,true);if(focusOpen())advanceAfter(it)});break}
     case 'rctry':closeSheet();rtStart(5,30,30,null);break;
     case 'rtstop':rtStop();break;
-    case 't15':if(T){T.end+=15000;T.total+=15}break;
+    case 't15':if(T){if(T.paused)T.left+=15000;else T.end+=15000;T.total+=15;if(T.paused)refreshCtl();else tick()}break;
+    case 'tpause':pauseTimer();break;
+    case 'tresume':resumeTimer();break;
+    case 'frest':{const it=flat()[F.i].it;startTimer(`พัก · ${EX[it.id][0]}`,it.rest||60,null,true);break}
     case 'tskip':if(T){const d=T.done;stopTimer();d&&d()}break;
     case 'ci':{const c=state.checkins[sel]||(state.checkins[sel]={});c[b.dataset.f]=+b.dataset.v;save();const y=$('#sheet').scrollTop;readySheet();$('#sheet').scrollTop=y;keepScroll(render);break}
     case 'readyopen':readySheet();break;
