@@ -1687,13 +1687,30 @@ let RT=null;
    ถ้ามีไฟล์ใน audio/voice.json จะเล่นไฟล์นั้น ถ้าไม่มีใช้เสียงพูดภาษาไทยของเครื่องแทน */
 const VOICE={"n5":"ห้า","n4":"สี่","n3":"สาม","n2":"สอง","n1":"หนึ่ง","start":"เริ่ม!","rest":"พัก","go":"ไปต่อ","last":"ต่อไป เซ็ตสุดท้าย","swap":"สลับข้าง","ten":"อีกสิบวินาที","done":"ครบทุกรอบ เยี่ยมมาก","fin":"ครบทุกเซ็ตแล้ว เยี่ยมมาก","c0":"หน้าซ้าย","c1":"หน้าขวา","c2":"กลางซ้าย","c3":"กลางขวา","c4":"หลังซ้าย","c5":"หลังขวา"};
 let vinfo=null,vbuf={},vsrc=null,vloading=false;
+/* เก็บไฟล์เสียงพากย์ไว้ในเครื่องถาวร (Cache Storage ของ Safari ชื่อ smashfit-voice)
+   - โหลดจากเว็บครั้งเดียว ครั้งต่อไปอ่านจากเครื่อง ใช้ตอนออฟไลน์ได้ ไม่หายเมื่ออัปเดตแอป
+   - แอปไม่เคยเรียก ElevenLabs เอง ไฟล์เสียงสร้างครั้งเดียวด้วย tools/gen_voice.py แล้วฝากไว้บนเว็บ */
+const VCACHE='smashfit-voice';let vstored=0;
+async function voiceCache(){try{return 'caches' in window?await caches.open(VCACHE):null}catch(e){return null}}
 async function loadVoice(){
   // เรียกซ้ำได้: โหลดเฉพาะคลิปที่ยังขาด (เช่น ครั้งก่อนออฟไลน์ หรือ context ถูกสร้างใหม่ระหว่างถอดรหัส)
   if(vloading||!actx)return;vloading=true;
   try{
-    if(!vinfo){try{const r=await fetch('audio/voice.json',{cache:'no-cache'});if(r.ok)vinfo=await r.json()}catch(e){}}
-    if(vinfo&&Array.isArray(vinfo.clips))for(const k of vinfo.clips){if(vbuf[k]||!VOICE[k])continue;
-      try{const ctx=actx,ab=await (await fetch(`audio/${k}.mp3?v=${vinfo.v}`)).arrayBuffer();vbuf[k]=await ctx.decodeAudioData(ab)}catch(e){}}
+    const c=await voiceCache();
+    if(!vinfo){ // รายการเสียง: ลองเว็บก่อน (รู้ว่ามีชุดใหม่ไหม) ไม่ได้ใช้ของในเครื่อง
+      try{const r=await fetch('audio/voice.json',{cache:'no-cache'});if(r.ok){vinfo=await r.clone().json();if(c)await c.put('audio/voice.json',r)}}catch(e){}
+      if(!vinfo&&c){try{const r=await c.match('audio/voice.json');if(r)vinfo=await r.json()}catch(e){}}
+    }
+    if(vinfo&&Array.isArray(vinfo.clips)){
+      const want=new Set(vinfo.clips.map(k=>`audio/${k}.mp3?v=${vinfo.v}`));
+      if(c){try{for(const req of await c.keys()){const u=new URL(req.url);const p=u.pathname.replace(/^.*\/(audio\/)/,'$1')+u.search;if(p.endsWith('.mp3'+u.search)&&!want.has(p))await c.delete(req)}}catch(e){}} // ลบเสียงชุดเก่า
+      vstored=0;
+      for(const k of vinfo.clips){if(!VOICE[k])continue;const url=`audio/${k}.mp3?v=${vinfo.v}`;
+        try{let res=c?await c.match(url):null;
+          if(!res){res=await fetch(url);if(!res.ok)continue;if(c)await c.put(url,res.clone())}
+          vstored++;if(vbuf[k])continue;
+          const ctx=actx,ab=await res.arrayBuffer();vbuf[k]=await ctx.decodeAudioData(ab)}catch(e){}}
+    }
   }finally{vloading=false}
 }
 function say(k){
@@ -1704,7 +1721,7 @@ function say(k){
   if(b&&actx&&actx.state!=='interrupted'&&actx.state!=='closed'){try{if(vsrc)try{vsrc.stop()}catch(e){}const s=actx.createBufferSource(),g=actx.createGain();g.gain.value=1;s.buffer=b;s.connect(g);g.connect(actx.destination);s.start();vsrc=s;return}catch(e){}}
   try{const u=new SpeechSynthesisUtterance(VOICE[k]||k);u.lang='th-TH';u.rate=1.15;speechSynthesis.cancel();speechSynthesis.speak(u)}catch(e){}
 }
-const voiceKind=()=>Object.keys(vbuf).length?'เสียงพากย์ ElevenLabs':'เสียงพูดของเครื่อง';
+const voiceKind=()=>Object.keys(vbuf).length?`เสียงพากย์ MeQueue · เก็บในเครื่องแล้ว ${vstored}/${vinfo&&vinfo.clips?vinfo.clips.length:0} คลิป`:'เสียงพูดของเครื่อง';
 function rtStart(rounds,work,rest,onDone){
   unlockAudio();stopTimer();rtStop();
   const sp=RT_SPD[state.settings.rtSpd||'mid'];

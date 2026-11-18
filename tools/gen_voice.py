@@ -58,15 +58,24 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--voice')
     ap.add_argument('--model', default='eleven_v3')
-    ap.add_argument('--only', help='คีย์คลิปคั่นด้วย , เช่น n5,n4')
+    ap.add_argument('--only', help='คีย์คลิปคั่นด้วย , เช่น n5,n4 (สร้างใหม่เฉพาะคลิปนี้ แม้มีไฟล์อยู่แล้ว)')
+    ap.add_argument('--force', action='store_true', help='สร้างใหม่ทุกคลิป แม้มีไฟล์อยู่แล้ว (ใช้เครดิตเต็มจำนวน)')
     a = ap.parse_args()
+    allc = clips()
+    os.makedirs(OUT, exist_ok=True)
+    # ประหยัดเครดิต: คลิปที่มีไฟล์อยู่แล้วจะไม่สร้างซ้ำ เว้นแต่สั่ง --only หรือ --force
+    if a.only:
+        todo = {k: v for k, v in allc.items() if k in a.only.split(',')}
+    else:
+        todo = {k: v for k, v in allc.items() if a.force or not os.path.exists(os.path.join(OUT, k + '.mp3'))}
+    if not todo:
+        print('มีไฟล์เสียงครบทุกคลิปแล้ว ไม่ต้องสร้างใหม่ (ไม่ใช้เครดิต) · ถ้าต้องการสร้างใหม่ใช้ --only <คีย์> หรือ --force')
+        return
+    print('จะสร้าง', len(todo), 'คลิป:', ', '.join(todo))
     key = os.environ.get('ELEVENLABS_API_KEY') or getpass.getpass('ElevenLabs API key (ไม่แสดงบนจอ ไม่ถูกบันทึก): ').strip()
     if not key:
         sys.exit('ไม่มีคีย์')
     voice = a.voice or pick_voice(key)
-    allc = clips()
-    todo = {k: v for k, v in allc.items() if not a.only or k in a.only.split(',')}
-    os.makedirs(OUT, exist_ok=True)
     lang = 'th'
     for k, text in todo.items():
         for attempt in range(3):
