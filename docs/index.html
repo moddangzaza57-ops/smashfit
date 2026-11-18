@@ -21,6 +21,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<script>/* ใช้ธีม สีหลัก และขนาดตัวอักษรที่ผู้ใช้เลือกก่อนวาดหน้า (ไม่กระพริบ) */try{var s=(JSON.parse(localStorage.getItem('smashfit.v1'))||{}).settings||{},r=document.documentElement;if(s.theme==='light'||s.theme==='dark')r.dataset.theme=s.theme;if(s.accent&&s.accent!=='green')r.dataset.accent=s.accent;if(s.textSize&&s.textSize!=1)r.style.setProperty('--tz',s.textSize)}catch(e){}</script>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -54,9 +55,26 @@
   --seg-on:#636366;--seg-sh:none;--sheet-sh:none;
   --fig-near:#f2f2f7;--fig-far:#8e8e93;--fig-db:#30d158;--fig-rk:#409cff;--fig-gr:#3a3a3c;--fig-pr:#48484a;--fig-bg:#1c1c1e;
 }
+/* ===== สีหลักที่ผู้ใช้เลือก (ค่าเริ่มต้น = เขียวสนาม) ===== */
+:root[data-accent="blue"]{--ac:#0060df;--ac-tx:#fff;--ac-soft:rgba(0,96,223,.12);--ac-ink:#0060df;--fig-db:#0060df;--game:#7a3fd1;--game-soft:rgba(122,63,209,.14)}
+:root[data-accent="orange"]{--ac:#b34700;--ac-tx:#fff;--ac-soft:rgba(179,71,0,.12);--ac-ink:#b34700;--fig-db:#b34700}
+:root[data-accent="purple"]{--ac:#7a3fd1;--ac-tx:#fff;--ac-soft:rgba(122,63,209,.12);--ac-ink:#7a3fd1;--fig-db:#7a3fd1}
+:root[data-accent="pink"]{--ac:#c2185b;--ac-tx:#fff;--ac-soft:rgba(194,24,91,.12);--ac-ink:#c2185b;--fig-db:#c2185b}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"])[data-accent="blue"]{--ac:#409cff;--ac-tx:#001a3d;--ac-soft:rgba(64,156,255,.18);--ac-ink:#409cff;--fig-db:#409cff;--game:#bf5af2;--game-soft:rgba(191,90,242,.2)}
+  :root:not([data-theme="light"])[data-accent="orange"]{--ac:#ff9f0a;--ac-tx:#2b1600;--ac-soft:rgba(255,159,10,.18);--ac-ink:#ff9f0a;--fig-db:#ff9f0a}
+  :root:not([data-theme="light"])[data-accent="purple"]{--ac:#bf5af2;--ac-tx:#1f0430;--ac-soft:rgba(191,90,242,.2);--ac-ink:#bf5af2;--fig-db:#bf5af2}
+  :root:not([data-theme="light"])[data-accent="pink"]{--ac:#ff6482;--ac-tx:#3a0010;--ac-soft:rgba(255,100,130,.18);--ac-ink:#ff6482;--fig-db:#ff6482}
+}
+:root[data-theme="dark"][data-accent="blue"]{--ac:#409cff;--ac-tx:#001a3d;--ac-soft:rgba(64,156,255,.18);--ac-ink:#409cff;--fig-db:#409cff;--game:#bf5af2;--game-soft:rgba(191,90,242,.2)}
+:root[data-theme="dark"][data-accent="orange"]{--ac:#ff9f0a;--ac-tx:#2b1600;--ac-soft:rgba(255,159,10,.18);--ac-ink:#ff9f0a;--fig-db:#ff9f0a}
+:root[data-theme="dark"][data-accent="purple"]{--ac:#bf5af2;--ac-tx:#1f0430;--ac-soft:rgba(191,90,242,.2);--ac-ink:#bf5af2;--fig-db:#bf5af2}
+:root[data-theme="dark"][data-accent="pink"]{--ac:#ff6482;--ac-tx:#3a0010;--ac-soft:rgba(255,100,130,.18);--ac-ink:#ff6482;--fig-db:#ff6482}
+:root[data-theme="light"]{color-scheme:light}
+:root[data-theme="dark"]{color-scheme:dark}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;background:var(--bg);color:var(--tx)}
-body{font-family:var(--font);font-size:17px;line-height:1.5;-webkit-font-smoothing:antialiased;padding-top:env(safe-area-inset-top);padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-right);caret-color:var(--ac)}
+body{zoom:var(--tz,1);font-family:var(--font);font-size:17px;line-height:1.5;-webkit-font-smoothing:antialiased;padding-top:env(safe-area-inset-top);padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-right);caret-color:var(--ac)}
 body.lock{overflow:hidden}
 ::selection{background:var(--ac-soft)}
 :focus-visible{outline:2px solid var(--ac);outline-offset:2px;border-radius:8px}
@@ -203,7 +221,7 @@ body.lock .timer,body:not(.v-today) .timer{display:none}
 /* ===== sheets ===== */
 .modal{position:fixed;inset:0;background:rgba(0,0,0,.4);display:none;align-items:flex-end;z-index:60}
 .modal.show{display:flex;animation:fade .25s var(--ease)}
-.sheet{background:var(--bg);width:100%;max-width:600px;margin:0 auto;border-radius:14px 14px 0 0;padding:8px 16px calc(20px + env(safe-area-inset-bottom));max-height:92vh;overflow:auto;box-shadow:var(--sheet-sh);animation:up .35s var(--ease);overscroll-behavior:contain}
+.sheet{background:var(--bg);width:100%;max-width:600px;margin:0 auto;border-radius:14px 14px 0 0;padding:8px 16px calc(20px + env(safe-area-inset-bottom));max-height:calc(92vh / var(--tz,1));overflow:auto;box-shadow:var(--sheet-sh);animation:up .35s var(--ease);overscroll-behavior:contain}
 .sheet:focus{outline:none}
 .grab{width:36px;height:5px;border-radius:3px;background:var(--fill2);margin:0 auto 10px}
 .shh{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:14px}
@@ -239,7 +257,7 @@ body.lock .timer,body:not(.v-today) .timer{display:none}
 .f-pos small{display:block;font-size:13px;font-weight:400;color:var(--tx2)}
 .f-prog{height:4px;border-radius:2px;background:var(--fill);overflow:hidden;margin:6px 0 12px}
 .f-prog i{display:block;height:100%;background:var(--ac);transition:width .4s var(--ease)}
-.f-fig{width:100%;height:clamp(150px,26vh,230px);background:var(--cell);border-radius:16px;display:block}
+.f-fig{width:100%;height:clamp(130px,calc(26vh / var(--tz,1)),230px);background:var(--cell);border-radius:16px;display:block}
 .f-name{font-size:26px;font-weight:700;line-height:1.25;margin:16px 0 2px;letter-spacing:-.01em}
 .f-rx{font-size:16px;color:var(--tx2)}
 .f-sug{font-size:15px;color:var(--ac-ink);margin-top:6px}
@@ -334,6 +352,13 @@ details[open] .chev{transform:rotate(90deg)}
 .onb .end{margin-top:auto;padding-top:16px}
 .mark-logo{width:64px;height:64px;border-radius:16px;background:var(--ac);color:var(--ac-tx);display:grid;place-items:center;margin-top:28px}
 .mark-logo svg.i{width:38px;height:38px;stroke-width:1.6}
+.swatches{display:flex;gap:14px;flex-wrap:wrap}
+.sw-c{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;color:#fff;box-shadow:inset 0 0 0 1px rgba(0,0,0,.08)}
+.sw-c svg.i{width:22px;height:22px;stroke-width:2.8;visibility:hidden}
+.sw-c[aria-checked="true"]{box-shadow:0 0 0 2px var(--bg),0 0 0 4.5px var(--tx)}
+.sw-c[aria-checked="true"] svg.i{visibility:visible}
+.preview{display:flex;align-items:center;gap:12px;padding:12px 16px}
+.preview .tally{flex:1}
 .opt .ok{width:22px;height:22px;color:var(--ac-ink);stroke-width:2.6;visibility:hidden}
 .opt[aria-checked="true"] .ok{visibility:visible}
 
@@ -344,7 +369,7 @@ details[open] .chev{transform:rotate(90deg)}
 .rtop .mu{font-size:15px;color:var(--tx2)}
 .rtbig{font-size:48px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1.1}
 .net{text-align:center;font-size:13px;color:var(--tx2);margin-top:10px;letter-spacing:.2em}
-.court{flex:1;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr 1fr;gap:3px;margin:6px 0 12px;background:var(--ac);border:3px solid var(--ac);border-radius:6px;max-height:70vh}
+.court{flex:1;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr 1fr;gap:3px;margin:6px 0 12px;background:var(--ac);border:3px solid var(--ac);border-radius:6px;max-height:calc(70vh / var(--tz,1))}
 .court div{background:var(--cell);display:flex;align-items:center;justify-content:center;font-size:17px;color:var(--tx2);transition:background .1s}
 .court div.on{background:var(--ac);color:var(--ac-tx);font-size:30px;font-weight:700}
 .rt .hint{text-align:center;font-size:14px;color:var(--tx2)}
@@ -933,7 +958,7 @@ const thd=s=>{const d=pd(s);return `${DNF[d.getDay()]} ${d.getDate()} ${TM[d.get
 const sdd=s=>{const d=pd(s);return `${d.getDate()}/${d.getMonth()+1}`};
 
 /* ================= State ================= */
-function defState(){return {settings:{level:'inter',goal:'power',start:mon(today()),dumbbells:'2, 4, 6, 8, 10, 12',rtSpd:'mid',voice:true,tourn:'',lastBackup:'',onboarded:false},week:{...PRESETS.balanced.w,5:'game'},overrides:{},checkins:{},logs:[],lastW:{},drafts:{},pain:{},tests:[],swaps:{},health:{},budget:{}}}
+function defState(){return {settings:{level:'inter',goal:'power',start:mon(today()),dumbbells:'2, 4, 6, 8, 10, 12',rtSpd:'mid',voice:true,tourn:'',lastBackup:'',onboarded:false,theme:'auto',accent:'green',textSize:1},week:{...PRESETS.balanced.w,5:'game'},overrides:{},checkins:{},logs:[],lastW:{},drafts:{},pain:{},tests:[],swaps:{},health:{},budget:{}}}
 function normalize(s){
   const d=defState(),hadOnb=!!(s.settings&&'onboarded' in s.settings);s.settings=Object.assign(d.settings,s.settings||{});
   // ผู้ใช้เดิม (ก่อนมีหน้าต้อนรับ) ที่มีข้อมูลแล้ว ไม่ต้องเห็นหน้าต้อนรับ
@@ -1533,11 +1558,32 @@ function vHist(){
   return h;
 }
 
+/* ---------- การแสดงผล: ธีม สีหลัก ขนาดตัวอักษร ---------- */
+const THEMES=[['auto','ตามเครื่อง'],['light','สว่าง'],['dark','มืด']];
+const ACCENTS=[['green','เขียวสนาม','#18794e'],['blue','น้ำเงิน','#0060df'],['orange','ส้ม','#b34700'],['purple','ม่วง','#7a3fd1'],['pink','ชมพู','#c2185b']];
+const SIZES=[[1,'ปกติ'],[1.1,'ใหญ่'],[1.2,'ใหญ่มาก']];
+function applyLook(){
+  const st=state.settings,r=document.documentElement;
+  if(st.theme==='light'||st.theme==='dark')r.dataset.theme=st.theme;else delete r.dataset.theme;
+  if(st.accent&&st.accent!=='green')r.dataset.accent=st.accent;else delete r.dataset.accent;
+  if(st.textSize&&+st.textSize!==1)r.style.setProperty('--tz',st.textSize);else r.style.removeProperty('--tz');
+  const forced=st.theme==='light'?'#f2f2f7':st.theme==='dark'?'#000000':null;
+  document.querySelectorAll('meta[name="theme-color"]').forEach(m=>{if(!m.dataset.orig)m.dataset.orig=m.content;m.content=forced||m.dataset.orig});
+}
+function lookSection(){
+  const st=state.settings,ts=+st.textSize||1;
+  return sec('การแสดงผล')+`<div class="grp">
+   <div class="field"><div class="lbl">ธีม</div><div class="seg" role="radiogroup" aria-label="ธีม">${THEMES.map(([k,n])=>`<button role="radio" class="${(st.theme||'auto')===k?'on':''}" aria-checked="${(st.theme||'auto')===k}" data-act="look" data-k="theme" data-v="${k}">${n}</button>`).join('')}</div></div>
+   <div class="field"><div class="lbl">สีหลัก</div><div class="swatches" role="radiogroup" aria-label="สีหลัก">${ACCENTS.map(([k,n,c])=>`<button class="sw-c" role="radio" aria-checked="${(st.accent||'green')===k}" aria-label="${n}" title="${n}" style="background:${c}" data-act="look" data-k="accent" data-v="${k}">${ic('check')}</button>`).join('')}</div></div>
+   <div class="field"><div class="lbl">ขนาดตัวอักษร</div><div class="seg" role="radiogroup" aria-label="ขนาดตัวอักษร">${SIZES.map(([v,n],i)=>`<button role="radio" class="${ts===v?'on':''}" aria-checked="${ts===v}" data-act="look" data-k="textSize" data-v="${v}" style="font-size:${14+i*2}px">${n}</button>`).join('')}</div></div>
+  </div><p class="foot">เปลี่ยนแล้วมีผลทันทีทั้งแอป "ตามเครื่อง" จะสลับสว่าง/มืดตามการตั้งค่าของ iPhone</p>`;
+}
+
 /* ---------- ตั้งค่า ---------- */
 function vSet(){
   const st=state.settings,lb=st.lastBackup;
   const url=location.origin+location.pathname;
-  let h=lt('ตั้งค่า');
+  let h=lt('ตั้งค่า')+lookSection();
   h+=sec('โปรไฟล์การฝึก')+`<div class="grp">
    ${selRow({i:'body',t:'ระดับ',v:lvN(st.level),ch:'level'},LEVELS.map(([k,n,d])=>`<option value="${k}" ${k===st.level?'selected':''}>${n} (${d})</option>`).join(''))}
    ${selRow({i:'target',t:'เป้าหมายหลัก',v:glN(st.goal),ch:'goal'},GOALS.map(([k,n])=>`<option value="${k}" ${k===st.goal?'selected':''}>${n}</option>`).join(''))}
@@ -1664,7 +1710,7 @@ function dlBackup(){
     setTimeout(()=>URL.revokeObjectURL(a.href),4000);state.settings.lastBackup=today();save();toast('ดาวน์โหลดไฟล์สำรองแล้ว เก็บไว้ใน iCloud Drive');
   }catch(e){toast('ดาวน์โหลดไม่ได้ ใช้วิธีคัดลอกแทน')}
 }
-function loadBackup(txt){try{const s=JSON.parse(txt);if(!s.week||!Array.isArray(s.logs))throw 0;state=normalize(s);save();render();toast('กู้คืนสำเร็จ')}catch(err){toast('ไฟล์หรือข้อความนี้ไม่ใช่ข้อมูลสำรองของ Smash Fit')}}
+function loadBackup(txt){try{const s=JSON.parse(txt);if(!s.week||!Array.isArray(s.logs))throw 0;state=normalize(s);save();applyLook();render();toast('กู้คืนสำเร็จ')}catch(err){toast('ไฟล์หรือข้อความนี้ไม่ใช่ข้อมูลสำรองของ Smash Fit')}}
 function importHealth(){
   let sl=null,rh=null;
   try{const q=new URLSearchParams(location.search);if(q.get('sleep'))sl=+q.get('sleep');if(q.get('rhr'))rh=+q.get('rhr')}catch(e){}
@@ -1750,13 +1796,14 @@ document.addEventListener('click',e=>{
     case 'dl':dlBackup();break;
     case 'copy':{const t=$('#exp');const ok=()=>{state.settings.lastBackup=today();save();toast('คัดลอกแล้ว')};try{navigator.clipboard.writeText(t.value).then(ok).catch(()=>{t.select();toast('กดค้างที่ข้อความเพื่อคัดลอก')})}catch(err){t.select();toast('กดค้างที่ข้อความเพื่อคัดลอก')}break}
     case 'import':loadBackup($('#imp').value);break;
-    case 'reset':if(b.dataset.arm){state=defState();save();render();toast('ล้างข้อมูลแล้ว');showOnb()}else{b.dataset.arm=1;b.querySelector('.row-t').textContent='แตะอีกครั้งเพื่อยืนยัน ลบทุกอย่างและกู้คืนไม่ได้';setTimeout(()=>{if(b.isConnected){delete b.dataset.arm;b.querySelector('.row-t').textContent='ล้างข้อมูลทั้งหมด'}},3500)}break;
+    case 'reset':if(b.dataset.arm){state=defState();save();applyLook();render();toast('ล้างข้อมูลแล้ว');showOnb()}else{b.dataset.arm=1;b.querySelector('.row-t').textContent='แตะอีกครั้งเพื่อยืนยัน ลบทุกอย่างและกู้คืนไม่ได้';setTimeout(()=>{if(b.isConnected){delete b.dataset.arm;b.querySelector('.row-t').textContent='ล้างข้อมูลทั้งหมด'}},3500)}break;
     case 'onbnext':if(ONB.step<2){ONB.step++;renderOnb()}break;
     case 'onbback':ONB.step=Math.max(0,ONB.step-1);renderOnb();break;
     case 'onbpick':{ONB[b.dataset.g]=b.dataset.v;const db=$('#onbdb');if(db)ONB.db=db.value;renderOnb();break}
     case 'onbskip':finishOnb(false);break;
     case 'onbdone':finishOnb(true);break;
     case 'onbshow':showOnb();break;
+    case 'look':{const kk=b.dataset.k;state.settings[kk]=kk==='textSize'?+b.dataset.v:b.dataset.v;save();applyLook();keepScroll(render);break}
   }
 });
 document.addEventListener('input',e=>{
@@ -1799,7 +1846,7 @@ document.addEventListener('keydown',e=>{
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&T)tick()});
 
 /* ================= เริ่มต้น ================= */
-importHealth();
+importHealth();applyLook();
 try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist().catch(()=>{})}catch(e){}
 if('serviceWorker' in navigator&&document.querySelector('link[rel="manifest"]')){try{navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}}
 render();

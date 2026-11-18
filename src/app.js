@@ -11,7 +11,7 @@ const thd=s=>{const d=pd(s);return `${DNF[d.getDay()]} ${d.getDate()} ${TM[d.get
 const sdd=s=>{const d=pd(s);return `${d.getDate()}/${d.getMonth()+1}`};
 
 /* ================= State ================= */
-function defState(){return {settings:{level:'inter',goal:'power',start:mon(today()),dumbbells:'2, 4, 6, 8, 10, 12',rtSpd:'mid',voice:true,tourn:'',lastBackup:'',onboarded:false},week:{...PRESETS.balanced.w,5:'game'},overrides:{},checkins:{},logs:[],lastW:{},drafts:{},pain:{},tests:[],swaps:{},health:{},budget:{}}}
+function defState(){return {settings:{level:'inter',goal:'power',start:mon(today()),dumbbells:'2, 4, 6, 8, 10, 12',rtSpd:'mid',voice:true,tourn:'',lastBackup:'',onboarded:false,theme:'auto',accent:'green',textSize:1},week:{...PRESETS.balanced.w,5:'game'},overrides:{},checkins:{},logs:[],lastW:{},drafts:{},pain:{},tests:[],swaps:{},health:{},budget:{}}}
 function normalize(s){
   const d=defState(),hadOnb=!!(s.settings&&'onboarded' in s.settings);s.settings=Object.assign(d.settings,s.settings||{});
   // ผู้ใช้เดิม (ก่อนมีหน้าต้อนรับ) ที่มีข้อมูลแล้ว ไม่ต้องเห็นหน้าต้อนรับ

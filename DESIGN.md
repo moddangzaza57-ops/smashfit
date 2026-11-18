@@ -22,6 +22,11 @@ Calm iOS grouped-list app, the way Apple's own Fitness and Health apps feel: sys
 | `--warn` / `--bad` | `#a64b00` / `#c4001a` | `#ffb340` / `#ff6961` | caution / pain-high only |
 | `--fig-*` | near `#1c1c1e`, dumbbell `#18794e` | near `#f2f2f7`, dumbbell `#30d158` | stick-figure animation (`figure.js` reads these) |
 
+**User appearance settings** (Settings → การแสดงผล, stored in `settings.theme/accent/textSize`, applied before first paint by an inline script in `<head>` and by `applyLook()`):
+- Theme: `auto` (follows the phone) / `light` / `dark` → `data-theme` on `<html>`.
+- Accent: green (default), blue, orange, purple, pink → `data-accent` overrides `--ac`, `--ac-tx`, `--ac-soft`, `--ac-ink`, `--fig-db` with a light and a dark value each (light values carry white text ≥4.5:1). Blue accent moves `--game` to purple so game days stay distinct.
+- Text size: 1 / 1.1 / 1.2 → `--tz`, applied as `body{zoom}`; any `vh` length divides by `--tz`.
+
 Rule: the accent appears only on things you can press or things that are done. State colours appear only where they carry meaning, always with text.
 
 ## Type

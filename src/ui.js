@@ -448,11 +448,32 @@ function vHist(){
   return h;
 }
 
+/* ---------- การแสดงผล: ธีม สีหลัก ขนาดตัวอักษร ---------- */
+const THEMES=[['auto','ตามเครื่อง'],['light','สว่าง'],['dark','มืด']];
+const ACCENTS=[['green','เขียวสนาม','#18794e'],['blue','น้ำเงิน','#0060df'],['orange','ส้ม','#b34700'],['purple','ม่วง','#7a3fd1'],['pink','ชมพู','#c2185b']];
+const SIZES=[[1,'ปกติ'],[1.1,'ใหญ่'],[1.2,'ใหญ่มาก']];
+function applyLook(){
+  const st=state.settings,r=document.documentElement;
+  if(st.theme==='light'||st.theme==='dark')r.dataset.theme=st.theme;else delete r.dataset.theme;
+  if(st.accent&&st.accent!=='green')r.dataset.accent=st.accent;else delete r.dataset.accent;
+  if(st.textSize&&+st.textSize!==1)r.style.setProperty('--tz',st.textSize);else r.style.removeProperty('--tz');
+  const forced=st.theme==='light'?'#f2f2f7':st.theme==='dark'?'#000000':null;
+  document.querySelectorAll('meta[name="theme-color"]').forEach(m=>{if(!m.dataset.orig)m.dataset.orig=m.content;m.content=forced||m.dataset.orig});
+}
+function lookSection(){
+  const st=state.settings,ts=+st.textSize||1;
+  return sec('การแสดงผล')+`<div class="grp">
+   <div class="field"><div class="lbl">ธีม</div><div class="seg" role="radiogroup" aria-label="ธีม">${THEMES.map(([k,n])=>`<button role="radio" class="${(st.theme||'auto')===k?'on':''}" aria-checked="${(st.theme||'auto')===k}" data-act="look" data-k="theme" data-v="${k}">${n}</button>`).join('')}</div></div>
+   <div class="field"><div class="lbl">สีหลัก</div><div class="swatches" role="radiogroup" aria-label="สีหลัก">${ACCENTS.map(([k,n,c])=>`<button class="sw-c" role="radio" aria-checked="${(st.accent||'green')===k}" aria-label="${n}" title="${n}" style="background:${c}" data-act="look" data-k="accent" data-v="${k}">${ic('check')}</button>`).join('')}</div></div>
+   <div class="field"><div class="lbl">ขนาดตัวอักษร</div><div class="seg" role="radiogroup" aria-label="ขนาดตัวอักษร">${SIZES.map(([v,n],i)=>`<button role="radio" class="${ts===v?'on':''}" aria-checked="${ts===v}" data-act="look" data-k="textSize" data-v="${v}" style="font-size:${14+i*2}px">${n}</button>`).join('')}</div></div>
+  </div><p class="foot">เปลี่ยนแล้วมีผลทันทีทั้งแอป "ตามเครื่อง" จะสลับสว่าง/มืดตามการตั้งค่าของ iPhone</p>`;
+}
+
 /* ---------- ตั้งค่า ---------- */
 function vSet(){
   const st=state.settings,lb=st.lastBackup;
   const url=location.origin+location.pathname;
-  let h=lt('ตั้งค่า');
+  let h=lt('ตั้งค่า')+lookSection();
   h+=sec('โปรไฟล์การฝึก')+`<div class="grp">
    ${selRow({i:'body',t:'ระดับ',v:lvN(st.level),ch:'level'},LEVELS.map(([k,n,d])=>`<option value="${k}" ${k===st.level?'selected':''}>${n} (${d})</option>`).join(''))}
    ${selRow({i:'target',t:'เป้าหมายหลัก',v:glN(st.goal),ch:'goal'},GOALS.map(([k,n])=>`<option value="${k}" ${k===st.goal?'selected':''}>${n}</option>`).join(''))}
@@ -579,7 +600,7 @@ function dlBackup(){
     setTimeout(()=>URL.revokeObjectURL(a.href),4000);state.settings.lastBackup=today();save();toast('ดาวน์โหลดไฟล์สำรองแล้ว เก็บไว้ใน iCloud Drive');
   }catch(e){toast('ดาวน์โหลดไม่ได้ ใช้วิธีคัดลอกแทน')}
 }
-function loadBackup(txt){try{const s=JSON.parse(txt);if(!s.week||!Array.isArray(s.logs))throw 0;state=normalize(s);save();render();toast('กู้คืนสำเร็จ')}catch(err){toast('ไฟล์หรือข้อความนี้ไม่ใช่ข้อมูลสำรองของ Smash Fit')}}
+function loadBackup(txt){try{const s=JSON.parse(txt);if(!s.week||!Array.isArray(s.logs))throw 0;state=normalize(s);save();applyLook();render();toast('กู้คืนสำเร็จ')}catch(err){toast('ไฟล์หรือข้อความนี้ไม่ใช่ข้อมูลสำรองของ Smash Fit')}}
 function importHealth(){
   let sl=null,rh=null;
   try{const q=new URLSearchParams(location.search);if(q.get('sleep'))sl=+q.get('sleep');if(q.get('rhr'))rh=+q.get('rhr')}catch(e){}
@@ -665,13 +686,14 @@ document.addEventListener('click',e=>{
     case 'dl':dlBackup();break;
     case 'copy':{const t=$('#exp');const ok=()=>{state.settings.lastBackup=today();save();toast('คัดลอกแล้ว')};try{navigator.clipboard.writeText(t.value).then(ok).catch(()=>{t.select();toast('กดค้างที่ข้อความเพื่อคัดลอก')})}catch(err){t.select();toast('กดค้างที่ข้อความเพื่อคัดลอก')}break}
     case 'import':loadBackup($('#imp').value);break;
-    case 'reset':if(b.dataset.arm){state=defState();save();render();toast('ล้างข้อมูลแล้ว');showOnb()}else{b.dataset.arm=1;b.querySelector('.row-t').textContent='แตะอีกครั้งเพื่อยืนยัน ลบทุกอย่างและกู้คืนไม่ได้';setTimeout(()=>{if(b.isConnected){delete b.dataset.arm;b.querySelector('.row-t').textContent='ล้างข้อมูลทั้งหมด'}},3500)}break;
+    case 'reset':if(b.dataset.arm){state=defState();save();applyLook();render();toast('ล้างข้อมูลแล้ว');showOnb()}else{b.dataset.arm=1;b.querySelector('.row-t').textContent='แตะอีกครั้งเพื่อยืนยัน ลบทุกอย่างและกู้คืนไม่ได้';setTimeout(()=>{if(b.isConnected){delete b.dataset.arm;b.querySelector('.row-t').textContent='ล้างข้อมูลทั้งหมด'}},3500)}break;
     case 'onbnext':if(ONB.step<2){ONB.step++;renderOnb()}break;
     case 'onbback':ONB.step=Math.max(0,ONB.step-1);renderOnb();break;
     case 'onbpick':{ONB[b.dataset.g]=b.dataset.v;const db=$('#onbdb');if(db)ONB.db=db.value;renderOnb();break}
     case 'onbskip':finishOnb(false);break;
     case 'onbdone':finishOnb(true);break;
     case 'onbshow':showOnb();break;
+    case 'look':{const kk=b.dataset.k;state.settings[kk]=kk==='textSize'?+b.dataset.v:b.dataset.v;save();applyLook();keepScroll(render);break}
   }
 });
 document.addEventListener('input',e=>{
@@ -714,7 +736,7 @@ document.addEventListener('keydown',e=>{
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&T)tick()});
 
 /* ================= เริ่มต้น ================= */
-importHealth();
+importHealth();applyLook();
 try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist().catch(()=>{})}catch(e){}
 if('serviceWorker' in navigator&&document.querySelector('link[rel="manifest"]')){try{navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}}
 render();
