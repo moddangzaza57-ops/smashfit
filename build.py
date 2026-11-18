@@ -5,7 +5,7 @@ import os, shutil, time
 S='src/'
 shell=open(S+'shell.html',encoding='utf-8').read()
 def inline(h):
-    for f in ['figure.js','exdata.js','data.js','app.js']:
+    for f in ['figure.js','exdata.js','data.js','app.js','ui.js']:
         h=h.replace(f'<script src="{f}"></script>','<script>\n'+open(S+f,encoding='utf-8').read()+'\n</script>')
     return h
 pwa='''<link rel="manifest" href="manifest.webmanifest">

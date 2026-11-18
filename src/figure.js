@@ -7,7 +7,7 @@ var FIG=(function(){
 'use strict';
 const L={T:52,N:9,HR:10,UA:30,FA:28,TH:44,SH:42,FT:13};
 const R=Math.PI/180;
-const C={near:'#e9f2ec',far:'#7f978a',db:'#c8f23c',rk:'#4fd1a5',gr:'#2a3a31',pr:'#3a5246'};
+const C={near:'var(--fig-near)',far:'var(--fig-far)',db:'var(--fig-db)',rk:'var(--fig-rk)',gr:'var(--fig-gr)',pr:'var(--fig-pr)'};
 function base(v){return {hip:[0,89],t:0,tl:1,hd:0,a:v==='front'?[[10,4],[-10,4]]:[[3,4],[-3,4]],h:v==='front'?[[4,-56],[-4,-56]]:[[2,-56],[-2,-56]],f:[0,0],kb:v==='front'?[1,-1]:[1,1],eb:v==='front'?[1,-1]:[-1,-1]}}
 
 // ---------- ท่าทาง ----------
@@ -136,13 +136,13 @@ function solve(ex,p){
 
 // ---------- วาด ----------
 const f1=v=>Math.round(v*10)/10;
-const ln=(a,b,c,w)=>`<line x1="${f1(a[0])}" y1="${f1(-a[1])}" x2="${f1(b[0])}" y2="${f1(-b[1])}" stroke="${c}" stroke-width="${w}" stroke-linecap="round"/>`;
-const dot=(a,r,c,s)=>`<circle cx="${f1(a[0])}" cy="${f1(-a[1])}" r="${r}" fill="${c}"${s?` stroke="${s}" stroke-width="2"`:''}/>`;
-function dbAt(p,fr,horiz){if(fr||horiz){return ln([p[0]-11,p[1]],[p[0]+11,p[1]],C.db,4)+`<rect x="${f1(p[0]-15)}" y="${f1(-p[1]-6)}" width="6" height="12" rx="2" fill="${C.db}"/><rect x="${f1(p[0]+9)}" y="${f1(-p[1]-6)}" width="6" height="12" rx="2" fill="${C.db}"/>`}return dot(p,7.5,C.db,'#0e1411')}
+const ln=(a,b,c,w)=>`<line x1="${f1(a[0])}" y1="${f1(-a[1])}" x2="${f1(b[0])}" y2="${f1(-b[1])}" style="stroke:${c}" stroke-width="${w}" stroke-linecap="round"/>`;
+const dot=(a,r,c,s)=>`<circle cx="${f1(a[0])}" cy="${f1(-a[1])}" r="${r}" style="fill:${c}${s?`;stroke:${s};stroke-width:2`:''}"/>`;
+function dbAt(p,fr,horiz){if(fr||horiz){return ln([p[0]-11,p[1]],[p[0]+11,p[1]],C.db,4)+`<rect x="${f1(p[0]-15)}" y="${f1(-p[1]-6)}" width="6" height="12" rx="2" style="fill:${C.db}"/><rect x="${f1(p[0]+9)}" y="${f1(-p[1]-6)}" width="6" height="12" rx="2" style="fill:${C.db}"/>`}return dot(p,7.5,C.db,'var(--fig-bg)')}
 function prop(q){
-  if(q.c==='wall')return `<rect x="${q.x}" y="-230" width="8" height="230" fill="${C.pr}"/>`;
-  if(q.c==='step')return `<rect x="${q.x}" y="${-q.h}" width="${q.w}" height="${q.h}" rx="2" fill="${C.pr}"/>`;
-  if(q.c==='chair')return `<rect x="${q.x}" y="${-q.h}" width="${q.w}" height="6" rx="2" fill="${C.pr}"/><rect x="${q.x+2}" y="${-q.h}" width="4" height="${q.h}" fill="${C.pr}"/><rect x="${q.x+q.w-6}" y="${-q.h}" width="4" height="${q.h}" fill="${C.pr}"/>`;
+  if(q.c==='wall')return `<rect x="${q.x}" y="-230" width="8" height="230" style="fill:${C.pr}"/>`;
+  if(q.c==='step')return `<rect x="${q.x}" y="${-q.h}" width="${q.w}" height="${q.h}" rx="2" style="fill:${C.pr}"/>`;
+  if(q.c==='chair')return `<rect x="${q.x}" y="${-q.h}" width="${q.w}" height="6" rx="2" style="fill:${C.pr}"/><rect x="${q.x+2}" y="${-q.h}" width="4" height="${q.h}" style="fill:${C.pr}"/><rect x="${q.x+q.w-6}" y="${-q.h}" width="4" height="${q.h}" style="fill:${C.pr}"/>`;
   return '';
 }
 function draw(ex,s){
@@ -163,7 +163,7 @@ function draw(ex,s){
   s.arms.forEach(g=>{if(g.Rd)o+=ln(g.W,g.Rd,C.db,4)+dot(g.Rd,6,C.db)});
   if(ex.rk){const g=s.arms[0],dx=g.W[0]-g.E[0],dy=g.W[1]-g.E[1],m=Math.hypot(dx,dy)||1,u=[dx/m,dy/m];
     const e1=add(g.W,[u[0]*20,u[1]*20]),c=add(g.W,[u[0]*34,u[1]*34]),ang=Math.atan2(-u[1],u[0])/R;
-    o+=ln(g.W,e1,C.rk,3)+`<ellipse cx="${f1(c[0])}" cy="${f1(-c[1])}" rx="14" ry="9" transform="rotate(${f1(ang)} ${f1(c[0])} ${f1(-c[1])})" fill="none" stroke="${C.rk}" stroke-width="3"/>`}
+    o+=ln(g.W,e1,C.rk,3)+`<ellipse cx="${f1(c[0])}" cy="${f1(-c[1])}" rx="14" ry="9" transform="rotate(${f1(ang)} ${f1(c[0])} ${f1(-c[1])})" style="fill:none;stroke:${C.rk}" stroke-width="3"/>`}
   return o;
 }
 function bounds(ex){
@@ -183,7 +183,7 @@ const cache={};
 function vb(id){const ex=P[id];if(!cache[id])cache[id]=bounds(ex);return cache[id]}
 function frame(id,time){
   const ex=P[id];if(!ex)return '';const b=vb(id),s=solve(ex,poseAt(ex,time));
-  return `<line x1="${f1(b.x)}" y1="0" x2="${f1(b.x+b.w)}" y2="0" stroke="${C.gr}" stroke-width="2"/>`+
+  return `<line x1="${f1(b.x)}" y1="0" x2="${f1(b.x+b.w)}" y2="0" style="stroke:${C.gr}" stroke-width="2"/>`+
     (ex.props||[]).map(prop).join('')+`<ellipse cx="${f1(s.hip[0])}" cy="2" rx="28" ry="3" fill="#000" opacity=".25"/>`+draw(ex,s);
 }
 function svg(id,time,cls){const b=vb(id);return `<svg class="${cls||''}" viewBox="${f1(b.x)} ${f1(b.y)} ${f1(b.w)} ${f1(b.h)}" xmlns="http://www.w3.org/2000/svg">${frame(id,time||0)}</svg>`}
