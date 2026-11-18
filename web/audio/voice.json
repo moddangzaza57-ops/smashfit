@@ -1,0 +1,26 @@
+{
+ "v": "20261118150037",
+ "voice": "ricZmLSllmf6OeJaMllz",
+ "model": "eleven_v4",
+ "clips": [
+  "c0",
+  "c1",
+  "c2",
+  "c3",
+  "c4",
+  "c5",
+  "done",
+  "fin",
+  "go",
+  "last",
+  "n1",
+  "n2",
+  "n3",
+  "n4",
+  "n5",
+  "rest",
+  "start",
+  "swap",
+  "ten"
+ ]
+}
