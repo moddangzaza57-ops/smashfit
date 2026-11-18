@@ -1,6 +1,6 @@
 /* Smash Fit service worker — ทำให้แอปเปิดได้แม้ไม่มีเน็ต
    เวลาอัปเดตแอป: build.py จะเปลี่ยน VERSION ให้อัตโนมัติ */
-const VERSION='20261118151906';
+const VERSION='20261118152554';
 const CACHE='smashfit-'+VERSION;
 const CORE=['./','./index.html','./manifest.webmanifest','./icons/icon-192.png','./icons/icon-512.png','./icons/apple-touch-icon.png'];
 self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE).then(c=>c.addAll(CORE)).then(()=>self.skipWaiting()))});
