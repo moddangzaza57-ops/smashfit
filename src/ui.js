@@ -178,7 +178,7 @@ function exRow(s,it){
 function vGame(s){
   const lg=state.logs.find(l=>l.date===sel&&l.type==='game');
   let h=renderBlocks(s,[s.blocks[0]]);
-  if(lg)h+=sec('บันทึกเกม')+`<div class="grp"><div class="rowx"><b>บันทึกแล้ว</b><p class="meta num">${lg.minutes} นาที · ${lg.games||0} เกม${lg.wins!=null?` · ชนะ ${lg.wins} แพ้ ${lg.losses}`:''} · RPE ${lg.rpe}</p>${lg.partner?`<p class="meta">คู่: ${esc(lg.partner)}</p>`:''}${lg.mist&&lg.mist.length?`<p class="meta">จุดพลาด: ${lg.mist.join(', ')}</p>`:''}${lg.feel?`<p class="meta">ร่างกาย: ${lg.feel}</p>`:''}${lg.notes?`<p class="meta">${esc(lg.notes)}</p>`:''}</div></div>`;
+  if(lg)h+=sec('บันทึกเกม')+`<div class="grp"><div class="rowx"><b>บันทึกแล้ว</b><p class="meta num">${esc(lg.minutes)} นาที · ${esc(lg.games||0)} เกม${lg.wins!=null?` · ชนะ ${esc(lg.wins)} แพ้ ${esc(lg.losses)}`:''} · RPE ${esc(lg.rpe)}</p>${lg.partner?`<p class="meta">คู่: ${esc(lg.partner)}</p>`:''}${lg.mist&&lg.mist.length?`<p class="meta">จุดพลาด: ${esc(lg.mist.join(', '))}</p>`:''}${lg.feel?`<p class="meta">ร่างกาย: ${esc(lg.feel)}</p>`:''}${lg.notes?`<p class="meta">${esc(lg.notes)}</p>`:''}</div></div>`;
   else h+=sec('บันทึกการตีเกม')+`<div class="grp">
    <div class="field"><div class="g2"><label><div class="lbl">เวลาเล่น (นาที)</div><input class="in num" type="number" id="gm" inputmode="numeric" value="120"></label><label><div class="lbl">คู่ที่เล่นด้วย</div><input class="in" type="text" id="gp" placeholder="ไม่บังคับ"></label></div></div>
    <div class="field"><div class="g2"><label><div class="lbl">ชนะ (เกม)</div><input class="in num" type="number" id="gw" inputmode="numeric" placeholder="0"></label><label><div class="lbl">แพ้ (เกม)</div><input class="in num" type="number" id="gl" inputmode="numeric" placeholder="0"></label></div></div>
@@ -201,7 +201,7 @@ function readySheet(){
   const sc=(f,lo,hi)=>`<div class="seg five" role="group" aria-label="${lo} ถึง ${hi}">${[1,2,3,4,5].map(v=>`<button class="${c[f]===v?'on':''}" data-act="ci" data-f="${f}" data-v="${v}" aria-pressed="${c[f]===v}">${v}</button>`).join('')}</div><div class="lbl" style="display:flex;justify-content:space-between;margin:6px 2px 0"><span>${lo}</span><span>${hi}</span></div>`;
   sheet(shh(`ความพร้อมวันนี้${r?` <span class="num" style="color:var(--ac-ink)">${r.score}/15</span>`:''}`)+
   `<p class="note">ตอบ 3 ข้อ แอปจะปรับปริมาณการฝึกให้ทันที ${tip('ready')}</p>
-  <div class="grp"><div class="field"><div class="g2"><label><div class="lbl">นอนกี่ชั่วโมง</div><input class="in num" type="number" inputmode="decimal" step="0.5" data-ch="sleepH" value="${hh.sleep??''}" placeholder="เช่น 7"></label><label><div class="lbl">ชีพจรตอนตื่น</div><input class="in num" type="number" inputmode="numeric" data-ch="rhr" value="${hh.rhr??''}" placeholder="${base?'ปกติ ~'+Math.round(base):'ไม่บังคับ'}"></label></div></div>
+  <div class="grp"><div class="field"><div class="g2"><label><div class="lbl">นอนกี่ชั่วโมง</div><input class="in num" type="number" inputmode="decimal" step="0.5" data-ch="sleepH" value="${esc(hh.sleep??'')}" placeholder="เช่น 7"></label><label><div class="lbl">ชีพจรตอนตื่น</div><input class="in num" type="number" inputmode="numeric" data-ch="rhr" value="${esc(hh.rhr??'')}" placeholder="${base?'ปกติ ~'+Math.round(base):'ไม่บังคับ'}"></label></div></div>
   <div class="field"><div class="lbl">คุณภาพการนอน</div>${sc('sleep','แย่มาก','ดีมาก')}</div>
   <div class="field"><div class="lbl">พลังงานตอนนี้</div>${sc('energy','หมดแรง','เต็มที่')}</div>
   <div class="field"><div class="lbl">ความล้า / ปวดกล้ามเนื้อ</div>${sc('sore','ไม่ปวด','ปวดมาก')}</div></div>
@@ -245,7 +245,8 @@ function openFocus(k){
   $('#focus').classList.add('show');document.body.classList.add('lock');keepAwake();renderFocus();
   setTimeout(()=>$('#focus').focus({preventScroll:true}),60);
 }
-function closeFocus(){$('#focus').classList.remove('show');if(fanim){fanim.stop();fanim=null}F=null;document.body.classList.remove('lock');keepScroll(render)}
+function closeFocus(){$('#focus').classList.remove('show');if(fanim){fanim.stop();fanim=null}F=null;document.body.classList.remove('lock');if(!T)releaseAwake();keepScroll(render)}
+const numIn=v=>String(v??'').trim().replace(',','.');
 const focusOpen=()=>F&&$('#focus').classList.contains('show');
 function renderFocus(){
   if(!focusOpen())return;
@@ -285,13 +286,13 @@ function refreshCtl(){
   }else if(it.id==='rand_corner'){
     h=`<button class="btn" data-act="rcstart" data-k="${it.slot}">${ic('target')}เริ่มสุ่มมุม ${it.sets} รอบ × ${fmtSec(it.v)}</button>`;
   }else if(a[F.set]){
-    h=`<p class="meta" style="text-align:center;margin-bottom:12px">เซ็ต ${F.set+1} ทำแล้ว${(()=>{const x=(getDraft(cur.date,cur.type).data[it.slot]||[])[F.set]||{};return x.r?` · ${x.w?x.w+' กก. × ':''}${x.r} ครั้ง`:''})()}</p><button class="btn plain" data-act="fundo">${ic('undo')}ยกเลิกเซ็ตนี้</button>`;
+    h=`<p class="meta" style="text-align:center;margin-bottom:12px">เซ็ต ${F.set+1} ทำแล้ว${(()=>{const x=(getDraft(cur.date,cur.type).data[it.slot]||[])[F.set]||{};return x.r?` · ${x.w?esc(x.w)+' กก. × ':''}${esc(x.r)} ครั้ง`:''})()}</p><button class="btn plain" data-act="fundo">${ic('undo')}ยกเลิกเซ็ตนี้</button>`;
   }else if(f.t){
     h=`<div class="big-time num">${fmtClock(it.v)}<span class="meta" style="font-size:17px">${f.u?' /ข้าง':''}</span></div><button class="btn" data-act="fplay">${ic('play')}เริ่มจับเวลาเซ็ต ${F.set+1}</button>`;
   }else{
     const d=getDraft(cur.date,cur.type).data[it.slot]||[],x=d[F.set]||{},prev=F.set>0?(d[F.set-1]||{}):{};
     const sw=it.db?suggestW(it.id,cur.ph,it):null;
-    const wv=x.w??prev.w??(sw?sw.w:''),rv=x.r??prev.r??it.v;
+    const wv=esc(x.w??prev.w??(sw?sw.w:'')),rv=esc(x.r??prev.r??it.v);
     h=`<div class="steps">${it.db?`<div class="step"><span class="lb">น้ำหนัก<br>${f.u?'ต่อมือ':'ต่อข้าง'}</span><button data-act="wstep" data-v="-1" aria-label="ลดน้ำหนัก">${ic('minus')}</button><input id="fw" inputmode="decimal" value="${wv}" placeholder="–" aria-label="น้ำหนัก กิโลกรัม"><span class="u">กก.</span><button data-act="wstep" data-v="1" aria-label="เพิ่มน้ำหนัก">${ic('plus')}</button></div>`:''}
       <div class="step"><span class="lb">จำนวน<br>ครั้ง${f.u?'/ข้าง':''}</span><button data-act="rstep" data-v="-1" aria-label="ลดจำนวนครั้ง">${ic('minus')}</button><input id="fr" inputmode="numeric" value="${rv}" aria-label="จำนวนครั้ง"><span class="u">ครั้ง</span><button data-act="rstep" data-v="1" aria-label="เพิ่มจำนวนครั้ง">${ic('plus')}</button></div></div>
       <button class="btn" data-act="flog">${ic('check')}บันทึกเซ็ต ${F.set+1}${it.hi?` · เป้า ${it.v}–${it.hi} ครั้ง`:''}</button>`;
@@ -308,7 +309,7 @@ function advanceAfter(it){
   refreshCtl();
 }
 function stepW(dir){
-  const el=$('#fw');if(!el)return;const v=parseFloat(el.value)||0,l=dbList();let n;
+  const el=$('#fw');if(!el)return;const v=parseFloat(numIn(el.value))||0,l=dbList();let n;
   if(l.length)n=dir>0?(l.find(x=>x>v)??(v||l[0])):([...l].reverse().find(x=>x<v)??l[0]);
   else n=Math.max(0,v+dir);
   el.value=n;const x=setArr(flat()[F.i].it.slot,F.set);x.w=String(n);save();
@@ -321,7 +322,7 @@ function vPlan(){
   let h=lt('ตาราง',`รอบ 4 สัปดาห์ · ตอนนี้ ${PH[ph].n}`);
   h+=sec('รอบฝึก 4 สัปดาห์')+`<div class="grp"><div class="phases">${PH.map((p,i)=>`<div class="${i===ph?'on':''}" ${i===ph?'aria-current="step"':''}>สัปดาห์ ${i+1}<b>${p.n}</b></div>`).join('')}</div><div class="rowx" style="padding-top:0"><p class="meta">${PH[ph].d}</p></div>${row({t:'เริ่มรอบใหม่ตั้งแต่สัปดาห์นี้',act:'cycle',cls:'link',chev:false})}</div>`;
   h+=`<p class="foot">สัปดาห์ที่ 4 เป็นสัปดาห์เบา (Deload) ${tip('deload')}</p>`;
-  h+=sec('โหมดก่อนแข่ง')+`<div class="grp"><label class="row has-i">${ic('trophy','row-i')}<span class="row-t">วันแข่งรายการถัดไป${tdays!=null?`<small>อีก ${tdays} วัน</small>`:''}</span><input class="row-in" type="date" data-ch="tourn" value="${state.settings.tourn||''}" aria-label="วันแข่งรายการถัดไป"></label>${state.settings.tourn?row({t:'ล้างวันแข่ง',act:'tournclr',cls:'link',chev:false}):''}</div>`;
+  h+=sec('โหมดก่อนแข่ง')+`<div class="grp"><label class="row has-i">${ic('trophy','row-i')}<span class="row-t">วันแข่งรายการถัดไป${tdays!=null?`<small>อีก ${tdays} วัน</small>`:''}</span><input class="row-in" type="date" data-ch="tourn" value="${esc(state.settings.tourn||'')}" aria-label="วันแข่งรายการถัดไป"></label>${state.settings.tourn?row({t:'ล้างวันแข่ง',act:'tournclr',cls:'link',chev:false}):''}</div>`;
   h+=`<p class="foot">ใส่วันแข่ง แอปจะลดปริมาณการฝึก 10 วันก่อนแข่ง (Taper) ${tip('taper')}</p>`;
   const opts=t=>Object.keys(TYPES).filter(k=>k!=='game'&&!TYPES[k].extra).map(k=>`<option value="${k}" ${k===t?'selected':''}>${TYPES[k].n}</option>`).join('');
   h+=sec('วันฝึกประจำสัปดาห์')+`<div class="grp">${ORDER.map(dow=>{
@@ -430,7 +431,7 @@ function gameInsights(){
   const grp=[[],[]];g.forEach(l=>{const r=readiness(l.date);if(r&&(+l.wins||+l.losses))grp[r.score>=12?0:1].push(l)});
   const wr=a=>{const w=a.reduce((s,l)=>s+(+l.wins||0),0),t=a.reduce((s,l)=>s+(+l.wins||0)+(+l.losses||0),0);return t?Math.round(w/t*100):null};
   let cmp='';if(grp[0].length>=2&&grp[1].length>=2){const a=wr(grp[0]),b=wr(grp[1]);cmp=`<div class="rowx row"><span class="row-t" style="font-size:15px">วันที่ความพร้อมดี ชนะ ${a}% · วันที่ความพร้อมต่ำ ชนะ ${b}%${a-b>=10?' การพักผ่อนส่งผลต่อเกมชัดเจน':''}</span></div>`}
-  return sec('สถิติการตีเกม')+`<div class="grp"><div class="stat"><div><b>${g.length}</b><small>ครั้งที่ตีเกม</small></div><div><b>${W+Lo?Math.round(W/(W+Lo)*100)+'%':'–'}</b><small>ชนะ ${W} แพ้ ${Lo}</small></div></div>${top.length?`<div class="rowx row"><span class="row-t" style="font-size:15px"><small>จุดที่พลาดบ่อย (8 ครั้งล่าสุด)</small>${top.map(([m,c])=>`${m} (${c})`).join(' · ')}</span></div>`:''}${cmp}</div>`;
+  return sec('สถิติการตีเกม')+`<div class="grp"><div class="stat"><div><b>${g.length}</b><small>ครั้งที่ตีเกม</small></div><div><b>${W+Lo?Math.round(W/(W+Lo)*100)+'%':'–'}</b><small>ชนะ ${W} แพ้ ${Lo}</small></div></div>${top.length?`<div class="rowx row"><span class="row-t" style="font-size:15px"><small>จุดที่พลาดบ่อย (8 ครั้งล่าสุด)</small>${top.map(([m,c])=>`${esc(m)} (${c})`).join(' · ')}</span></div>`:''}${cmp}</div>`;
 }
 function vHist(){
   const td=today(),m=mon(td),st=streak();
@@ -442,9 +443,9 @@ function vHist(){
   h+=sec('ภาระการฝึกรายสัปดาห์')+`<div class="grp"><div class="rowx">${loads.some(Boolean)?`<p class="meta">นาที × RPE รวมเวทและตีแบด ${tip('load')}</p><div class="bars">${loads.map((v,i)=>`<div class="${i===7?'cur':''}" style="height:${v/mx*100}%" title="${v}"></div>`).join('')}</div><div class="blbl">${wks.map(w=>`<span>${sdd(w)}</span>`).join('')}</div>
   <p class="meta" style="margin-top:10px">${a?(a.ratio>1.3?`<span style="color:var(--warn)">สัปดาห์นี้สูงกว่าค่าเฉลี่ย ${Math.round((a.ratio-1)*100)}% ระวังบาดเจ็บ</span>`:`สัปดาห์นี้ ${a.cur} / ค่าเฉลี่ย ${Math.round(a.avg)} อยู่ในช่วงปลอดภัย`):'บันทึกต่อเนื่อง 3 สัปดาห์ขึ้นไปจะเห็นการเตือนภาระเกิน'}</p>`:`<div class="empty" style="padding:12px 0">${ic('chart')}<div>กราฟจะขึ้นหลังบันทึกเซสชันแรก ${tip('load')}</div></div>`}</div></div>`;
   const ws=Object.entries(state.lastW).filter(([id])=>EX[id]);
-  if(ws.length)h+=sec('น้ำหนักล่าสุดต่อท่า')+`<div class="grp">${ws.map(([id,w])=>row({tag:'div',t:EX[id][0],sub:sdd(w.date),v:`<b class="num" style="color:var(--tx)">${w.w} กก.</b><br><small style="color:${w.ok?'var(--ac-ink)':'var(--tx2)'}">${w.ok?'พร้อมเพิ่มน้ำหนัก':'เพิ่มจำนวนครั้งก่อน'}</small>`,chev:false})).join('')}</div>`;
+  if(ws.length)h+=sec('น้ำหนักล่าสุดต่อท่า')+`<div class="grp">${ws.map(([id,w])=>row({tag:'div',t:EX[id][0],sub:sdd(w.date),v:`<b class="num" style="color:var(--tx)">${esc(w.w)} กก.</b><br><small style="color:${w.ok?'var(--ac-ink)':'var(--tx2)'}">${w.ok?'พร้อมเพิ่มน้ำหนัก':'เพิ่มจำนวนครั้งก่อน'}</small>`,chev:false})).join('')}</div>`;
   const logs=[...state.logs].sort((x,y)=>y.date.localeCompare(x.date)||y.id-x.id).slice(0,40);
-  h+=sec('ประวัติ')+`<div class="grp">${logs.length?logs.map(l=>row({tag:'div',i:TIC[l.type]||'body',t:TYPES[l.type]?.n||l.type,sub:`<span class="num">${thd(l.date)} · ${l.minutes} นาที · RPE ${l.rpe}${l.type==='game'&&l.wins!=null?` · ชนะ ${l.wins} แพ้ ${l.losses}`:''}${l.total?` · ${l.done}/${l.total} เซ็ต`:''}</span>${l.notes?`<br>${esc(l.notes)}`:''}`,chev:false,post:`<button class="x" data-act="del" data-id="${l.id}" aria-label="ลบบันทึก ${thd(l.date)}">ลบ</button>`})).join(''):`<div class="empty">${ic('book')}<div>ยังไม่มีบันทึก<br>ทำเซสชันแรกจากแท็บวันนี้ แล้วประวัติจะขึ้นที่นี่</div><div style="height:12px"></div><button class="btn sm" data-nav="today">ไปหน้าวันนี้</button></div>`}</div>`;
+  h+=sec('ประวัติ')+`<div class="grp">${logs.length?logs.map(l=>row({tag:'div',i:TIC[l.type]||'body',t:TYPES[l.type]?.n||esc(l.type),sub:`<span class="num">${thd(l.date)} · ${esc(l.minutes)} นาที · RPE ${esc(l.rpe)}${l.type==='game'&&l.wins!=null?` · ชนะ ${esc(l.wins)} แพ้ ${esc(l.losses)}`:''}${l.total?` · ${esc(l.done)}/${esc(l.total)} เซ็ต`:''}</span>${l.notes?`<br>${esc(l.notes)}`:''}`,chev:false,post:`<button class="x" data-act="del" data-id="${esc(l.id)}" aria-label="ลบบันทึก ${thd(l.date)}">ลบ</button>`})).join(''):`<div class="empty">${ic('book')}<div>ยังไม่มีบันทึก<br>ทำเซสชันแรกจากแท็บวันนี้ แล้วประวัติจะขึ้นที่นี่</div><div style="height:12px"></div><button class="btn sm" data-nav="today">ไปหน้าวันนี้</button></div>`}</div>`;
   return h;
 }
 
@@ -456,7 +457,8 @@ function applyLook(){
   const st=state.settings,r=document.documentElement;
   if(st.theme==='light'||st.theme==='dark')r.dataset.theme=st.theme;else delete r.dataset.theme;
   if(st.accent&&st.accent!=='green')r.dataset.accent=st.accent;else delete r.dataset.accent;
-  if(st.textSize&&+st.textSize!==1)r.style.setProperty('--tz',st.textSize);else r.style.removeProperty('--tz');
+  if(![1,1.1,1.2].includes(+st.textSize))st.textSize=1;
+  if(+st.textSize!==1)r.style.setProperty('--tz',st.textSize);else r.style.removeProperty('--tz');
   const forced=st.theme==='light'?'#f2f2f7':st.theme==='dark'?'#000000':null;
   document.querySelectorAll('meta[name="theme-color"]').forEach(m=>{if(!m.dataset.orig)m.dataset.orig=m.content;m.content=forced||m.dataset.orig});
 }
@@ -478,7 +480,7 @@ function vSet(){
    ${selRow({i:'body',t:'ระดับ',v:lvN(st.level),ch:'level'},LEVELS.map(([k,n,d])=>`<option value="${k}" ${k===st.level?'selected':''}>${n} (${d})</option>`).join(''))}
    ${selRow({i:'target',t:'เป้าหมายหลัก',v:glN(st.goal),ch:'goal'},GOALS.map(([k,n])=>`<option value="${k}" ${k===st.goal?'selected':''}>${n}</option>`).join(''))}
    <label class="row has-i">${ic('dumbbell','row-i')}<span class="row-t">ดัมเบลที่มี<small>กก. ต่อข้าง คั่นด้วย ,</small></span><input class="row-in num" type="text" data-ch="db" value="${esc(st.dumbbells)}" aria-label="น้ำหนักดัมเบลที่มี"></label>
-   <label class="row has-i">${ic('calendar','row-i')}<span class="row-t">วันเริ่มรอบ 4 สัปดาห์</span><input class="row-in" type="date" data-ch="start" value="${st.start}" aria-label="วันเริ่มรอบ 4 สัปดาห์"></label></div>`;
+   <label class="row has-i">${ic('calendar','row-i')}<span class="row-t">วันเริ่มรอบ 4 สัปดาห์</span><input class="row-in" type="date" data-ch="start" value="${esc(st.start)}" aria-label="วันเริ่มรอบ 4 สัปดาห์"></label></div>`;
   h+=sec('เสียง')+`<div class="grp"><label class="row has-i">${ic('speaker','row-i')}<span class="row-t">เสียงพูดภาษาไทย<small>เริ่ม · อีก 10 วินาที · มุมคอร์ท</small></span><input class="sw" type="checkbox" data-ch="voice" ${st.voice!==false?'checked':''} aria-label="เสียงพูดภาษาไทย"></label>${rtCfg(true)}</div>`;
   h+=sec('ข้อมูลสุขภาพ')+`<details class="grp"><summary class="row has-i">${ic('heart','row-i')}<span class="row-t">ดึงข้อมูลจากแอป Health อัตโนมัติ<small>ชั่วโมงนอนและชีพจรตอนตื่น ผ่านแอปคำสั่งลัด</small></span>${ic('chev','chev')}</summary>
    <div class="rowx"><ol style="margin:0;padding-left:20px;font-size:15px;line-height:1.6">
@@ -568,6 +570,7 @@ let T=null,actx=null,wl=null;
 function unlockAudio(){try{actx=actx||new(window.AudioContext||window.webkitAudioContext)();if(actx.state==='suspended')actx.resume()}catch(e){}}
 function beep(f=880,d=.18){try{if(!actx)return;const o=actx.createOscillator(),g=actx.createGain();o.frequency.value=f;o.connect(g);g.connect(actx.destination);g.gain.setValueAtTime(.25,actx.currentTime);g.gain.exponentialRampToValueAtTime(.001,actx.currentTime+d);o.start();o.stop(actx.currentTime+d)}catch(e){}}
 function keepAwake(){try{if(navigator.wakeLock&&!wl)navigator.wakeLock.request('screen').then(l=>{wl=l;l.addEventListener('release',()=>wl=null)}).catch(()=>{})}catch(e){}}
+function releaseAwake(){try{if(wl){wl.release();wl=null}}catch(e){}}
 function startTimer(label,sec,done,isRest){
   unlockAudio();if(T)clearInterval(T.iv);
   T={label,end:Date.now()+sec*1000,total:sec,done,last:null,isRest};
@@ -582,7 +585,7 @@ function tick(){
   if(s!==T.last){if(s===10&&T.total>=20)say('อีก 10 วินาที');if(s>0&&s<=3)beep(660,.12)}T.last=s;
   if(left<=0){const d=T.done,r=T.isRest;stopTimer();beep(990,.35);setTimeout(()=>beep(990,.35),400);if(r)say('ไปต่อ');d&&d()}
 }
-function stopTimer(){if(T){clearInterval(T.iv);T=null}$('#timer').classList.remove('show');refreshCtl()}
+function stopTimer(){if(T){clearInterval(T.iv);T=null}$('#timer').classList.remove('show');if(!focusOpen()&&!RT)releaseAwake();refreshCtl()}
 
 /* ================= Helpers ================= */
 function toast(t){const e=$('#toast');e.innerHTML=ic('check')+esc(clean(t));e.classList.add('show');clearTimeout(e._t);e._t=setTimeout(()=>e.classList.remove('show'),2000)}
@@ -638,9 +641,13 @@ document.addEventListener('click',e=>{
     case 'fset':F.set=i;refreshCtl();break;
     case 'wstep':stepW(+b.dataset.v);break;
     case 'rstep':stepR(+b.dataset.v);break;
-    case 'flog':{const it=flat()[F.i].it,x=setArr(it.slot,F.set),fw=$('#fw'),fr=$('#fr');if(fr)x.r=fr.value||String(it.v);if(fw&&fw.value!=='')x.w=fw.value;markDone(it.slot,F.set,true);if(navigator.vibrate)navigator.vibrate(15);advanceAfter(it);break}
+    case 'flog':{const it=flat()[F.i].it,x=setArr(it.slot,F.set),fw=$('#fw'),fr=$('#fr');if(fr)x.r=String(parseInt(fr.value)||it.v);if(fw&&numIn(fw.value)!==''&&!isNaN(parseFloat(numIn(fw.value))))x.w=String(parseFloat(numIn(fw.value)));markDone(it.slot,F.set,true);if(navigator.vibrate)navigator.vibrate(15);advanceAfter(it);break}
     case 'fundo':{const it=flat()[F.i].it;markDone(it.slot,F.set,false);refreshCtl();break}
-    case 'fplay':{const it=flat()[F.i].it,set=F.set,slot=it.slot;startTimer(`${EX[it.id][0]} · เซ็ต ${set+1}`,it.v,()=>{markDone(slot,set,true);if(focusOpen()&&flat()[F.i]&&flat()[F.i].it.slot===slot)advanceAfter(itemByKey(slot));else if(focusOpen())refreshCtl();else if(view==='today')keepScroll(render)});break}
+    case 'fplay':{const it=flat()[F.i].it,set=F.set,slot=it.slot,nm=EX[it.id][0];
+      const fin=()=>{markDone(slot,set,true);if(focusOpen()&&flat()[F.i]&&flat()[F.i].it.slot===slot)advanceAfter(itemByKey(slot));else if(focusOpen())refreshCtl();else if(view==='today')keepScroll(render)};
+      // ท่าข้างเดียวแบบจับเวลา: จับเวลาข้างแรก แล้วสลับข้างให้อัตโนมัติ
+      if(EX[it.id][2].u)startTimer(`${nm} · เซ็ต ${set+1} · ข้างแรก`,it.v,()=>{say('สลับข้าง');startTimer(`${nm} · เซ็ต ${set+1} · อีกข้าง`,it.v,fin)});
+      else startTimer(`${nm} · เซ็ต ${set+1}`,it.v,fin);break}
     case 'swap':{const it=itemByKey(k),o=it.orig||it.id,list=[o,...ALT[o]];const nx=list[(list.indexOf(it.id)+1)%list.length];
       const sw=state.swaps[cur.date]||(state.swaps[cur.date]={});if(nx===o)delete sw[k];else sw[k]=nx;
       const dr=getDraft(cur.date,cur.type);delete dr.data[k];save();keepScroll(render);if(focusOpen()){F.set=0;renderFocus()}toast(`เปลี่ยนเป็น ${EX[nx][0]}`);break}
@@ -689,7 +696,7 @@ document.addEventListener('click',e=>{
     case 'reset':if(b.dataset.arm){state=defState();save();applyLook();render();toast('ล้างข้อมูลแล้ว');showOnb()}else{b.dataset.arm=1;b.querySelector('.row-t').textContent='แตะอีกครั้งเพื่อยืนยัน ลบทุกอย่างและกู้คืนไม่ได้';setTimeout(()=>{if(b.isConnected){delete b.dataset.arm;b.querySelector('.row-t').textContent='ล้างข้อมูลทั้งหมด'}},3500)}break;
     case 'onbnext':if(ONB.step<2){ONB.step++;renderOnb()}break;
     case 'onbback':ONB.step=Math.max(0,ONB.step-1);renderOnb();break;
-    case 'onbpick':{ONB[b.dataset.g]=b.dataset.v;const db=$('#onbdb');if(db)ONB.db=db.value;renderOnb();break}
+    case 'onbpick':{ONB[b.dataset.g]=b.dataset.v;const db=$('#onbdb');if(db)ONB.db=db.value;const y=$('#onb').scrollTop;renderOnb();$('#onb').scrollTop=y;break}
     case 'onbskip':finishOnb(false);break;
     case 'onbdone':finishOnb(true);break;
     case 'onbshow':showOnb();break;
@@ -698,7 +705,7 @@ document.addEventListener('click',e=>{
 });
 document.addEventListener('input',e=>{
   const t=e.target;if(t.id==='libq'){$('#liblist').innerHTML=libList(t.value);return}
-  if((t.id==='fw'||t.id==='fr')&&F){const x=setArr(flat()[F.i].it.slot,F.set);x[t.id==='fw'?'w':'r']=t.value;save()}
+  if((t.id==='fw'||t.id==='fr')&&F){const x=setArr(flat()[F.i].it.slot,F.set);x[t.id==='fw'?'w':'r']=numIn(t.value);save()}
 });
 document.addEventListener('change',e=>{
   const t=e.target,c=t.dataset.ch;if(!c)return;
@@ -733,7 +740,14 @@ document.addEventListener('keydown',e=>{
   sh.addEventListener('touchmove',e=>{if(y0==null)return;dy=e.touches[0].clientY-y0;if(dy>0){sh.style.transform=`translateY(${dy}px)`;sh.style.transition='none'}},{passive:true});
   sh.addEventListener('touchend',()=>{if(y0==null)return;sh.style.transition='transform .25s var(--ease)';if(dy>110)closeSheet();sh.style.transform='';y0=null});
 })();
-document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&T)tick()});
+/* กลับมาที่แอป: ตัวจับเวลาทำงานต่อ · ข้ามเที่ยงคืนแล้วให้ "วันนี้" เป็นวันใหม่ · ขอให้จอติดต่อถ้ายังฝึกอยู่ */
+let lastDay=today();
+document.addEventListener('visibilitychange',()=>{
+  if(document.visibilityState!=='visible')return;
+  if(T)tick();
+  const td=today();if(td!==lastDay){if(sel===lastDay&&!focusOpen()){sel=td;deskMode=false;render()}lastDay=td}
+  if(focusOpen()||T||RT)keepAwake();
+});
 
 /* ================= เริ่มต้น ================= */
 importHealth();applyLook();

@@ -17,8 +17,26 @@ function normalize(s){
   // ผู้ใช้เดิม (ก่อนมีหน้าต้อนรับ) ที่มีข้อมูลแล้ว ไม่ต้องเห็นหน้าต้อนรับ
   if(!hadOnb)s.settings.onboarded=!!((s.logs&&s.logs.length)||Object.keys(s.checkins||{}).length||Object.keys(s.drafts||{}).length);
   if(s.settings.rtVoice===false&&s.voice==null)s.settings.voice=false;
-  ['overrides','checkins','lastW','drafts','pain','swaps','health','budget'].forEach(k=>s[k]=s[k]||{});
-  s.logs=s.logs||[];s.tests=s.tests||[];s.week=s.week||d.week;return s;
+  ['overrides','checkins','lastW','drafts','pain','swaps','health','budget'].forEach(k=>s[k]=(s[k]&&typeof s[k]==='object'&&!Array.isArray(s[k]))?s[k]:{});
+  s.logs=Array.isArray(s.logs)?s.logs:[];s.tests=Array.isArray(s.tests)?s.tests:[];
+  // ป้องกันข้อมูลเสีย/ไฟล์สำรองผิดรูปแบบทำให้แอปพัง (ค่าเพี้ยน → ใช้ค่าเริ่มต้น ข้อมูลอื่นยังอยู่)
+  const st=s.settings,isD=v=>typeof v==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(v)&&!isNaN(pd(v));
+  if(!isD(st.start))st.start=mon(today());
+  if(st.tourn&&!isD(st.tourn))st.tourn='';
+  if(!['beg','inter','adv'].includes(st.level))st.level='inter';
+  if(!['power','endurance','prevention'].includes(st.goal))st.goal='power';
+  if(!['slow','mid','fast'].includes(st.rtSpd))st.rtSpd='mid';
+  st.dumbbells=String(st.dumbbells??'2, 4, 6, 8, 10, 12');
+  const okT=t=>typeof t==='string'&&TYPES[t]&&t!=='game'&&!TYPES[t].extra;
+  if(!s.week||typeof s.week!=='object')s.week=d.week;
+  for(let i=0;i<7;i++){if(i===GAME_DOW)s.week[i]='game';else if(!okT(s.week[i]))s.week[i]='rest'}
+  for(const k in s.overrides)if(!isD(k)||!okT(s.overrides[k]))delete s.overrides[k];
+  s.logs=s.logs.filter(l=>l&&typeof l==='object'&&isD(l.date)&&typeof l.type==='string');
+  s.logs.forEach(l=>{['minutes','rpe','load'].forEach(f=>{l[f]=+l[f]||0})});
+  s.tests=s.tests.filter(t=>t&&isD(t.date)&&t.r&&typeof t.r==='object');
+  for(const k in s.lastW){const v=s.lastW[k];if(!v||isNaN(+v.w))delete s.lastW[k];else v.w=+v.w}
+  for(const k in s.budget)if(![20,30,45].includes(+s.budget[k]))delete s.budget[k];
+  return s;
 }
 let state;
 try{state=JSON.parse(localStorage.getItem(KEY))}catch(e){state=null}
@@ -32,7 +50,7 @@ let view='today',sel=today(),cur=null,rpeSel=0,gRpe=0,deskMode=false,gMist=new S
 
 /* ================= ตัวช่วยคำนวณ ================= */
 const typeOf=date=>{const dow=pd(date).getDay();if(dow===GAME_DOW)return 'game';return state.overrides[date]||state.week[dow]||'rest'};
-function phaseIdx(date){const w=Math.floor(dayDiff(mon(state.settings.start),mon(date))/7);return ((w%4)+4)%4}
+function phaseIdx(date){const w=Math.floor(dayDiff(mon(state.settings.start),mon(date))/7);return (((w%4)+4)%4)||0}
 const weekLoad=wk=>state.logs.filter(l=>mon(l.date)===wk).reduce((a,l)=>a+(l.load||0),0);
 function acwr(date){const wk=mon(date),c=weekLoad(wk);const prev=[1,2,3].map(i=>weekLoad(addD(wk,-7*i))).filter(x=>x>0);if(prev.length<2)return null;const avg=prev.reduce((a,b)=>a+b,0)/prev.length;return {ratio:c/avg,cur:c,avg}}
 const sleepScore=h=>h>=8?5:h>=7?4:h>=6?3:h>=5?2:1;
