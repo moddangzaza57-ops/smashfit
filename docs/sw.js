@@ -1,6 +1,6 @@
 /* Smash Fit service worker — ทำให้แอปเปิดได้แม้ไม่มีเน็ต
    เวลาอัปเดตแอป: build.py จะเปลี่ยน VERSION ให้อัตโนมัติ */
-const VERSION='20261118144514';
+const VERSION='20261118145320';
 const CACHE='smashfit-'+VERSION;
 const CORE=['./','./index.html','./manifest.webmanifest','./icons/icon-192.png','./icons/icon-512.png','./icons/apple-touch-icon.png'];
 self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE).then(c=>c.addAll(CORE)).then(()=>self.skipWaiting()))});
@@ -18,5 +18,12 @@ self.addEventListener('fetch',e=>{
     e.respondWith(caches.open(CACHE+'-fonts').then(c=>c.match(req).then(hit=>{const net=fetch(req).then(r=>{c.put(req,r.clone());return r}).catch(()=>hit);return hit||net})));
     return;
   }
-  if(url.origin===location.origin)e.respondWith(caches.match(req).then(hit=>hit||fetch(req)));
+  if(url.origin!==location.origin)return;
+  // รายการเสียงพากย์: ลองเน็ตก่อน (ได้เสียงชุดใหม่) ถ้าไม่มีเน็ตใช้ของในเครื่อง
+  if(url.pathname.endsWith('/audio/voice.json')){
+    e.respondWith(fetch(req).then(r=>{if(r.ok){const cp=r.clone();caches.open(CACHE).then(c=>c.put(req,cp))}return r}).catch(()=>caches.match(req)));
+    return;
+  }
+  // ไฟล์อื่นในเว็บ (ไอคอน, เสียงพากย์ mp3): ใช้ของในเครื่องก่อน ถ้ายังไม่มีโหลดแล้วเก็บไว้ใช้ตอนออฟไลน์
+  e.respondWith(caches.match(req).then(hit=>hit||fetch(req).then(r=>{if(r.ok&&r.type==='basic'){const cp=r.clone();caches.open(CACHE).then(c=>c.put(req,cp))}return r})));
 });

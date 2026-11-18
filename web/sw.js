@@ -18,5 +18,12 @@ self.addEventListener('fetch',e=>{
     e.respondWith(caches.open(CACHE+'-fonts').then(c=>c.match(req).then(hit=>{const net=fetch(req).then(r=>{c.put(req,r.clone());return r}).catch(()=>hit);return hit||net})));
     return;
   }
-  if(url.origin===location.origin)e.respondWith(caches.match(req).then(hit=>hit||fetch(req)));
+  if(url.origin!==location.origin)return;
+  // รายการเสียงพากย์: ลองเน็ตก่อน (ได้เสียงชุดใหม่) ถ้าไม่มีเน็ตใช้ของในเครื่อง
+  if(url.pathname.endsWith('/audio/voice.json')){
+    e.respondWith(fetch(req).then(r=>{if(r.ok){const cp=r.clone();caches.open(CACHE).then(c=>c.put(req,cp))}return r}).catch(()=>caches.match(req)));
+    return;
+  }
+  // ไฟล์อื่นในเว็บ (ไอคอน, เสียงพากย์ mp3): ใช้ของในเครื่องก่อน ถ้ายังไม่มีโหลดแล้วเก็บไว้ใช้ตอนออฟไลน์
+  e.respondWith(caches.match(req).then(hit=>hit||fetch(req).then(r=>{if(r.ok&&r.type==='basic'){const cp=r.clone();caches.open(CACHE).then(c=>c.put(req,cp))}return r})));
 });

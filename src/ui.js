@@ -301,9 +301,9 @@ function refreshCtl(){
 }
 function advanceAfter(it){
   const L=flat(),nx=firstUndone(it);let label='';
-  if(nx>=0){F.set=nx;label=`พัก · ต่อไป${nx===it.sets-1?'เซ็ตสุดท้าย':' เซ็ต '+(nx+1)}`;if(nx===it.sets-1)say('ต่อไปเซ็ตสุดท้าย')}
+  if(nx>=0){F.set=nx;label=`พัก · ต่อไป${nx===it.sets-1?'เซ็ตสุดท้าย':' เซ็ต '+(nx+1)}`;if(nx===it.sets-1)setTimeout(()=>say('last'),300)}
   else{let j=-1;for(let s=1;s<=L.length;s++){const c=(F.i+s)%L.length;if(firstUndone(L[c].it)>=0){j=c;break}}
-    if(j<0){beep(990,.3);renderFocus();return}
+    if(j<0){beep(990,.3);setTimeout(()=>say('fin'),500);renderFocus();return}
     const moved=j!==F.i;F.i=j;F.set=firstUndone(L[j].it);label=`พัก · ต่อไป ${EX[L[j].it.id][0]}`;if(moved){renderFocus()}}
   if(it.rest&&it.id!=='rand_corner')startTimer(label,it.rest,null,true);
   refreshCtl();
@@ -481,7 +481,7 @@ function vSet(){
    ${selRow({i:'target',t:'เป้าหมายหลัก',v:glN(st.goal),ch:'goal'},GOALS.map(([k,n])=>`<option value="${k}" ${k===st.goal?'selected':''}>${n}</option>`).join(''))}
    <label class="row has-i">${ic('dumbbell','row-i')}<span class="row-t">ดัมเบลที่มี<small>กก. ต่อข้าง คั่นด้วย ,</small></span><input class="row-in num" type="text" data-ch="db" value="${esc(st.dumbbells)}" aria-label="น้ำหนักดัมเบลที่มี"></label>
    <label class="row has-i">${ic('calendar','row-i')}<span class="row-t">วันเริ่มรอบ 4 สัปดาห์</span><input class="row-in" type="date" data-ch="start" value="${esc(st.start)}" aria-label="วันเริ่มรอบ 4 สัปดาห์"></label></div>`;
-  h+=sec('เสียง')+`<div class="grp"><label class="row has-i">${ic('speaker','row-i')}<span class="row-t">เสียงพูดภาษาไทย<small>เริ่ม · อีก 10 วินาที · มุมคอร์ท</small></span><input class="sw" type="checkbox" data-ch="voice" ${st.voice!==false?'checked':''} aria-label="เสียงพูดภาษาไทย"></label>${rtCfg(true)}</div>`;
+  h+=sec('เสียง')+`<div class="grp"><label class="row has-i">${ic('speaker','row-i')}<span class="row-t">เสียงพูดภาษาไทย<small>นับถอยหลัง 5-4-3-2-1 · เริ่ม · พัก · มุมคอร์ท</small></span><input class="sw" type="checkbox" data-ch="voice" ${st.voice!==false?'checked':''} aria-label="เสียงพูดภาษาไทย"></label>${row({i:'play',t:'ทดสอบเสียง',sub:`<span id="vkind">${voiceKind()}</span> · ปิดโหมดเงียบของ iPhone ก่อน`,act:'vtest',chev:false})}${rtCfg(true)}</div>`;
   h+=sec('ข้อมูลสุขภาพ')+`<details class="grp"><summary class="row has-i">${ic('heart','row-i')}<span class="row-t">ดึงข้อมูลจากแอป Health อัตโนมัติ<small>ชั่วโมงนอนและชีพจรตอนตื่น ผ่านแอปคำสั่งลัด</small></span>${ic('chev','chev')}</summary>
    <div class="rowx"><ol style="margin:0;padding-left:20px;font-size:15px;line-height:1.6">
    <li>เปิดแอปคำสั่งลัด สร้างคำสั่งลัดใหม่ ชื่อ "SmashFit เช้า"</li>
@@ -542,7 +542,25 @@ const RT_LBL=['หน้าซ้าย','หน้าขวา','กลาง�
 function rtCfg(noVoice){const s=state.settings.rtSpd||'mid';
   return selRow({i:'target',t:'ความเร็วโหมดสุ่มมุม',v:{slow:'ช้า',mid:'กลาง',fast:'เร็ว'}[s],ch:'rtspd'},`<option value="slow" ${s==='slow'?'selected':''}>ช้า (มือใหม่)</option><option value="mid" ${s==='mid'?'selected':''}>กลาง</option><option value="fast" ${s==='fast'?'selected':''}>เร็ว</option>`)+(noVoice?'':`<label class="row has-i">${ic('speaker','row-i')}<span class="row-t">เสียงพูดบอกมุม</span><input class="sw" type="checkbox" data-ch="voice" ${state.settings.voice!==false?'checked':''} aria-label="เสียงพูดบอกมุม"></label>`)}
 let RT=null;
-function say(t){if(state.settings.voice===false)return;try{const u=new SpeechSynthesisUtterance(t);u.lang='th-TH';u.rate=1.2;speechSynthesis.cancel();speechSynthesis.speak(u)}catch(e){}}
+/* ---------- เสียงพากย์ ----------
+   คำพูดทั้งหมดอยู่ที่ VOICE (tools/gen_voice.py อ่านบรรทัดนี้ไปสร้าง mp3 ด้วย ElevenLabs → web/audio/<คีย์>.mp3)
+   ถ้ามีไฟล์ใน audio/voice.json จะเล่นไฟล์นั้น ถ้าไม่มีใช้เสียงพูดภาษาไทยของเครื่องแทน */
+const VOICE={"n5":"ห้า","n4":"สี่","n3":"สาม","n2":"สอง","n1":"หนึ่ง","start":"เริ่ม!","rest":"พัก","go":"ไปต่อ","last":"ต่อไป เซ็ตสุดท้าย","swap":"สลับข้าง","ten":"อีกสิบวินาที","done":"ครบทุกรอบ เยี่ยมมาก","fin":"ครบทุกเซ็ตแล้ว เยี่ยมมาก","c0":"หน้าซ้าย","c1":"หน้าขวา","c2":"กลางซ้าย","c3":"กลางขวา","c4":"หลังซ้าย","c5":"หลังขวา"};
+let vinfo=null,vbuf={},vsrc=null,vloading=false;
+async function loadVoice(){
+  if(vloading||!actx)return;vloading=true;
+  try{const r=await fetch('audio/voice.json',{cache:'no-cache'});if(r.ok)vinfo=await r.json()}catch(e){}
+  if(!vinfo||!Array.isArray(vinfo.clips))return;
+  for(const k of vinfo.clips){if(vbuf[k]||!VOICE[k])continue;
+    try{const ab=await (await fetch(`audio/${k}.mp3?v=${vinfo.v}`)).arrayBuffer();vbuf[k]=await actx.decodeAudioData(ab)}catch(e){}}
+}
+function say(k){
+  if(state.settings.voice===false)return;
+  const b=vbuf[k];
+  if(b&&actx){try{if(vsrc)try{vsrc.stop()}catch(e){}const s=actx.createBufferSource(),g=actx.createGain();g.gain.value=1;s.buffer=b;s.connect(g);g.connect(actx.destination);s.start();vsrc=s;return}catch(e){}}
+  try{const u=new SpeechSynthesisUtterance(VOICE[k]||k);u.lang='th-TH';u.rate=1.15;speechSynthesis.cancel();speechSynthesis.speak(u)}catch(e){}
+}
+const voiceKind=()=>Object.keys(vbuf).length?'เสียงพากย์ ElevenLabs':'เสียงพูดของเครื่อง';
 function rtStart(rounds,work,rest,onDone){
   unlockAudio();stopTimer();rtStop();
   const sp=RT_SPD[state.settings.rtSpd||'mid'];
@@ -553,12 +571,12 @@ function rtStart(rounds,work,rest,onDone){
     if(!RT)return;const now=Date.now(),left=Math.max(0,Math.ceil((RT.end-now)/1000));
     $('#rtT').textContent=RT.phase==='work'?fmtClock(left):left;$('#rtR').textContent=`รอบ ${RT.round}/${RT.rounds}`;
     $('#rtPh').textContent=RT.phase==='prep'?'เตรียมตัว…':RT.phase==='work'?'ทำงาน!':'พัก เดินกลับกลางคอร์ท หายใจ';
-    if(RT.phase==='work'&&now>=RT.next){clear();let i;do{i=Math.floor(Math.random()*6)}while(i===RT.last);RT.last=i;RT.cells[i].classList.add('on');beep(880,.12);say(RT_LBL[i]);RT.next=now+sp[0]+Math.random()*(sp[1]-sp[0]);setTimeout(()=>{if(RT&&RT.last===i)RT.cells[i].classList.remove('on')},Math.min(900,sp[0]-200))}
+    if(RT.phase==='work'&&now>=RT.next){clear();let i;do{i=Math.floor(Math.random()*6)}while(i===RT.last);RT.last=i;RT.cells[i].classList.add('on');beep(880,.12);say('c'+i);RT.next=now+sp[0]+Math.random()*(sp[1]-sp[0]);setTimeout(()=>{if(RT&&RT.last===i)RT.cells[i].classList.remove('on')},Math.min(900,sp[0]-200))}
     if(now>=RT.end){
       if(RT.phase==='prep'){RT.phase='work';RT.end=now+RT.work*1000;RT.next=now+400;beep(990,.3)}
       else if(RT.phase==='work'){clear();beep(990,.35);setTimeout(()=>beep(990,.35),400);
-        if(RT.round>=RT.rounds){const d=RT.onDone;rtStop();toast('ครบทุกรอบ เยี่ยมมาก');say('ครบทุกรอบ');d&&d();return}
-        RT.phase='rest';RT.end=now+RT.rest*1000;say('พัก')}
+        if(RT.round>=RT.rounds){const d=RT.onDone;rtStop();toast('ครบทุกรอบ เยี่ยมมาก');setTimeout(()=>say('done'),500);d&&d();return}
+        RT.phase='rest';RT.end=now+RT.rest*1000;setTimeout(()=>say('rest'),500)}
       else{RT.round++;RT.phase='work';RT.end=now+RT.work*1000;RT.next=now+400;beep(990,.3)}
     }
   },100);
@@ -567,7 +585,7 @@ function rtStop(){if(RT){clearInterval(RT.iv);RT=null}$('#rt').classList.remove(
 
 /* ================= ตัวจับเวลา ================= */
 let T=null,actx=null,wl=null;
-function unlockAudio(){try{actx=actx||new(window.AudioContext||window.webkitAudioContext)();if(actx.state==='suspended')actx.resume()}catch(e){}}
+function unlockAudio(){try{actx=actx||new(window.AudioContext||window.webkitAudioContext)();if(actx.state==='suspended')actx.resume();loadVoice()}catch(e){}}
 function beep(f=880,d=.18){try{if(!actx)return;const o=actx.createOscillator(),g=actx.createGain();o.frequency.value=f;o.connect(g);g.connect(actx.destination);g.gain.setValueAtTime(.25,actx.currentTime);g.gain.exponentialRampToValueAtTime(.001,actx.currentTime+d);o.start();o.stop(actx.currentTime+d)}catch(e){}}
 function keepAwake(){try{if(navigator.wakeLock&&!wl)navigator.wakeLock.request('screen').then(l=>{wl=l;l.addEventListener('release',()=>wl=null)}).catch(()=>{})}catch(e){}}
 function releaseAwake(){try{if(wl){wl.release();wl=null}}catch(e){}}
@@ -576,14 +594,15 @@ function startTimer(label,sec,done,isRest){
   T={label,end:Date.now()+sec*1000,total:sec,done,last:null,isRest};
   $('#tl').textContent=label;$('#timer').classList.add('show');
   refreshCtl();T.iv=setInterval(tick,200);tick();keepAwake();
-  if(!isRest)say('เริ่ม');
+  if(!isRest)say('start');
 }
 function tick(){
   if(!T)return;const left=Math.max(0,(T.end-Date.now())/1000),s=Math.ceil(left),pct=Math.min(100,100-left/T.total*100)+'%';
   $('#tt').textContent=fmtClock(s);$('#tb').style.width=pct;
   const fT=$('#fT');if(fT){fT.textContent=fmtClock(s);$('#fB').style.width=pct}
-  if(s!==T.last){if(s===10&&T.total>=20)say('อีก 10 วินาที');if(s>0&&s<=3)beep(660,.12)}T.last=s;
-  if(left<=0){const d=T.done,r=T.isRest;stopTimer();beep(990,.35);setTimeout(()=>beep(990,.35),400);if(r)say('ไปต่อ');d&&d()}
+  // นับถอยหลังด้วยเสียง 5-4-3-2-1 แล้วบี๊บตอนหมดเวลา
+  if(s!==T.last&&T.last!==null){if(s===10&&T.total>=20)say('ten');if(s>=1&&s<=5){if(state.settings.voice===false){if(s<=3)beep(660,.12)}else say('n'+s)}}T.last=s;
+  if(left<=0){const d=T.done,r=T.isRest;stopTimer();beep(990,.35);setTimeout(()=>beep(990,.35),400);if(r)setTimeout(()=>say('go'),850);d&&d()}
 }
 function stopTimer(){if(T){clearInterval(T.iv);T=null}$('#timer').classList.remove('show');if(!focusOpen()&&!RT)releaseAwake();refreshCtl()}
 
@@ -646,7 +665,7 @@ document.addEventListener('click',e=>{
     case 'fplay':{const it=flat()[F.i].it,set=F.set,slot=it.slot,nm=EX[it.id][0];
       const fin=()=>{markDone(slot,set,true);if(focusOpen()&&flat()[F.i]&&flat()[F.i].it.slot===slot)advanceAfter(itemByKey(slot));else if(focusOpen())refreshCtl();else if(view==='today')keepScroll(render)};
       // ท่าข้างเดียวแบบจับเวลา: จับเวลาข้างแรก แล้วสลับข้างให้อัตโนมัติ
-      if(EX[it.id][2].u)startTimer(`${nm} · เซ็ต ${set+1} · ข้างแรก`,it.v,()=>{say('สลับข้าง');startTimer(`${nm} · เซ็ต ${set+1} · อีกข้าง`,it.v,fin)});
+      if(EX[it.id][2].u)startTimer(`${nm} · เซ็ต ${set+1} · ข้างแรก`,it.v,()=>{setTimeout(()=>say('swap'),800);startTimer(`${nm} · เซ็ต ${set+1} · อีกข้าง`,it.v,fin)});
       else startTimer(`${nm} · เซ็ต ${set+1}`,it.v,fin);break}
     case 'swap':{const it=itemByKey(k),o=it.orig||it.id,list=[o,...ALT[o]];const nx=list[(list.indexOf(it.id)+1)%list.length];
       const sw=state.swaps[cur.date]||(state.swaps[cur.date]={});if(nx===o)delete sw[k];else sw[k]=nx;
@@ -700,6 +719,8 @@ document.addEventListener('click',e=>{
     case 'onbskip':finishOnb(false);break;
     case 'onbdone':finishOnb(true);break;
     case 'onbshow':showOnb();break;
+    case 'vtest':{if(state.settings.voice===false){toast('เปิดเสียงพูดภาษาไทยก่อน');break}
+      loadVoice().then(()=>{const v=$('#vkind');if(v)v.textContent=voiceKind();say('start');[5,4,3,2,1].forEach((n,i)=>setTimeout(()=>say('n'+n),1000*(i+1)));setTimeout(()=>{beep(990,.35);setTimeout(()=>beep(990,.35),400)},6000)});break}
     case 'look':{const kk=b.dataset.k;state.settings[kk]=kk==='textSize'?+b.dataset.v:b.dataset.v;save();applyLook();keepScroll(render);break}
   }
 });
