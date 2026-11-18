@@ -277,6 +277,9 @@ body.lock .timer,body:not(.v-today) .timer{display:none}
 .sc.f.cur{box-shadow:inset 0 0 0 2.5px var(--tx)}
 .sc svg.i{width:22px;height:22px;stroke-width:2.6}
 .f-ctl{margin-top:auto;padding-top:14px}
+.sc-hint{align-self:center;font-size:13px;color:var(--tx2);margin-left:4px}
+.redo{display:grid;gap:10px;background:var(--cell);border-radius:16px;padding:16px;margin-bottom:12px}
+.redo .meta{text-align:center;line-height:1.5}
 .steps{display:grid;gap:10px;margin-bottom:14px}
 .step{display:flex;align-items:center;gap:8px;background:var(--cell);border-radius:16px;padding:8px}
 .step .lb{font-size:13px;color:var(--tx2);width:62px;padding-left:8px;line-height:1.3}
@@ -1413,12 +1416,20 @@ function refreshCtl(){
   if(!focusOpen()||!$('#fctl'))return;
   const L=flat(),{it}=L[F.i],ex=EX[it.id],f=ex[2],a=doneArr(cur,it);
   const all=L.every(x=>firstUndone(x.it)<0);
-  $('#fsets').innerHTML=a.map((d,j)=>`<button class="sc${d?' f':''}${j===F.set?' cur':''}" data-act="fset" data-i="${j}" aria-label="เซ็ต ${j+1}${d?' ทำแล้ว':''}" ${j===F.set?'aria-current="step"':''}>${d?ic('check'):j+1}</button>`).join('');
+  $('#fsets').innerHTML=a.map((d,j)=>`<button class="sc${d?' f':''}${j===F.set?' cur':''}" data-act="fset" data-i="${j}" aria-label="เซ็ต ${j+1}${d?' ทำแล้ว แตะเพื่อทำใหม่':''}" ${j===F.set?'aria-current="step"':''}>${d?ic('check'):j+1}</button>`).join('')+(a.some(Boolean)&&!F.redo?`<span class="sc-hint">แตะ ✓ เพื่อทำเซ็ตนั้นใหม่</span>`:'');
   const pr=$('.f-prog i');if(pr){const {tot,dn}=sessionCount(cur);pr.style.width=(tot?dn/tot*100:0)+'%'}
   let h='';
   // ปุ่มแดง "พัก": ระหว่างจับเวลา = หยุดเวลาชั่วคราว · ไม่มีเวลาเดิน = เริ่มพักตามเวลาพักของท่า
   const restBtn=`<button class="btn red" data-act="frest" aria-label="พัก ${it.rest||60} วินาที">${ic('pause')}พัก</button>`;
-  if(T){
+  // แผง "ทำใหม่": แตะเซ็ตที่ติ๊กแล้ว เพื่อยกเลิกแล้วทำเซ็ตนั้น (หรือทั้งท่า) ใหม่ — ใช้ได้แม้กำลังพักอยู่
+  const redoPanel=()=>{const x=(getDraft(cur.date,cur.type).data[it.slot]||[])[F.set]||{},n=a.filter(Boolean).length;
+    return `<div class="redo"><p class="meta">เซ็ต ${F.set+1} บันทึกว่าทำแล้ว${x.r?` · ${x.w?esc(x.w)+' กก. × ':''}${esc(x.r)} ครั้ง`:''}<br>กดผิด หรือยังทำไม่จบ? ทำใหม่ได้</p>
+      <button class="btn" data-act="fredo">${ic('undo')}ทำเซ็ต ${F.set+1} ใหม่</button>
+      ${n>1?`<button class="btn plain" data-act="fredoall">เริ่มท่านี้ใหม่ทั้งหมด (${n} เซ็ต)</button>`:''}
+      ${F.redo&&(T||firstUndone(it)>=0)?`<button class="btn plain" data-act="fredox">ไม่เปลี่ยน กลับ</button>`:''}</div>`};
+  if(F.redo&&a[F.set]){
+    h=redoPanel();
+  }else if(T){
     const left=T.paused?T.left/1000:Math.max(0,(T.end-Date.now())/1000);
     h=`<div class="f-timer${T.paused?' paused':''}" role="timer"><div class="fl" id="fL">${T.paused?'หยุดชั่วคราว · ':''}${esc(T.label)}</div><div class="ft" id="fT">${fmtClock(Math.ceil(left))}</div><div class="fb"><i id="fB" style="width:${Math.min(100,100-left/T.total*100)}%"></i></div><div class="acts">${T.paused?`<button class="btn" data-act="tresume">${ic('play')}ทำต่อ</button>`:`<button class="btn red" data-act="tpause">${ic('pause')}พัก</button>`}<button class="btn plain" data-act="t15">+15 วิ</button><button class="btn plain" data-act="tskip">${T.isRest?'ข้าม':'จบเซ็ต'}</button></div></div>`;
   }else if(all&&!isLogged(cur.date,cur.type)&&cur.type!=='game'){
@@ -1428,7 +1439,7 @@ function refreshCtl(){
   }else if(it.id==='rand_corner'){
     h=`<div class="brow">${restBtn}<button class="btn" data-act="rcstart" data-k="${it.slot}">${ic('target')}เริ่มสุ่มมุม ${it.sets}×${fmtSec(it.v)}</button></div>`;
   }else if(a[F.set]){
-    h=`<p class="meta" style="text-align:center;margin-bottom:12px">เซ็ต ${F.set+1} ทำแล้ว${(()=>{const x=(getDraft(cur.date,cur.type).data[it.slot]||[])[F.set]||{};return x.r?` · ${x.w?esc(x.w)+' กก. × ':''}${esc(x.r)} ครั้ง`:''})()}</p><div class="brow">${restBtn}<button class="btn plain" data-act="fundo">${ic('undo')}ยกเลิกเซ็ตนี้</button></div>`;
+    h=redoPanel();
   }else if(f.t){
     h=`<div class="big-time num">${fmtClock(it.v)}<span class="meta" style="font-size:17px">${f.u?' /ข้าง':''}</span></div><div class="brow">${restBtn}<button class="btn" data-act="fplay">${ic('play')}เริ่มจับเวลาเซ็ต ${F.set+1}</button></div>`;
   }else{
@@ -1442,7 +1453,7 @@ function refreshCtl(){
   $('#fctl').innerHTML=h;
 }
 function advanceAfter(it){
-  const L=flat(),nx=firstUndone(it);let label='';
+  F.redo=false;const L=flat(),nx=firstUndone(it);let label='';
   if(nx>=0){F.set=nx;label=`พัก · ต่อไป${nx===it.sets-1?'เซ็ตสุดท้าย':' เซ็ต '+(nx+1)}`;if(nx===it.sets-1)setTimeout(()=>say('last'),300)}
   else{let j=-1;for(let s=1;s<=L.length;s++){const c=(F.i+s)%L.length;if(firstUndone(L[c].it)>=0){j=c;break}}
     if(j<0){beep(990,.3);setTimeout(()=>say('fin'),500);renderFocus();return}
@@ -1864,13 +1875,15 @@ document.addEventListener('click',e=>{
     case 'term':termSheet(b.dataset.t);break;
     case 'fopen':openFocus(k);break;
     case 'fclose':closeFocus();break;
-    case 'fprev':if(F.i>0){F.i--;const fu=firstUndone(flat()[F.i].it);F.set=fu<0?0:fu;renderFocus()}break;
-    case 'fnext':if(F.i<flat().length-1){F.i++;const fu=firstUndone(flat()[F.i].it);F.set=fu<0?0:fu;renderFocus()}break;
-    case 'fset':F.set=i;refreshCtl();break;
+    case 'fprev':if(F.i>0){F.i--;F.redo=false;const fu=firstUndone(flat()[F.i].it);F.set=fu<0?0:fu;renderFocus()}break;
+    case 'fnext':if(F.i<flat().length-1){F.i++;F.redo=false;const fu=firstUndone(flat()[F.i].it);F.set=fu<0?0:fu;renderFocus()}break;
+    case 'fset':{F.set=i;F.redo=doneArr(cur,flat()[F.i].it)[i];refreshCtl();break}
+    case 'fredox':F.redo=false;{const fu=firstUndone(flat()[F.i].it);if(fu>=0)F.set=fu}refreshCtl();break;
+    case 'fredo':case 'fundo':{const it=flat()[F.i].it;if(T)stopTimer();markDone(it.slot,F.set,false);F.redo=false;refreshCtl();toast(`ทำเซ็ต ${F.set+1} ของ ${EX[it.id][0]} ใหม่ได้เลย`);break}
+    case 'fredoall':{const it=flat()[F.i].it;if(T)stopTimer();for(let j=0;j<it.sets;j++)markDone(it.slot,j,false);F.set=0;F.redo=false;refreshCtl();toast(`เริ่ม ${EX[it.id][0]} ใหม่ทั้งท่า`);break}
     case 'wstep':stepW(+b.dataset.v);break;
     case 'rstep':stepR(+b.dataset.v);break;
     case 'flog':{const it=flat()[F.i].it,x=setArr(it.slot,F.set),fw=$('#fw'),fr=$('#fr');if(fr)x.r=String(parseInt(fr.value)||it.v);if(fw&&numIn(fw.value)!==''&&!isNaN(parseFloat(numIn(fw.value))))x.w=String(parseFloat(numIn(fw.value)));markDone(it.slot,F.set,true);if(navigator.vibrate)navigator.vibrate(15);advanceAfter(it);break}
-    case 'fundo':{const it=flat()[F.i].it;markDone(it.slot,F.set,false);refreshCtl();break}
     case 'fplay':{const it=flat()[F.i].it,set=F.set,slot=it.slot,nm=EX[it.id][0];
       const fin=()=>{markDone(slot,set,true);if(focusOpen()&&flat()[F.i]&&flat()[F.i].it.slot===slot)advanceAfter(itemByKey(slot));else if(focusOpen())refreshCtl();else if(view==='today')keepScroll(render)};
       // ท่าข้างเดียวแบบจับเวลา: จับเวลาข้างแรก แล้วสลับข้างให้อัตโนมัติ
@@ -1878,7 +1891,7 @@ document.addEventListener('click',e=>{
       else startTimer(`${nm} · เซ็ต ${set+1}`,it.v,fin);break}
     case 'swap':{const it=itemByKey(k),o=it.orig||it.id,list=[o,...ALT[o]];const nx=list[(list.indexOf(it.id)+1)%list.length];
       const sw=state.swaps[cur.date]||(state.swaps[cur.date]={});if(nx===o)delete sw[k];else sw[k]=nx;
-      const dr=getDraft(cur.date,cur.type);delete dr.data[k];save();keepScroll(render);if(focusOpen()){F.set=0;renderFocus()}toast(`เปลี่ยนเป็น ${EX[nx][0]}`);break}
+      const dr=getDraft(cur.date,cur.type);delete dr.data[k];save();keepScroll(render);if(focusOpen()){F.set=0;F.redo=false;renderFocus()}toast(`เปลี่ยนเป็น ${EX[nx][0]}`);break}
     case 'rcstart':{const it=itemByKey(k);rtStart(it.sets,it.v,it.rest,()=>{for(let j=0;j<it.sets;j++)markDone(k,j,true);if(focusOpen())advanceAfter(it)});break}
     case 'rctry':closeSheet();rtStart(5,30,30,null);break;
     case 'rtstop':rtStop();break;
