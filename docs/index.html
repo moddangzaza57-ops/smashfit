@@ -478,6 +478,9 @@ const P={
    {hip:[6,50],a:[[-54,11],[36,4]],f:[55,0],h:[[16,-48],[-14,-50]]},
    {hip:[0,98],a:[[10,18],[-10,18]],f:[20,20],h:[[0,-54],[0,-54]]}]},
  squat_jump:{d:.45,k:[{hip:[-22,48],t:38,h:[[-22,-50],[-22,-50]]},{hip:[0,104],a:[[3,19],[-3,19]],f:[35,35],h:[[8,54],[8,54]]}]},
+ air_squat:{d:1,k:[{t:4,h:[[6,-54],[4,-54]]},{hip:[-24,46],t:36,h:[[54,-2],[52,-2]]}]},
+ glute_bridge:{d:1.1,k:[{hip:[0,10],t:96,a:[[-36,4],[-38,4]],kb:[-1,-1],f:[-60,-60],h:[[-44,-6],[-44,-6]]},{hip:[0,38],t:122,a:[[-36,4],[-38,4]],kb:[-1,-1],f:[-60,-60],h:[[-44,-6],[-44,-6]]}]},
+ chest_str:{d:1.6,props:[{c:'wall',x:-62}],k:[{t:0,h:[[-52,2],[4,-54]]},{hip:[6,89],t:6,h:[[-58,0],[4,-54]]}]},
  push_up:{d:1,k:[{hip:[-2,42],t:66,a:[[-80,10],[-80,10]],f:[60,60],h:[[0,-59],[0,-59]]},{hip:[-2,26],t:78,a:[[-80,10],[-80,10]],f:[60,60],h:[[0,-38],[0,-38]]}]},
  quick_feet:{d:.14,hold:0,k:[{hip:[-8,74],t:22,a:[[8,13],[-12,4]],f:[20,0],h:[[22,-26],[22,-28]]},{hip:[-8,74],t:22,a:[[8,4],[-12,13]],f:[0,20],h:[[22,-26],[22,-28]]}]},
  split_step:{rk:1,m:'loop',d:.35,k:[RDY,{hip:[-6,86],t:14,a:[[12,14],[-14,14]],f:[25,25],h:[[24,-12],[22,-28]]},{hip:[-6,70],t:16,a:[[16,4],[-18,4]],h:[[24,-14],[22,-30]]},{hip:[28,56],t:22,a:[[66,4],[-10,6]],f:[-15,30],h:[[48,-4],[-10,-40]]}]},
@@ -771,6 +774,15 @@ hip_flex:{m:'หน้าสะโพก',w:'ลดอาการตึงห�
 ham_str:{m:'หลังต้นขา',w:'ลดความตึงหลังขาหลังเกม',
  s:['นั่งเหยียดขาไปข้างหน้า','หลังตรง พับตัวจากสะโพกไปหาปลายเท้า','ไปจนรู้สึกตึง ไม่ต้องแตะเท้า','ค้างตามเวลา'],
  b:'หายใจออกตอนพับ',x:['หลังงอแทนการพับสะโพก','เด้งตัว'],e:'งอเข่าเล็กน้อย',h:'ใช้ผ้าคล้องเท้า',q:'seated hamstring stretch'},
+air_squat:{m:'ต้นขาหน้า ก้น สะโพก ข้อเท้า',w:'ซ้อมท่าสควอทแบบไม่มีน้ำหนัก ให้ข้อต่อพร้อมก่อนยกเวทขาและก่อนย่อรับลูก',
+ s:['ยืนเท้ากว้างกว่าไหล่เล็กน้อย ปลายเท้าแบะออกเล็กน้อย','ยื่นแขนตรงไปข้างหน้าช่วยทรงตัว','ย่อลงช้าๆ เหมือนนั่งเก้าอี้ เข่าชี้ตามปลายเท้า','ลงลึกเท่าที่หลังยังตรงและส้นเท้าไม่ยก','ดันพื้นยืนขึ้น บีบก้นด้านบน'],
+ b:'ลง 2 วินาที ขึ้น 1 วินาที · หายใจเข้าตอนลง ออกตอนขึ้น',x:['เข่าหุบเข้า','ส้นเท้ายก','รีบทำจนท่าเสีย'],e:'นั่งลงเก้าอี้แล้วลุก',h:'ค้างล่างสุด 2 วินาทีทุกครั้ง',q:'bodyweight squat warm up form'},
+glute_bridge:{m:'ก้น หลังต้นขา',w:'ปลุกกล้ามก้นให้ทำงานก่อนเล่นขา ช่วยให้ลันจ์และสควอทใช้ก้นแทนการกดเข่าและหลังล่าง',
+ s:['นอนหงาย ชันเข่า เท้าห่างเท่าสะโพก ส้นเท้าใกล้ก้น','แขนวางข้างลำตัว เกร็งท้องเล็กน้อย','ดันส้นเท้ายกสะโพกขึ้นจนลำตัวตรงจากไหล่ถึงเข่า','บีบก้นค้าง 1 วินาที','ลดสะโพกลงช้าๆ'],
+ b:'ขึ้น 1 วินาที ค้าง 1 วินาที ลง 2 วินาที · หายใจออกตอนยก',x:['แอ่นหลังแทนการบีบก้น','ดันด้วยปลายเท้าแทนส้นเท้า','เข่ากางออกหรือหุบเข้า'],e:'ยกสะโพกครึ่งทาง',h:'ทำขาเดียว หรือค้างบนสุด 3 วินาที',q:'glute bridge form'},
+chest_str:{m:'อก ไหล่ด้านหน้า',w:'คลายอกและไหล่หน้าหลังเล่นท่าดัน/ตบซ้ำๆ ช่วยให้ไหล่กลับมาอยู่ตำแหน่งดี ลดไหล่ห่อ',
+ s:['ยืนข้างกำแพงหรือขอบประตู','วางแขนท่อนล่างหรือฝ่ามือพิงกำแพง ข้อศอกสูงระดับไหล่','ก้าวเท้าใกล้กำแพงไปข้างหน้า แล้วหมุนลำตัวออกช้าๆ','หยุดเมื่อรู้สึกตึงที่อกและไหล่หน้า ค้างไว้','สลับข้าง'],
+ b:'ค้าง 30 วินาที หายใจยาวๆ ผ่อนคลาย',x:['ยกไหล่ขึ้นหู','ดันแรงจนเจ็บแปลบที่ไหล่'],e:'วางแขนต่ำกว่าระดับไหล่',h:'ยกแขนสูงขึ้นเล็กน้อย (เน้นอกส่วนล่าง)',q:'doorway chest stretch'},
 wrist_str:{m:'ข้อมือ ปลายแขน',w:'คลายปลายแขนหลังจับไม้นาน',
  s:['เหยียดแขนตรงไปข้างหน้า','คว่ำมือ ใช้มืออีกข้างดึงนิ้วลงเข้าหาตัว ค้าง','หงายมือ ดึงนิ้วลงเข้าหาตัว ค้าง','สลับข้าง'],
  b:'ยืดเบาๆ',x:['ดึงแรงเกิน'],e:'งอศอกเล็กน้อย',h:'ค้างนานขึ้น',q:'wrist flexor extensor stretch'},
@@ -883,15 +895,46 @@ const EX={
   sprint_short:['พุ่งสั้น 3–4 ก้าว','ปลุกความเร็วก่อนลงเกม',{}],
   push_up:['Push-up','ลำตัวตรงเป็นแผ่นเดียว (ทำบนเข่าได้)',{}],
   ham_slide:['Towel Hamstring Curl','นอนหงาย ส้นเท้าบนผ้า ยกสะโพก ไถออก–ดึงเข้า',{}],
+  air_squat:['Bodyweight Squat','สควอทมือเปล่า ยื่นแขนไปหน้าตอนลง วอร์มสะโพก–เข่า–ข้อเท้าก่อนยกเวทขา',{}],
+  glute_bridge:['Glute Bridge','นอนหงายชันเข่า ยกสะโพกขึ้นบีบก้น ค้าง 1 วินาที ปลุกกล้ามก้นก่อนเล่นขา',{}],
+  chest_str:['ยืดอก–ไหล่หน้า (พิงกำแพง)','วางแขนพิงขอบกำแพงระดับไหล่ หมุนตัวออกจนตึงอก',{t:1,u:1}],
   rand_corner:['🎯 สุ่มมุมคอร์ท (ฝึกตอบสนอง)','แอปสุ่มบอกมุม ให้สปลิตสเต็ปแล้วพุ่งไป',{t:1}]
 };
-const CATS=[['วอร์มอัพ',['jacks','leg_swing','arm_circle','wgs','inchworm','jog_skip','shadow_swing','sprint_short']],['ขา–สะโพก',['goblet_squat','db_rdl','rev_lunge','lat_lunge','bss','sl_rdl','ham_slide','calf','tib','copen']],['บน–ไหล่–แขน',['floor_press','push_up','row','ohp','pullover','rear_fly','push_press']],['ป้องกันบาดเจ็บ',['ext_rot','ytw','wrist_curl','prosup','ankle_bal']],['แกนกลาง',['deadbug','side_plank','suitcase','woodchop']],['พลังระเบิด',['pogo','skater','lat_bound','split_jump','squat_jump']],['ฟุตเวิร์ค',['quick_feet','split_step','lat_shuffle','chasse','front_back','six_corner','rand_corner']],['คาร์ดิโอ',['shadow_int','burpee','mtn_climb','rope']],['ยืดเหยียด–ฟื้นฟู',['walk','hip9090','tspine','ankle_df','sleeper','calf_str','hip_flex','ham_str','wrist_str']]];
+const CATS=[['วอร์มอัพ',['jacks','leg_swing','arm_circle','wgs','inchworm','air_squat','glute_bridge','jog_skip','shadow_swing','sprint_short']],['ขา–สะโพก',['goblet_squat','db_rdl','rev_lunge','lat_lunge','bss','sl_rdl','ham_slide','calf','tib','copen']],['บน–ไหล่–แขน',['floor_press','push_up','row','ohp','pullover','rear_fly','push_press']],['ป้องกันบาดเจ็บ',['ext_rot','ytw','wrist_curl','prosup','ankle_bal']],['แกนกลาง',['deadbug','side_plank','suitcase','woodchop']],['พลังระเบิด',['pogo','skater','lat_bound','split_jump','squat_jump']],['ฟุตเวิร์ค',['quick_feet','split_step','lat_shuffle','chasse','front_back','six_corner','rand_corner']],['คาร์ดิโอ',['shadow_int','burpee','mtn_climb','rope']],['ยืดเหยียด–ฟื้นฟู',['walk','hip9090','tspine','ankle_df','sleeper','calf_str','hip_flex','ham_str','chest_str','wrist_str']]];
 
 const I=(id,sets,v,rest=30)=>({id,sets,v,rest});
-const WARM={t:'วอร์มอัพ',fixed:1,items:[I('jacks',1,60,0),I('leg_swing',1,10,0),I('arm_circle',1,15,0),I('wgs',1,5,0),I('inchworm',1,5,0)]};
-const COOL={t:'คูลดาวน์',fixed:1,items:[I('calf_str',1,30,0),I('hip_flex',1,30,0),I('sleeper',1,30,0)]};
-const GAME_WARM={t:'วอร์มอัพก่อนลงสนาม (~10 นาที)',fixed:1,items:[I('jog_skip',1,180,0),I('leg_swing',1,10,0),I('arm_circle',1,15,0),I('wgs',1,4,0),I('ext_rot',1,15,0),I('lat_shuffle',1,20,0),I('split_step',1,20,0),I('shadow_swing',1,60,0),I('sprint_short',1,4,0)]};
-const GAME_COOL={t:'คูลดาวน์หลังเกม',fixed:1,items:[I('walk',1,180,0),I('calf_str',1,45,0),I('hip_flex',1,45,0),I('ham_str',1,45,0),I('sleeper',1,45,0),I('wrist_str',1,30,0)]};
+/* วอร์มอัพ/คูลดาวน์เฉพาะแต่ละโปรแกรม
+   วอร์มอัพแบบ RAMP: Raise (ให้ตัวอุ่น) → Activate/Mobilise (ปลุกกล้ามและข้อต่อที่จะใช้ในโปรแกรมหลัก) → Potentiate (ซ้อมท่าหลักแบบเบา/เร็ว)
+   ใช้ท่าเคลื่อนไหว (dynamic) ก่อนฝึก ไม่ยืดค้างนานก่อนเล่นพลัง · คูลดาวน์ = ลดชีพจร แล้วยืดค้างกล้ามที่เพิ่งใช้หนัก
+   เรียงท่าสำคัญไว้หน้า: ถ้าเวลาน้อย ระบบตัดวอร์มอัพเหลือ 3 ท่าแรก และคูลดาวน์เหลือท่าแรก */
+const W=(t,items)=>({t,fixed:1,items});
+const WU={
+  // เวทขา: สควอท/RDL/ลันจ์/ลันจ์ข้าง → ปลุกก้น สะโพก ข้อเท้า หลังต้นขา
+  lower:W('วอร์มอัพ (ขา–สะโพก)',[I('jog_skip',1,120,0),I('leg_swing',1,10,0),I('air_squat',1,10,0),I('glute_bridge',1,12,0),I('wgs',1,4,0),I('ankle_df',1,8,0),I('inchworm',1,4,0)]),
+  // เวทบน: ดัน/ดึง/ดันเหนือหัว/pullover → ปลุกสะบัก ไหล่ อกส่วนบน ข้อมือ
+  upper:W('วอร์มอัพ (ไหล่–อก–หลัง)',[I('jacks',1,60,0),I('arm_circle',1,15,0),I('ytw',1,5,0),I('tspine',1,8,0),I('ext_rot',1,12,0),I('inchworm',1,4,0),I('push_up',1,6,0)]),
+  // ทั้งตัว: ผสมขา + ไหล่
+  full:W('วอร์มอัพ (ทั้งตัว)',[I('jog_skip',1,120,0),I('leg_swing',1,10,0),I('arm_circle',1,15,0),I('air_squat',1,10,0),I('glute_bridge',1,10,0),I('wgs',1,4,0),I('ytw',1,5,0),I('inchworm',1,4,0)]),
+  // พลังระเบิด: ต้องอุ่นนานกว่า + ข้อเท้าพร้อมรับแรงกระแทก + ปลุกความเร็วก่อนกระโดด
+  power:W('วอร์มอัพ (ก่อนกระโดด/พลัง)',[I('jog_skip',1,180,0),I('leg_swing',1,10,0),I('ankle_df',1,8,0),I('air_squat',1,10,0),I('glute_bridge',1,10,0),I('wgs',1,4,0),I('quick_feet',1,15,0),I('sprint_short',1,3,0)]),
+  // ฟุตเวิร์ค: ข้อเท้า สะโพก การเคลื่อนข้าง + แขนตีไม้
+  footwork:W('วอร์มอัพ (ก่อนฟุตเวิร์ค)',[I('jog_skip',1,120,0),I('leg_swing',1,10,0),I('ankle_df',1,8,0),I('wgs',1,4,0),I('lat_shuffle',1,20,0),I('shadow_swing',1,30,0),I('sprint_short',1,3,0)]),
+  // HIIT: ค่อยๆ เร่งชีพจร + เตรียมไหล่/สะโพกสำหรับ burpee, mountain climber
+  cardio:W('วอร์มอัพ (ก่อน HIIT)',[I('jog_skip',1,180,0),I('jacks',1,30,0),I('leg_swing',1,10,0),I('arm_circle',1,15,0),I('air_squat',1,10,0),I('inchworm',1,4,0)]),
+  // ป้องกันบาดเจ็บ: อุ่นเบาๆ + ข้อต่อที่จะฝึก
+  prehab:W('วอร์มอัพ (เบา)',[I('jacks',1,60,0),I('arm_circle',1,15,0),I('tspine',1,6,0),I('ankle_df',1,8,0)])
+};
+const CD={
+  lower:W('คูลดาวน์ (ขา–สะโพก)',[I('ham_str',1,45,0),I('hip_flex',1,45,0),I('calf_str',1,45,0),I('hip9090',1,60,0),I('walk',1,90,0)]),
+  upper:W('คูลดาวน์ (ไหล่–อก–ข้อมือ)',[I('chest_str',1,30,0),I('sleeper',1,45,0),I('tspine',1,6,0),I('wrist_str',1,30,0)]),
+  full:W('คูลดาวน์ (ทั้งตัว)',[I('ham_str',1,45,0),I('hip_flex',1,45,0),I('chest_str',1,30,0),I('sleeper',1,45,0),I('walk',1,90,0)]),
+  power:W('คูลดาวน์ (หลังกระโดด)',[I('walk',1,120,0),I('calf_str',1,45,0),I('ham_str',1,45,0),I('hip_flex',1,45,0),I('ankle_df',1,8,0)]),
+  footwork:W('คูลดาวน์ (หลังฟุตเวิร์ค)',[I('walk',1,120,0),I('calf_str',1,45,0),I('hip9090',1,60,0),I('hip_flex',1,45,0),I('ham_str',1,45,0)]),
+  cardio:W('คูลดาวน์ (หลัง HIIT)',[I('walk',1,180,0),I('calf_str',1,45,0),I('ham_str',1,45,0),I('hip_flex',1,45,0),I('tspine',1,6,0)]),
+  prehab:W('คูลดาวน์',[I('sleeper',1,45,0),I('wrist_str',1,30,0),I('calf_str',1,30,0)])
+};
+const GAME_WARM={t:'วอร์มอัพก่อนลงสนาม (~10 นาที)',fixed:1,items:[I('jog_skip',1,180,0),I('leg_swing',1,10,0),I('arm_circle',1,15,0),I('ankle_df',1,8,0),I('wgs',1,4,0),I('ext_rot',1,15,0),I('lat_shuffle',1,20,0),I('split_step',1,20,0),I('shadow_swing',1,60,0),I('sprint_short',1,4,0)]};
+const GAME_COOL={t:'คูลดาวน์หลังเกม',fixed:1,items:[I('walk',1,180,0),I('calf_str',1,45,0),I('hip_flex',1,45,0),I('ham_str',1,45,0),I('sleeper',1,45,0),I('chest_str',1,30,0),I('wrist_str',1,30,0)]};
 
 function mk(ctx){
   const lv=ctx.level;
@@ -901,13 +944,13 @@ function mk(ctx){
   return {S,P,R};
 }
 const TPL={
-  lower:c=>{const {S}=mk(c);return [WARM,{t:'เวทหลัก',items:[S('goblet_squat'),S('db_rdl'),S('rev_lunge'),S('lat_lunge')]},{t:'เสริม / หลังขา–ข้อเท้า–ขาหนีบ',pr:2,items:[I('ham_slide',2,8,45),I('calf',3,15,45),I('tib',2,15,30),I('copen',2,20,30)]},COOL]},
-  upper:c=>{const {S}=mk(c);return [WARM,{t:'เวทหลัก',items:[S('floor_press'),S('row'),S('ohp'),S('pullover')]},{t:'ไหล่–ข้อมือ (แรงตบ + ป้องกัน)',pr:2,items:[I('rear_fly',3,15,45),I('ext_rot',2,15,30),I('wrist_curl',2,15,30),I('prosup',2,12,30)]},{t:'แกนกลาง',pr:2,items:[I('woodchop',3,10,45)]},COOL]},
-  full:c=>{const {S}=mk(c);return [WARM,{t:'เวทหลัก',items:[S('goblet_squat'),S('row'),S('sl_rdl'),S('ohp'),S('lat_lunge')]},{t:'แกนกลาง',pr:2,items:[I('suitcase',2,30,30),I('side_plank',2,30,20)]},COOL]},
-  power:c=>{const {S,P}=mk(c);return [WARM,{t:'พลังระเบิด (ทำตอนสด พักให้เต็ม)',items:[P('pogo',20),P('skater',5),P('lat_bound',4),P('split_jump',5),P('squat_jump',5)]},{t:'แรง',items:[S('bss'),S('push_press')]},{t:'แกนกลาง',pr:2,items:[I('woodchop',3,8,45)]},COOL]},
-  footwork:c=>{const {R}=mk(c);return [WARM,{t:'ฟุตเวิร์ค (เน้นคุณภาพ ไม่ใช่เหนื่อย)',items:[R('quick_feet',20),R('split_step',30),R('lat_shuffle',30),R('chasse',30),R('front_back',30),R('six_corner',40,60)]},{t:'🎯 ฝึกตอบสนอง (สุ่มมุม)',pr:2,items:[R('rand_corner',30,30)]},{t:'ข้อเท้า',pr:2,items:[I('ankle_bal',2,30,15),I('calf',2,15,30)]},COOL]},
-  cardio:c=>{const {R}=mk(c);return [WARM,{t:'วงจร HIIT',items:[R('shadow_int',30,30),R('burpee',30,30),R('mtn_climb',30,30),R('rope',60,60)]},COOL]},
-  prehab:()=>[{t:'ไหล่–ข้อมือ',items:[I('ext_rot',3,15,30),I('ytw',3,6,30),I('wrist_curl',2,15,30),I('prosup',2,12,30)]},{t:'ขา–ข้อเท้า',pr:2,items:[I('tib',2,20,30),I('ankle_bal',2,30,15),I('copen',2,20,30)]},{t:'แกนกลาง',pr:2,items:[I('deadbug',3,8,30),I('side_plank',2,30,20)]}],
+  lower:c=>{const {S}=mk(c);return [WU.lower,{t:'เวทหลัก',items:[S('goblet_squat'),S('db_rdl'),S('rev_lunge'),S('lat_lunge')]},{t:'เสริม / หลังขา–ข้อเท้า–ขาหนีบ',pr:2,items:[I('ham_slide',2,8,45),I('calf',3,15,45),I('tib',2,15,30),I('copen',2,20,30)]},CD.lower]},
+  upper:c=>{const {S}=mk(c);return [WU.upper,{t:'เวทหลัก',items:[S('floor_press'),S('row'),S('ohp'),S('pullover')]},{t:'ไหล่–ข้อมือ (แรงตบ + ป้องกัน)',pr:2,items:[I('rear_fly',3,15,45),I('ext_rot',2,15,30),I('wrist_curl',2,15,30),I('prosup',2,12,30)]},{t:'แกนกลาง',pr:2,items:[I('woodchop',3,10,45)]},CD.upper]},
+  full:c=>{const {S}=mk(c);return [WU.full,{t:'เวทหลัก',items:[S('goblet_squat'),S('row'),S('sl_rdl'),S('ohp'),S('lat_lunge')]},{t:'แกนกลาง',pr:2,items:[I('suitcase',2,30,30),I('side_plank',2,30,20)]},CD.full]},
+  power:c=>{const {S,P}=mk(c);return [WU.power,{t:'พลังระเบิด (ทำตอนสด พักให้เต็ม)',items:[P('pogo',20),P('skater',5),P('lat_bound',4),P('split_jump',5),P('squat_jump',5)]},{t:'แรง',items:[S('bss'),S('push_press')]},{t:'แกนกลาง',pr:2,items:[I('woodchop',3,8,45)]},CD.power]},
+  footwork:c=>{const {R}=mk(c);return [WU.footwork,{t:'ฟุตเวิร์ค (เน้นคุณภาพ ไม่ใช่เหนื่อย)',items:[R('quick_feet',20),R('split_step',30),R('lat_shuffle',30),R('chasse',30),R('front_back',30),R('six_corner',40,60)]},{t:'🎯 ฝึกตอบสนอง (สุ่มมุม)',pr:2,items:[R('rand_corner',30,30)]},{t:'ข้อเท้า',pr:2,items:[I('ankle_bal',2,30,15),I('calf',2,15,30)]},CD.footwork]},
+  cardio:c=>{const {R}=mk(c);return [WU.cardio,{t:'วงจร HIIT',items:[R('shadow_int',30,30),R('burpee',30,30),R('mtn_climb',30,30),R('rope',60,60)]},CD.cardio]},
+  prehab:()=>[WU.prehab,{t:'ไหล่–ข้อมือ',items:[I('ext_rot',3,15,30),I('ytw',3,6,30),I('wrist_curl',2,15,30),I('prosup',2,12,30)]},{t:'ขา–ข้อเท้า',pr:2,items:[I('tib',2,20,30),I('ankle_bal',2,30,15),I('copen',2,20,30)]},{t:'แกนกลาง',pr:2,items:[I('deadbug',3,8,30),I('side_plank',2,30,20)]},CD.prehab],
   mobility:()=>[{t:'ฟื้นฟู ~20 นาที',items:[I('walk',1,300,0),I('hip9090',2,60,0),I('tspine',2,8,0),I('ankle_df',2,10,0),I('hip_flex',1,45,0),I('ham_str',1,60,0),I('sleeper',1,45,0),I('calf_str',1,45,0),I('wrist_str',1,30,0)]}],
   rest:()=>[],
   desk:()=>[{t:'ยืดระหว่างวัน (ยืนข้างโต๊ะได้)',items:[I('arm_circle',1,15,0),I('wrist_str',1,30,0),I('leg_swing',1,10,0),I('calf_str',1,30,0),I('hip_flex',1,30,0)]}]
@@ -928,17 +971,17 @@ const ALT={goblet_squat:['rev_lunge','bss','sl_rdl','ham_slide'],db_rdl:['sl_rdl
  split_jump:['rev_lunge'],squat_jump:['goblet_squat','push_press'],burpee:['mtn_climb','shadow_int'],mtn_climb:['deadbug','burpee'],
  shadow_int:['six_corner','quick_feet'],six_corner:['front_back','lat_shuffle'],front_back:['six_corner','lat_shuffle'],chasse:['lat_shuffle'],
  lat_shuffle:['quick_feet'],quick_feet:['split_step'],rope:['quick_feet'],ext_rot:['ytw','rear_fly'],ytw:['ext_rot','rear_fly'],
- wrist_curl:['prosup','wrist_str'],prosup:['wrist_curl','wrist_str'],ankle_bal:['tib'],rand_corner:['six_corner']};
+ wrist_curl:['prosup','wrist_str'],prosup:['wrist_curl','wrist_str'],ankle_bal:['tib'],rand_corner:['six_corner'],jog_skip:['walk'],jacks:['walk'],air_squat:['glute_bridge'],glute_bridge:['deadbug'],chest_str:['tspine']};
 
 // อาการเจ็บ → ท่าที่ลงน้ำหนักบริเวณนั้น
 const AREAS={shoulder:'ไหล่',elbow:'ข้อศอก/ข้อมือ',back:'หลังล่าง',hip:'สะโพก/ขาหนีบ',knee:'เข่า',ham:'หลังต้นขา',calf:'น่อง/เอ็นร้อยหวาย',ankle:'ข้อเท้า'};
 const JUMPY=['pogo','skater','lat_bound','split_jump','squat_jump','burpee','rope','jacks','quick_feet','split_step','sprint_short','jog_skip','front_back','six_corner','shadow_int','rand_corner','chasse'];
 const RISK={
- shoulder:['ohp','push_press','pullover','floor_press','push_up','burpee','mtn_climb','woodchop','side_plank','copen','inchworm','shadow_swing'],
+ shoulder:['ohp','chest_str','push_press','pullover','floor_press','push_up','burpee','mtn_climb','woodchop','side_plank','copen','inchworm','shadow_swing'],
  elbow:['wrist_curl','prosup','push_up','floor_press','row','suitcase','pullover','shadow_swing','burpee','mtn_climb','side_plank'],
  back:['db_rdl','sl_rdl','row','push_press','burpee','woodchop','squat_jump','goblet_squat','suitcase'],
  hip:['lat_lunge','copen','bss','skater','lat_bound','split_jump','wgs','lat_shuffle','six_corner','front_back','shadow_int','rand_corner','hip9090'],
- knee:['goblet_squat','bss','rev_lunge','lat_lunge','ankle_df',...JUMPY,'mtn_climb'],
+ knee:['goblet_squat','air_squat','bss','rev_lunge','lat_lunge','ankle_df',...JUMPY,'mtn_climb'],
  ham:['db_rdl','sl_rdl','ham_slide','leg_swing','inchworm','sprint_short','split_jump','squat_jump','front_back','shadow_int'],
  calf:['calf',...JUMPY],
  ankle:['calf','lat_lunge','lat_shuffle','ankle_bal','skater',...JUMPY]
@@ -1102,10 +1145,10 @@ function buildSession(date,forced){
   const sw=state.swaps[date]||{};
   blocks=blocks.map(b=>({...b,items:b.items.map(it=>sw[it.slot]&&EX[sw[it.slot]]?subst(it,sw[it.slot],ctx):it)}));
   // อาการเจ็บ → เปลี่ยน/ตัดท่า
-  if(painA.length){let subN=[],rem=[];const used=new Set(blocks.flatMap(b=>b.items.map(i=>i.id)));
+  if(painA.length){let subN=[],rem=[];const used=new Set(blocks.filter(b=>!b.fixed).flatMap(b=>b.items.map(i=>i.id))); // วอร์มอัพ/คูลดาวน์ใช้ท่าซ้ำกับอีกช่วงได้ (เช่น เดิน)
     blocks=blocks.map(b=>({...b,items:b.items.flatMap(it=>{
       const ra=riskAreas(it.id,pain);if(!ra.length)return [it];
-      const alt=(ALT[it.orig||it.id]||[]).find(x=>!riskAreas(x,pain).length&&x!==it.id&&!used.has(x));
+      const alt=(ALT[it.orig||it.id]||[]).find(x=>!riskAreas(x,pain).length&&x!==it.id&&!used.has(x)&&!b.items.some(y=>y.id===x));
       if(alt&&!ra.some(a=>pain[a]>=6)){used.add(alt);const n=subst(it,alt,ctx);n.painSub=ra.map(a=>AREAS[a]).join(', ');subN.push(EX[it.id][0]);return [n]}
       rem.push(EX[it.id][0]);return [];
     })})).filter(b=>b.items.length);

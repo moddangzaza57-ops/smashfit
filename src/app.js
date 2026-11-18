@@ -144,10 +144,10 @@ function buildSession(date,forced){
   const sw=state.swaps[date]||{};
   blocks=blocks.map(b=>({...b,items:b.items.map(it=>sw[it.slot]&&EX[sw[it.slot]]?subst(it,sw[it.slot],ctx):it)}));
   // อาการเจ็บ → เปลี่ยน/ตัดท่า
-  if(painA.length){let subN=[],rem=[];const used=new Set(blocks.flatMap(b=>b.items.map(i=>i.id)));
+  if(painA.length){let subN=[],rem=[];const used=new Set(blocks.filter(b=>!b.fixed).flatMap(b=>b.items.map(i=>i.id))); // วอร์มอัพ/คูลดาวน์ใช้ท่าซ้ำกับอีกช่วงได้ (เช่น เดิน)
     blocks=blocks.map(b=>({...b,items:b.items.flatMap(it=>{
       const ra=riskAreas(it.id,pain);if(!ra.length)return [it];
-      const alt=(ALT[it.orig||it.id]||[]).find(x=>!riskAreas(x,pain).length&&x!==it.id&&!used.has(x));
+      const alt=(ALT[it.orig||it.id]||[]).find(x=>!riskAreas(x,pain).length&&x!==it.id&&!used.has(x)&&!b.items.some(y=>y.id===x));
       if(alt&&!ra.some(a=>pain[a]>=6)){used.add(alt);const n=subst(it,alt,ctx);n.painSub=ra.map(a=>AREAS[a]).join(', ');subN.push(EX[it.id][0]);return [n]}
       rem.push(EX[it.id][0]);return [];
     })})).filter(b=>b.items.length);
