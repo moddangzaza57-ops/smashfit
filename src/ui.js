@@ -485,7 +485,8 @@ function vSet(){
    ${selRow({i:'target',t:'เป้าหมายหลัก',v:glN(st.goal),ch:'goal'},GOALS.map(([k,n])=>`<option value="${k}" ${k===st.goal?'selected':''}>${n}</option>`).join(''))}
    <label class="row has-i">${ic('dumbbell','row-i')}<span class="row-t">ดัมเบลที่มี<small>กก. ต่อข้าง คั่นด้วย ,</small></span><input class="row-in num" type="text" data-ch="db" value="${esc(st.dumbbells)}" aria-label="น้ำหนักดัมเบลที่มี"></label>
    <label class="row has-i">${ic('calendar','row-i')}<span class="row-t">วันเริ่มรอบ 4 สัปดาห์</span><input class="row-in" type="date" data-ch="start" value="${esc(st.start)}" aria-label="วันเริ่มรอบ 4 สัปดาห์"></label></div>`;
-  h+=sec('เสียง')+`<div class="grp"><label class="row has-i">${ic('speaker','row-i')}<span class="row-t">เสียงพูดภาษาไทย<small>นับถอยหลัง 5-4-3-2-1 · เริ่ม · พัก · มุมคอร์ท</small></span><input class="sw" type="checkbox" data-ch="voice" ${st.voice!==false?'checked':''} aria-label="เสียงพูดภาษาไทย"></label><label class="row has-i">${ic('phone','row-i')}<span class="row-t">ดังแม้เปิดโหมดเงียบ<small>เสียงออกทุกครั้งแม้ iPhone ปิดเสียงอยู่ · เพลงจากแอปอื่นจะหยุดระหว่างฝึก</small></span><input class="sw" type="checkbox" data-ch="loud" ${st.loud!==false?'checked':''} aria-label="ดังแม้เปิดโหมดเงียบ"></label><label class="row has-i">${ic('clock','row-i')}<span class="row-t">เสียงติ๊กทุกวินาที<small>ระหว่างจับเวลา ก่อนนับถอยหลัง 5 วินาทีสุดท้าย</small></span><input class="sw" type="checkbox" data-ch="tick" ${st.tick!==false?'checked':''} aria-label="เสียงติ๊กทุกวินาที"></label>${row({i:'play',t:'ทดสอบเสียง',sub:`<span id="vkind">${voiceKind()}</span> · ปิดโหมดเงียบของ iPhone ก่อน`,act:'vtest',chev:false})}${rtCfg(true)}</div>`;
+  h+=sec('เสียง')+`<div class="grp"><label class="row has-i">${ic('speaker','row-i')}<span class="row-t">เสียงพูดภาษาไทย<small>นับถอยหลัง 5-4-3-2-1 · เริ่ม · พัก · มุมคอร์ท</small></span><input class="sw" type="checkbox" data-ch="voice" ${st.voice!==false?'checked':''} aria-label="เสียงพูดภาษาไทย"></label><div class="field"><div class="lbl">เมื่อเปิดเพลงจากแอปอื่น (เช่น YouTube)</div><div class="seg" role="radiogroup" aria-label="เมื่อเปิดเพลงจากแอปอื่น">${[['mix','เล่นพร้อมเพลง'],['solo','หยุดเพลงแอปอื่น']].map(([k,n])=>`<button role="radio" class="${st.audioMode===k?'on':''}" aria-checked="${st.audioMode===k}" data-act="amode" data-v="${k}">${n}</button>`).join('')}</div><div class="lbl" style="margin:6px 2px 0">${st.audioMode==='solo'?'เสียงดังแม้เปิดโหมดเงียบ แต่เพลงจากแอปอื่นจะหยุดระหว่างฝึก':'ได้ยินทั้งเพลงและเสียงนับ · ต้องปิดโหมดเงียบของ iPhone'}</div></div>
+   <div class="field"><div class="lbl">ความดังเสียงนับและเสียงพูด</div><div class="seg" role="radiogroup" aria-label="ความดังเสียงนับ">${[[1,'ปกติ'],[1.6,'ดัง'],[2.2,'ดังมาก']].map(([v,n])=>`<button role="radio" class="${+st.cueVol===v?'on':''}" aria-checked="${+st.cueVol===v}" data-act="cuevol" data-v="${v}">${n}</button>`).join('')}</div></div><label class="row has-i">${ic('clock','row-i')}<span class="row-t">เสียงติ๊กทุกวินาที<small>ระหว่างจับเวลา ก่อนนับถอยหลัง 5 วินาทีสุดท้าย</small></span><input class="sw" type="checkbox" data-ch="tick" ${st.tick!==false?'checked':''} aria-label="เสียงติ๊กทุกวินาที"></label>${row({i:'play',t:'ทดสอบเสียง',sub:`<span id="vkind">${voiceKind()}</span> · ปิดโหมดเงียบของ iPhone ก่อน`,act:'vtest',chev:false})}${rtCfg(true)}</div>`;
   h+=sec('ข้อมูลสุขภาพ')+`<details class="grp"><summary class="row has-i">${ic('heart','row-i')}<span class="row-t">ดึงข้อมูลจากแอป Health อัตโนมัติ<small>ชั่วโมงนอนและชีพจรตอนตื่น ผ่านแอปคำสั่งลัด</small></span>${ic('chev','chev')}</summary>
    <div class="rowx"><ol style="margin:0;padding-left:20px;font-size:15px;line-height:1.6">
    <li>เปิดแอปคำสั่งลัด สร้างคำสั่งลัดใหม่ ชื่อ "SmashFit เช้า"</li>
@@ -582,7 +583,7 @@ function say(k){
   ensureAudio();
   const b=vbuf[k];
   // ถ้า iOS ขัดจังหวะเสียงอยู่ ใช้เสียงพูดของเครื่องแทน จะได้ไม่เงียบ
-  if(b&&actx&&actx.state!=='interrupted'&&actx.state!=='closed'){try{if(vsrc)try{vsrc.stop()}catch(e){}const s=actx.createBufferSource(),g=actx.createGain();g.gain.value=1;s.buffer=b;s.connect(g);g.connect(actx.destination);s.start();vsrc=s;return}catch(e){}}
+  if(b&&actx&&actx.state!=='interrupted'&&actx.state!=='closed'){try{if(vsrc)try{vsrc.stop()}catch(e){}const s=actx.createBufferSource(),g=actx.createGain();g.gain.value=/^n\d$/.test(k)?1.35:1;s.buffer=b;s.connect(g);g.connect(out());s.start();vsrc=s;return}catch(e){}}
   try{const u=new SpeechSynthesisUtterance(VOICE[k]||k);u.lang='th-TH';u.rate=1.15;speechSynthesis.cancel();speechSynthesis.speak(u)}catch(e){}
 }
 const voiceKind=()=>Object.keys(vbuf).length?`เสียงพากย์ MeQueue · เก็บในเครื่องแล้ว ${vstored}/${vinfo&&vinfo.clips?vinfo.clips.length:0} คลิป`:'เสียงพูดของเครื่อง';
@@ -619,7 +620,19 @@ let T=null,actx=null,wl=null;
 const AC=window.AudioContext||window.webkitAudioContext;
 let keepSrc=null,acStale=false,acLastT=-1,acLastAt=0;
 const training=()=>!!(focusOpen()||T||RT);
-function setSession(){try{if(navigator.audioSession)navigator.audioSession.type=state.settings.loud!==false?'playback':'auto'}catch(e){}}
+/* mix = เล่นพร้อมเพลงจากแอปอื่น เช่น YouTube (ambient: ต้องปิดโหมดเงียบ) · solo = ดังแม้โหมดเงียบ แต่หยุดเพลงแอปอื่น (playback)
+   หมายเหตุ: เว็บแอปบน iOS สั่งลดเสียงแอปอื่น (duck) ไม่ได้ จึงใช้วิธีทำให้เสียงนับดังและชัดขึ้นแทน */
+function setSession(){try{if(navigator.audioSession)navigator.audioSession.type=state.settings.audioMode==='solo'?'playback':'ambient'}catch(e){}}
+let master=null,masterGain=null;
+function out(){ // ทางออกเสียงรวม: คอมเพรสเซอร์ + เพิ่มความดัง ให้เสียงนับตัดผ่านเสียงเพลง
+  // เพิ่มความดังก่อน แล้วจำกัดยอดเสียง (limiter) ไม่ให้แตก
+  if(!master||master.context!==actx){masterGain=actx.createGain();masterComp=actx.createDynamicsCompressor();masterComp.knee.value=2;masterComp.ratio.value=20;masterComp.attack.value=.001;masterComp.release.value=.12;
+    const trim=actx.createGain();trim.gain.value=.86; // ชดเชย makeup gain ของคอมเพรสเซอร์ ให้ยอดเสียงไม่เกิน 1.0
+    masterGain.connect(masterComp);masterComp.connect(trim);trim.connect(actx.destination);master=masterGain}
+  const v=+state.settings.cueVol||1.6;masterGain.gain.value=v;
+  masterComp.threshold.value=-1.5; // limiter: ดันความดังด้วย gain แล้วกันยอดเสียงไม่ให้เกิน 0 dB
+  return master}
+let masterComp=null;
 function newCtx(){try{if(actx&&actx.state!=='closed')try{const p=actx.close();p&&p.catch&&p.catch(()=>{})}catch(e){}actx=new AC();keepSrc=null;acStale=false;acLastT=-1;
   actx.onstatechange=()=>{if(actx&&actx.state!=='running'&&actx.state!=='closed'&&training())ensureAudio()};
   if(training())keepAlive(true)}catch(e){actx=null}}
@@ -633,13 +646,13 @@ function audioHealth(){ // เรียกทุกวินาทีระห�
   if(actx.state==='running'){const t=actx.currentTime,now=Date.now();if(t!==acLastT){acLastT=t;acLastAt=now}else if(now-acLastAt>2500){acStale=true;newCtx();ensureAudio();if(training())keepAlive(true)}}
 }
 function unlockAudio(){try{setSession();if(!actx||acStale||actx.state==='closed')newCtx();if(!actx)return;ensureAudio();if(training())keepAlive(true);loadVoice()}catch(e){}}
-function beep(f=880,d=.18){try{if(!actx)return;ensureAudio();const o=actx.createOscillator(),g=actx.createGain();o.frequency.value=f;o.connect(g);g.connect(actx.destination);g.gain.setValueAtTime(.25,actx.currentTime);g.gain.exponentialRampToValueAtTime(.001,actx.currentTime+d);o.start();o.stop(actx.currentTime+d)}catch(e){}}
+function beep(f=880,d=.18){try{if(!actx)return;ensureAudio();const o=actx.createOscillator(),g=actx.createGain();o.frequency.value=f;o.connect(g);g.connect(out());g.gain.setValueAtTime(.25,actx.currentTime);g.gain.exponentialRampToValueAtTime(.001,actx.currentTime+d);o.start();o.stop(actx.currentTime+d)}catch(e){}}
 function keepAwake(){try{if(navigator.wakeLock&&!wl)navigator.wakeLock.request('screen').then(l=>{wl=l;l.addEventListener('release',()=>wl=null)}).catch(()=>{})}catch(e){}}
 /* เสียง "ติ๊ก" แบบนาฬิกา: คลิกสั้นๆ ความถี่สูง เบากว่าเสียงบี๊บ */
 function tickSound(){try{if(!actx)return;ensureAudio();const t=actx.currentTime,o=actx.createOscillator(),g=actx.createGain(),f=actx.createBiquadFilter();
   o.type='square';o.frequency.setValueAtTime(2200,t);o.frequency.exponentialRampToValueAtTime(1200,t+.03);
   f.type='highpass';f.frequency.value=900;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(.16,t+.003);g.gain.exponentialRampToValueAtTime(.0001,t+.045);
-  o.connect(f);f.connect(g);g.connect(actx.destination);o.start(t);o.stop(t+.05)}catch(e){}}
+  o.connect(f);f.connect(g);g.connect(out());o.start(t);o.stop(t+.05)}catch(e){}}
 function releaseAwake(){try{if(wl){wl.release();wl=null}}catch(e){}}
 function startTimer(label,sec,done,isRest){
   unlockAudio();if(T)clearInterval(T.iv);
@@ -783,6 +796,8 @@ document.addEventListener('click',e=>{
     case 'onbshow':showOnb();break;
     case 'vtest':{if(state.settings.voice===false){toast('เปิดเสียงพูดภาษาไทยก่อน');break}
       loadVoice().then(()=>{const v=$('#vkind');if(v)v.textContent=voiceKind();say('start');const tk=state.settings.tick!==false?3:0;for(let i=1;i<=tk;i++)setTimeout(tickSound,1000*i);[5,4,3,2,1].forEach((n,i)=>setTimeout(()=>say('n'+n),1000*(tk+i+1)));setTimeout(()=>{beep(990,.35);setTimeout(()=>beep(990,.35),400)},1000*(tk+6))});break}
+    case 'amode':state.settings.audioMode=b.dataset.v;save();setSession();keepScroll(render);toast(b.dataset.v==='solo'?'หยุดเพลงแอปอื่นระหว่างฝึก':'เล่นเสียงนับพร้อมเพลงได้แล้ว');break;
+    case 'cuevol':{state.settings.cueVol=+b.dataset.v;save();keepScroll(render);unlockAudio();setTimeout(()=>{say('n3');setTimeout(()=>beep(990,.3),700)},100);break}
     case 'look':{const kk=b.dataset.k;state.settings[kk]=kk==='textSize'?+b.dataset.v:b.dataset.v;save();applyLook();keepScroll(render);break}
   }
 });
@@ -801,7 +816,6 @@ document.addEventListener('change',e=>{
   else if(c==='tourn'){st.tourn=t.value;save();keepScroll(render)}
   else if(c==='rtspd'){st.rtSpd=t.value;save();const v=t.closest('.row').querySelector('.row-v');if(v)v.textContent={slow:'ช้า',mid:'กลาง',fast:'เร็ว'}[t.value]}
   else if(c==='voice'){st.voice=t.checked;save()}
-  else if(c==='loud'){st.loud=t.checked;save();setSession();toast(t.checked?'เสียงจะดังแม้เปิดโหมดเงียบ':'เสียงจะเงียบตามสวิตช์ของ iPhone')}
   else if(c==='tick'){st.tick=t.checked;save();if(t.checked){unlockAudio();[0,1,2].forEach(i=>setTimeout(tickSound,i*1000))}}
   else if(c==='sleepH'||c==='rhr'){const h=state.health[sel]||(state.health[sel]={});const v=parseFloat(t.value);
     if(c==='sleepH'){if(v>0){h.sleep=v;(state.checkins[sel]=state.checkins[sel]||{}).sleep=sleepScore(v)}else delete h.sleep}

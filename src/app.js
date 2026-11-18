@@ -11,7 +11,7 @@ const thd=s=>{const d=pd(s);return `${DNF[d.getDay()]} ${d.getDate()} ${TM[d.get
 const sdd=s=>{const d=pd(s);return `${d.getDate()}/${d.getMonth()+1}`};
 
 /* ================= State ================= */
-function defState(){return {settings:{level:'inter',goal:'power',start:mon(today()),dumbbells:'2, 4, 6, 8, 10, 12',rtSpd:'mid',voice:true,tourn:'',lastBackup:'',onboarded:false,theme:'auto',accent:'green',textSize:1,tick:true,loud:true},week:{...PRESETS.balanced.w,5:'game'},overrides:{},checkins:{},logs:[],lastW:{},drafts:{},pain:{},tests:[],swaps:{},health:{},budget:{}}}
+function defState(){return {settings:{level:'inter',goal:'power',start:mon(today()),dumbbells:'2, 4, 6, 8, 10, 12',rtSpd:'mid',voice:true,tourn:'',lastBackup:'',onboarded:false,theme:'auto',accent:'green',textSize:1,tick:true,audioMode:'mix',cueVol:1.6},week:{...PRESETS.balanced.w,5:'game'},overrides:{},checkins:{},logs:[],lastW:{},drafts:{},pain:{},tests:[],swaps:{},health:{},budget:{}}}
 function normalize(s){
   const d=defState(),hadOnb=!!(s.settings&&'onboarded' in s.settings);s.settings=Object.assign(d.settings,s.settings||{});
   // ผู้ใช้เดิม (ก่อนมีหน้าต้อนรับ) ที่มีข้อมูลแล้ว ไม่ต้องเห็นหน้าต้อนรับ
@@ -26,6 +26,8 @@ function normalize(s){
   if(!['beg','inter','adv'].includes(st.level))st.level='inter';
   if(!['power','endurance','prevention'].includes(st.goal))st.goal='power';
   if(!['slow','mid','fast'].includes(st.rtSpd))st.rtSpd='mid';
+  if(!['mix','solo'].includes(st.audioMode))st.audioMode='mix';
+  if(![1,1.6,2.2].includes(+st.cueVol))st.cueVol=1.6;st.cueVol=+st.cueVol;delete st.loud;
   st.dumbbells=String(st.dumbbells??'2, 4, 6, 8, 10, 12');
   const okT=t=>typeof t==='string'&&TYPES[t]&&t!=='game'&&!TYPES[t].extra;
   if(!s.week||typeof s.week!=='object')s.week=d.week;
