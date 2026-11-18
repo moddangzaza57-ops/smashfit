@@ -85,7 +85,15 @@ function row(o){
   return `<${tag} class="row${o.i?' has-i':''}${o.cls?' '+o.cls:''}" ${o.act?`data-act="${o.act}"`:''} ${attrs}>${o.i?ic(o.i,'row-i'):''}${o.pre||''}<span class="row-t">${o.t}${o.sub?`<small>${o.sub}</small>`:''}</span>${o.v!=null?`<span class="row-v">${o.v}</span>`:''}${o.post||''}${o.chev===false?'':ic('chev','chev')}</${tag}>`;
 }
 const selRow=(o,opts)=>`<label class="row sel${o.i?' has-i':''}">${o.i?ic(o.i,'row-i'):''}<span class="row-t">${o.t}${o.sub?`<small>${o.sub}</small>`:''}</span><span class="row-v">${o.v}</span>${ic('chev','chev')}<select data-ch="${o.ch}" ${o.attrs||''} aria-label="${o.t}">${opts}</select></label>`;
-const doneArr=(s,it)=>{const d=getDraft(s.date,s.type).data[it.slot]||[];return Array.from({length:it.sets},(_,j)=>!!(d[j]&&d[j].done))};
+function doneArr(s,it){
+  const k=s.date+'|'+s.type,d=(state.drafts[k]&&state.drafts[k].data[it.slot])||null;
+  if(d)return Array.from({length:it.sets},(_,j)=>!!(d[j]&&d[j].done));
+  // เซสชันที่บันทึกแล้ว (ไม่มี draft) → แสดงช่องตามที่บันทึกไว้
+  const lg=state.logs.find(l=>l.date===s.date&&l.type===s.type&&l.items);
+  if(lg){const idx=s.blocks.flatMap(b=>b.items).findIndex(x=>x.slot===it.slot),li=lg.items[idx];
+    if(li&&li.id===it.id)return Array.from({length:it.sets},(_,j)=>!!(li.sets[j]&&li.sets[j].done))}
+  return Array.from({length:it.sets},()=>false);
+}
 const tallyCells=arr=>arr.map(f=>`<i${f?' class="f"':''}></i>`).join('');
 function sessionCount(s){let tot=0,dn=0;s.blocks.forEach(b=>b.items.forEach(it=>{const a=doneArr(s,it);tot+=a.length;dn+=a.filter(Boolean).length}));return {tot,dn}}
 function rxText(it,long){
@@ -235,6 +243,7 @@ function openFocus(k){
   let i=k?L.findIndex(x=>x.it.slot===k):L.findIndex(x=>firstUndone(x.it)>=0);if(i<0)i=0;
   const fu=firstUndone(L[i].it);F={i,set:fu<0?0:fu};
   $('#focus').classList.add('show');document.body.classList.add('lock');keepAwake();renderFocus();
+  setTimeout(()=>$('#focus').focus({preventScroll:true}),60);
 }
 function closeFocus(){$('#focus').classList.remove('show');if(fanim){fanim.stop();fanim=null}F=null;document.body.classList.remove('lock');keepScroll(render)}
 const focusOpen=()=>F&&$('#focus').classList.contains('show');
@@ -268,7 +277,7 @@ function refreshCtl(){
   const pr=$('.f-prog i');if(pr){const {tot,dn}=sessionCount(cur);pr.style.width=(tot?dn/tot*100:0)+'%'}
   let h='';
   if(T){
-    h=`<div class="f-timer" role="timer"><div class="fl" id="fL">${esc(T.label)}</div><div class="ft" id="fT">${fmtClock(Math.ceil(Math.max(0,(T.end-Date.now())/1000)))}</div><div class="fb"><i id="fB"></i></div><div class="acts"><button class="btn plain" data-act="t15">+15 วิ</button><button class="btn" data-act="tskip">${T.isRest?'ข้ามการพัก':'หยุดจับเวลา'}</button></div></div>`;
+    h=`<div class="f-timer" role="timer"><div class="fl" id="fL">${esc(T.label)}</div><div class="ft" id="fT">${fmtClock(Math.ceil(Math.max(0,(T.end-Date.now())/1000)))}</div><div class="fb"><i id="fB"></i></div><div class="acts"><button class="btn plain" data-act="t15">+15 วิ</button><button class="btn" data-act="tskip">${T.isRest?'ข้ามการพัก':'จบเซ็ตนี้เลย'}</button></div></div>`;
   }else if(all&&!isLogged(cur.date,cur.type)&&cur.type!=='game'){
     h=`<div class="f-done"><div class="mark">${ic('check')}</div><h2>ครบทุกเซ็ตแล้ว</h2><p class="meta" style="margin:4px 0 16px">บันทึกเวลาและความเหนื่อย แล้วดูความต่อเนื่องของคุณ</p><button class="btn" data-act="finish">จบเซสชันและบันทึก</button></div>`;
   }else if(all){
@@ -610,7 +619,7 @@ document.addEventListener('click',e=>{
     case 'rstep':stepR(+b.dataset.v);break;
     case 'flog':{const it=flat()[F.i].it,x=setArr(it.slot,F.set),fw=$('#fw'),fr=$('#fr');if(fr)x.r=fr.value||String(it.v);if(fw&&fw.value!=='')x.w=fw.value;markDone(it.slot,F.set,true);if(navigator.vibrate)navigator.vibrate(15);advanceAfter(it);break}
     case 'fundo':{const it=flat()[F.i].it;markDone(it.slot,F.set,false);refreshCtl();break}
-    case 'fplay':{const it=flat()[F.i].it,set=F.set,slot=it.slot;startTimer(`${EX[it.id][0]} · เซ็ต ${set+1}`,it.v,()=>{markDone(slot,set,true);if(focusOpen()&&flat()[F.i]&&flat()[F.i].it.slot===slot)advanceAfter(itemByKey(slot));else refreshCtl()});break}
+    case 'fplay':{const it=flat()[F.i].it,set=F.set,slot=it.slot;startTimer(`${EX[it.id][0]} · เซ็ต ${set+1}`,it.v,()=>{markDone(slot,set,true);if(focusOpen()&&flat()[F.i]&&flat()[F.i].it.slot===slot)advanceAfter(itemByKey(slot));else if(focusOpen())refreshCtl();else if(view==='today')keepScroll(render)});break}
     case 'swap':{const it=itemByKey(k),o=it.orig||it.id,list=[o,...ALT[o]];const nx=list[(list.indexOf(it.id)+1)%list.length];
       const sw=state.swaps[cur.date]||(state.swaps[cur.date]={});if(nx===o)delete sw[k];else sw[k]=nx;
       const dr=getDraft(cur.date,cur.type);delete dr.data[k];save();keepScroll(render);if(focusOpen()){F.set=0;renderFocus()}toast(`เปลี่ยนเป็น ${EX[nx][0]}`);break}
@@ -619,7 +628,7 @@ document.addEventListener('click',e=>{
     case 'rtstop':rtStop();break;
     case 't15':if(T){T.end+=15000;T.total+=15}break;
     case 'tskip':if(T){const d=T.done;stopTimer();d&&d()}break;
-    case 'ci':{const c=state.checkins[sel]||(state.checkins[sel]={});c[b.dataset.f]=+b.dataset.v;save();readySheet();keepScroll(render);break}
+    case 'ci':{const c=state.checkins[sel]||(state.checkins[sel]={});c[b.dataset.f]=+b.dataset.v;save();const y=$('#sheet').scrollTop;readySheet();$('#sheet').scrollTop=y;keepScroll(render);break}
     case 'readyopen':readySheet();break;
     case 'budget':{const v=+b.dataset.v;if(v)state.budget[sel]=v;else delete state.budget[sel];save();keepScroll(render);break}
     case 'painopen':painSheet();break;
@@ -683,10 +692,14 @@ document.addEventListener('change',e=>{
   else if(c==='sleepH'||c==='rhr'){const h=state.health[sel]||(state.health[sel]={});const v=parseFloat(t.value);
     if(c==='sleepH'){if(v>0){h.sleep=v;(state.checkins[sel]=state.checkins[sel]||{}).sleep=sleepScore(v)}else delete h.sleep}
     else{if(v>0)h.rhr=v;else delete h.rhr}
-    save();if(sheetKind==='ready')readySheet();keepScroll(render)}
+    save();if(sheetKind==='ready'){const y=$('#sheet').scrollTop;readySheet();$('#sheet').scrollTop=y}keepScroll(render)}
   else if(c==='impfile'){const f=t.files&&t.files[0];if(!f)return;const r=new FileReader();r.onload=()=>loadBackup(r.result);r.readAsText(f)}
 });
 document.addEventListener('keydown',e=>{
+  if(focusOpen()&&!$('#modal').classList.contains('show')&&!/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName)){
+    if(e.key==='ArrowRight'){const b=$('#focus [data-act=fnext]');if(b&&!b.disabled)b.click();return}
+    if(e.key==='ArrowLeft'){const b=$('#focus [data-act=fprev]');if(b&&!b.disabled)b.click();return}
+  }
   if(e.key!=='Escape')return;
   if($('#modal').classList.contains('show'))closeSheet();
   else if(RT)rtStop();
