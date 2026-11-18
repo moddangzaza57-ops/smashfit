@@ -1,8 +1,8 @@
 /* Smash Fit service worker — ทำให้แอปเปิดได้แม้ไม่มีเน็ต
    เวลาอัปเดตแอป: build.py จะเปลี่ยน VERSION ให้อัตโนมัติ */
-const VERSION='20261118201411';
+const VERSION='20261118203417';
 const CACHE='smashfit-'+VERSION;
-const CORE=['./','./index.html','./manifest.webmanifest','./icons/icon-192.png','./icons/icon-512.png','./icons/apple-touch-icon.png'];
+const CORE=['./','./index.html','./manifest.webmanifest','./icons/icon-192.png','./icons/icon-512.png','./icons/apple-touch-icon.png','./anatomy3d.js','./vendor/three.module.min.js'];
 self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE).then(c=>c.addAll(CORE)).then(()=>self.skipWaiting()))});
 // ล้างแคชเวอร์ชันเก่า แต่เก็บ smashfit-voice (เสียงพากย์) และฟอนต์ไว้ถาวร ไม่ต้องโหลดใหม่ทุกครั้งที่อัปเดตแอป
 const KEEP=k=>k===CACHE||k==='smashfit-voice'||k.endsWith('-fonts');

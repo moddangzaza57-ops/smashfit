@@ -197,6 +197,8 @@ function play(el,id){
   requestAnimationFrame(loop);return {stop(){on=false}};
 }
 function thumbT(id){const ex=P[id];if(!ex)return 0;const d=ex.d||.8,h=ex.hold==null?.25:ex.hold;return h+d+.01}
-return {P,svg,frame,play,has:id=>!!P[id],thumbT};
+return {P,svg,frame,play,has:id=>!!P[id],thumbT,
+  // สำหรับหุ่น 3D: ข้อต่อ 2D ณ เวลา t, ความยาว 1 รอบท่า (วินาที), มุมมอง side/front
+  pose:(id,t)=>solve(P[id],poseAt(P[id],t)),dur:id=>{const ex=P[id];return ex.k.length*(ex.m==="loop"?1:2)*((ex.d||.8)+(ex.hold==null?.25:ex.hold))},view:id=>P[id].v||"side"};
 })();
 if(typeof module!=='undefined')module.exports=FIG;

@@ -234,7 +234,16 @@ body.lock .timer,body:not(.v-today) .timer{display:none}
 .shh h2{font-size:22px;font-weight:700;line-height:1.3}
 .shh .x{min-height:36px;padding:6px 14px;border-radius:999px;background:var(--fill);font-size:15px;font-weight:600;flex:none}
 .sheet .note{font-size:15px;color:var(--tx2);margin:8px 4px 14px}
-.anim{width:100%;height:220px;background:var(--cell);border-radius:var(--r);display:block;margin:0 0 16px}
+.anim{width:100%;height:280px;background:var(--cell);border-radius:var(--r);display:block;margin:0 0 8px}
+.fig3d{position:relative;overflow:hidden;background:radial-gradient(120% 90% at 50% 20%,var(--cell) 55%,var(--fill) 100%)}
+.fig3d canvas{width:100%;height:100%;display:block;touch-action:pan-y;cursor:grab}
+.fig3d svg.fig2d{width:100%;height:100%;display:block}
+.fig-hint{position:absolute;right:10px;bottom:8px;font-size:11px;color:var(--tx2);background:var(--cell);padding:2px 8px;border-radius:999px;opacity:.85;pointer-events:none}
+.mus{font-size:14px;color:var(--tx2);margin:2px 0 4px;line-height:1.7}
+.mus b{color:var(--bad);font-weight:600}
+.mus .mp,.mus .ms{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px;vertical-align:1px}
+.mus .mp{background:#e0262f;animation:mpulse 1s ease-in-out infinite}.mus .ms{background:#f2a49b;margin-left:10px}
+@keyframes mpulse{50%{opacity:.35}}
 .sheet h3{font-size:17px;font-weight:600;margin:20px 4px 6px}
 .sheet ol,.sheet ul.l{margin:0;padding:12px 16px 12px 36px;background:var(--cell);border-radius:var(--r);font-size:16px}
 .sheet li{margin:4px 0}
@@ -263,7 +272,7 @@ body.lock .timer,body:not(.v-today) .timer{display:none}
 .f-pos small{display:block;font-size:13px;font-weight:400;color:var(--tx2)}
 .f-prog{height:4px;border-radius:2px;background:var(--fill);overflow:hidden;margin:6px 0 12px}
 .f-prog i{display:block;height:100%;background:var(--ac);transition:width .4s var(--ease)}
-.f-fig{width:100%;height:clamp(130px,calc(26vh / var(--tz,1)),230px);background:var(--cell);border-radius:16px;display:block}
+.f-fig{width:100%;height:clamp(170px,calc(34vh / var(--tz,1)),320px);background:var(--cell);border-radius:16px;display:block}
 .f-name{font-size:26px;font-weight:700;line-height:1.25;margin:16px 0 2px;letter-spacing:-.01em}
 .f-rx{font-size:16px;color:var(--tx2)}
 .f-sug{font-size:15px;color:var(--ac-ink);margin-top:6px}

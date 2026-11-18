@@ -2,7 +2,7 @@
    เวลาอัปเดตแอป: build.py จะเปลี่ยน VERSION ให้อัตโนมัติ */
 const VERSION='__VERSION__';
 const CACHE='smashfit-'+VERSION;
-const CORE=['./','./index.html','./manifest.webmanifest','./icons/icon-192.png','./icons/icon-512.png','./icons/apple-touch-icon.png'];
+const CORE=['./','./index.html','./manifest.webmanifest','./icons/icon-192.png','./icons/icon-512.png','./icons/apple-touch-icon.png','./anatomy3d.js','./vendor/three.module.min.js'];
 self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE).then(c=>c.addAll(CORE)).then(()=>self.skipWaiting()))});
 // ล้างแคชเวอร์ชันเก่า แต่เก็บ smashfit-voice (เสียงพากย์) และฟอนต์ไว้ถาวร ไม่ต้องโหลดใหม่ทุกครั้งที่อัปเดตแอป
 const KEEP=k=>k===CACHE||k==='smashfit-voice'||k.endsWith('-fonts');

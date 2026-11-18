@@ -96,6 +96,31 @@ const EX={
   chest_str:['ยืดอก–ไหล่หน้า (พิงกำแพง)','วางแขนพิงขอบกำแพงระดับไหล่ หมุนตัวออกจนตึงอก',{t:1,u:1}],
   rand_corner:['🎯 สุ่มมุมคอร์ท (ฝึกตอบสนอง)','แอปสุ่มบอกมุม ให้สปลิตสเต็ปแล้วพุ่งไป',{t:1}]
 };
+// กล้ามเนื้อที่ใช้ในแต่ละท่า (หุ่น 3D): 'โดนตรง|ช่วย'  — ชื่อกล้ามดู MUSCLE_TH ใน web/anatomy3d.js
+// quads ต้นขาหน้า · hams หลังต้นขา · glutes ก้นใหญ่ · gmed ก้นข้าง/สะโพกข้าง · adductors ขาหนีบ · hipflex หน้าสะโพก · calves น่อง · tibialis หน้าแข้ง
+// pecs อก · delts ไหล่ · rotcuff ไหล่ส่วนลึก · traps สะบัก/หลังบน · lats ปีก · biceps แขนหน้า · triceps แขนหลัง · forearms ปลายแขน · abs หน้าท้อง · obliques เอว · erectors หลังล่าง
+const MUS={
+  jacks:'delts calves|gmed adductors',leg_swing:'hipflex hams|gmed adductors',arm_circle:'delts rotcuff|traps',wgs:'hipflex hams adductors|obliques glutes',
+  inchworm:'hams delts|abs pecs triceps',air_squat:'quads glutes|adductors',glute_bridge:'glutes|hams erectors',
+  goblet_squat:'quads glutes|adductors erectors abs',db_rdl:'hams glutes|erectors forearms traps',rev_lunge:'quads glutes|hams adductors gmed',
+  lat_lunge:'adductors glutes quads|gmed hams',bss:'quads glutes|hams adductors gmed',sl_rdl:'hams glutes|gmed erectors calves',
+  calf:'calves|tibialis',tib:'tibialis|',copen:'adductors|obliques abs',ham_slide:'hams|glutes erectors',
+  floor_press:'pecs triceps|delts',push_up:'pecs triceps|delts abs',row:'lats traps|biceps delts forearms',ohp:'delts triceps|traps abs obliques',
+  pullover:'lats pecs|triceps abs',rear_fly:'delts traps|rotcuff',push_press:'delts triceps quads|glutes traps abs',
+  ext_rot:'rotcuff|delts',ytw:'traps rotcuff|delts erectors',wrist_curl:'forearms|',prosup:'forearms|',ankle_bal:'calves tibialis|gmed abs',
+  deadbug:'abs|hipflex obliques',side_plank:'obliques gmed|abs delts',suitcase:'obliques forearms|traps gmed abs',woodchop:'obliques abs|delts glutes',
+  pogo:'calves|quads tibialis',skater:'glutes gmed quads|adductors calves',lat_bound:'glutes gmed quads|adductors calves',
+  split_jump:'quads glutes|calves hams',squat_jump:'quads glutes calves|hams',
+  quick_feet:'calves|quads tibialis',split_step:'calves quads|glutes adductors',lat_shuffle:'gmed adductors quads|calves glutes',
+  chasse:'gmed quads calves|adductors',front_back:'quads glutes|calves adductors delts',six_corner:'quads glutes adductors|calves delts',
+  rand_corner:'quads glutes calves|adductors gmed',shadow_int:'quads calves glutes|delts adductors',burpee:'quads pecs delts|triceps abs glutes',
+  mtn_climb:'abs hipflex|delts quads',rope:'calves|delts forearms',
+  hip9090:'glutes gmed|hipflex adductors',tspine:'obliques pecs|traps',ankle_df:'calves|tibialis',sleeper:'rotcuff|delts',
+  calf_str:'calves|hams',hip_flex:'hipflex quads|',ham_str:'hams|erectors',wrist_str:'forearms|',chest_str:'pecs delts|',
+  walk:'|quads hams calves glutes',jog_skip:'calves|quads hams glutes',shadow_swing:'delts pecs|obliques triceps forearms rotcuff',sprint_short:'quads glutes calves|hams'
+};
+const MUS_TH={quads:'ต้นขาหน้า',hams:'หลังต้นขา',glutes:'ก้น',gmed:'สะโพกด้านข้าง',adductors:'ขาหนีบ/ต้นขาด้านใน',hipflex:'หน้าสะโพก',calves:'น่อง',tibialis:'หน้าแข้ง',pecs:'อก',delts:'ไหล่',rotcuff:'ไหล่ส่วนลึก',traps:'สะบัก/หลังบน',lats:'ปีก (หลังกลาง)',biceps:'แขนหน้า',triceps:'แขนหลัง',forearms:'ปลายแขน/ข้อมือ',abs:'หน้าท้อง',obliques:'เอว/ข้างลำตัว',erectors:'หลังล่าง'};
+const musclesOf=id=>{const [p,s]=(MUS[id]||'|').split('|');return {primary:p.split(' ').filter(Boolean),secondary:(s||'').split(' ').filter(Boolean)}};
 const CATS=[['วอร์มอัพ',['jacks','leg_swing','arm_circle','wgs','inchworm','air_squat','glute_bridge','jog_skip','shadow_swing','sprint_short']],['ขา–สะโพก',['goblet_squat','db_rdl','rev_lunge','lat_lunge','bss','sl_rdl','ham_slide','calf','tib','copen']],['บน–ไหล่–แขน',['floor_press','push_up','row','ohp','pullover','rear_fly','push_press']],['ป้องกันบาดเจ็บ',['ext_rot','ytw','wrist_curl','prosup','ankle_bal']],['แกนกลาง',['deadbug','side_plank','suitcase','woodchop']],['พลังระเบิด',['pogo','skater','lat_bound','split_jump','squat_jump']],['ฟุตเวิร์ค',['quick_feet','split_step','lat_shuffle','chasse','front_back','six_corner','rand_corner']],['คาร์ดิโอ',['shadow_int','burpee','mtn_climb','rope']],['ยืดเหยียด–ฟื้นฟู',['walk','hip9090','tspine','ankle_df','sleeper','calf_str','hip_flex','ham_str','chest_str','wrist_str']]];
 
 const I=(id,sets,v,rest=30)=>({id,sets,v,rest});

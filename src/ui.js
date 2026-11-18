@@ -219,7 +219,7 @@ function exSheet(id){
   const ex=EX[id],D=(window.EXD||{})[id];if(!ex)return;
   const L=a=>(a||[]).map(t=>`<li>${t}</li>`).join('');
   let h=shh(`${ex[0]}${D?`<div class="meta" style="font-weight:400;font-size:15px">${D.m}</div>`:''}`,'ปิด');
-  h+=FIG.has(id)?`<svg class="anim" id="anim" role="img" aria-label="หุ่นสาธิตท่า ${esc(ex[0])}"></svg>`:'';
+  h+=FIG.has(id)?`<div class="anim fig3d" id="anim" role="img" aria-label="หุ่นสาธิตท่า ${esc(ex[0])}"></div>${musLegend(id)}`:'';
   if(D){
     h+=`<div class="why">${ic('shuttle')}<span>${clean(D.w)}</span></div><h3>วิธีทำทีละขั้น</h3><ol>${L(D.s)}</ol>
     <h3>จังหวะ / การหายใจ</h3><p class="body">${D.b}</p><h3>ข้อผิดพลาดที่พบบ่อย</h3><ul class="l">${L(D.x)}</ul>
@@ -232,8 +232,30 @@ function exSheet(id){
   if(id==='rand_corner')h+=`<div class="grp" style="margin-top:14px">${rtCfg()}</div><button class="btn" data-act="rctry">ลองเลย 5 รอบ × 30 วิ</button>`;
   h+=`<p class="note">หุ่นเป็นภาพประกอบจังหวะการเคลื่อนไหว ดูวิดีโอประกอบเพื่อรายละเอียดท่าที่ถูกต้อง · เจ็บแหลมหรือชาให้หยุดทันที</p>`;
   sheet(h,'ex');
-  if(FIG.has(id)){if(anim)anim.stop();anim=FIG.play($('#anim'),id)}
+  if(FIG.has(id)){if(anim)anim.stop();anim=mountFig($('#anim'),id,'sheet')}
 }
+
+/* ================= หุ่น 3D (anatomy) =================
+   โหลด web/anatomy3d.js + three.js เมื่อใช้ครั้งแรก · ถ้าเครื่องไม่รองรับ WebGL หรือโหลดไม่ได้ ใช้หุ่น 2D เดิม */
+let A3=null,A3fail=false,A3p=null;const A3V={};
+function load3D(){if(A3||A3fail)return Promise.resolve(A3);
+  if(!A3p)A3p=import('./anatomy3d.js').then(m=>{if(!m.supported())throw new Error('no webgl');A3=m;return m}).catch(()=>{A3fail=true;return null});return A3p}
+function mountFig(box,id,slot){
+  if(!box)return null;
+  if(A3&&A3V[slot]!==false){
+    try{if(!A3V[slot]){const c=document.createElement('canvas');A3V[slot]={c,v:A3.create(c)}}
+      const w=A3V[slot];box.innerHTML='';box.appendChild(w.c);box.insertAdjacentHTML('beforeend','<span class="fig-hint">ลากเพื่อหมุนดูรอบตัว</span>');box.classList.add('is3d');
+      w.v.play(id,musclesOf(id));return {stop(){w.v.stop()}}}
+    catch(e){A3V[slot]=false}
+  }
+  box.innerHTML=`<svg class="fig2d"></svg>`;const a2=FIG.play(box.firstChild,id);
+  let dead=false;const h={stop(){dead=true;a2.stop()}};
+  if(!A3fail&&A3V[slot]!==false)load3D().then(m=>{if(m&&!dead&&box.isConnected){a2.stop();const n=mountFig(box,id,slot);if(n)h.stop=n.stop}});
+  return h;
+}
+function musLegend(id){const m=musclesOf(id);if(!m.primary.length&&!m.secondary.length)return '';
+  const n=a=>a.map(k=>MUS_TH[k]||k).join(', ');
+  return `<p class="mus">${m.primary.length?`<span class="mp"></span>โดนตรง: <b>${n(m.primary)}</b>`:''}${m.secondary.length?`<span class="ms"></span>ช่วย: ${n(m.secondary)}`:''}</p>`}
 
 /* ================= โหมดโฟกัส ================= */
 let F=null,fanim=null;
@@ -260,15 +282,15 @@ function renderFocus(){
   $('#focus').innerHTML=`<div class="f-in">
    <div class="f-top"><button class="f-btn" data-act="fclose" aria-label="ปิดโหมดโฟกัส">${ic('down')}</button><div class="f-pos num">ท่า ${F.i+1} จาก ${L.length}<small>${esc(clean(b.t))}</small></div><button class="f-btn" data-act="exinfo" data-id="${it.id}" aria-label="วิธีทำ ${esc(ex[0])}">${ic('info')}</button></div>
    <div class="f-prog" role="progressbar" aria-valuemin="0" aria-valuemax="${tot}" aria-valuenow="${dn}" aria-label="ความคืบหน้าทั้งเซสชัน"><i style="width:${tot?dn/tot*100:0}%"></i></div>
-   ${FIG.has(it.id)?`<svg class="f-fig" id="ffig" role="img" aria-label="หุ่นสาธิตท่า ${esc(ex[0])}"></svg>`:''}
-   <h2 class="f-name">${ex[0]}</h2>
+   ${FIG.has(it.id)?`<div class="f-fig fig3d" id="ffig" role="img" aria-label="หุ่นสาธิตท่า ${esc(ex[0])}"></div>`:''}
+   <h2 class="f-name">${ex[0]}</h2>${musLegend(it.id)}
    <p class="f-rx num">${rxText(it,true)}${it.hi?tip('rir'):''}${it.rest?` · พัก ${it.rest} วิ`:''}</p>${sug?`<p class="f-sug">${sug}</p>`:''}${tag}
    <div class="f-sets" id="fsets"></div>
    <div class="f-ctl" id="fctl"></div>
    <div class="f-nav"><button class="btn plain sq" data-act="fprev" ${F.i===0?'disabled':''} aria-label="ท่าก่อนหน้า">${ic('left')}</button>${canSwap?`<button class="btn plain" data-act="swap" data-k="${it.slot}">${ic('swap')}เปลี่ยนท่า</button>`:''}<button class="btn plain" data-act="fnext" ${F.i>=L.length-1?'disabled':''}>ท่าถัดไป${ic('chev')}</button></div>
   </div>`;
   if(fanim){fanim.stop();fanim=null}
-  if(FIG.has(it.id))fanim=FIG.play($('#ffig'),it.id);
+  if(FIG.has(it.id))fanim=mountFig($('#ffig'),it.id,'focus');
   refreshCtl();
 }
 function refreshCtl(){
@@ -845,7 +867,7 @@ document.addEventListener('keydown',e=>{
 });
 /* ปัดชีตลงเพื่อปิด */
 (function(){let y0=null,dy=0;const sh=$('#sheet');
-  sh.addEventListener('touchstart',e=>{y0=sh.scrollTop<=0?e.touches[0].clientY:null;dy=0},{passive:true});
+  sh.addEventListener('touchstart',e=>{y0=sh.scrollTop<=0&&!e.target.closest('.fig3d')?e.touches[0].clientY:null;dy=0},{passive:true});
   sh.addEventListener('touchmove',e=>{if(y0==null)return;dy=e.touches[0].clientY-y0;if(dy>0){sh.style.transform=`translateY(${dy}px)`;sh.style.transition='none'}},{passive:true});
   sh.addEventListener('touchend',()=>{if(y0==null)return;sh.style.transition='transform .25s var(--ease)';if(dy>110)closeSheet();sh.style.transform='';y0=null});
 })();

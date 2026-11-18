@@ -236,7 +236,16 @@ body.lock .timer,body:not(.v-today) .timer{display:none}
 .shh h2{font-size:22px;font-weight:700;line-height:1.3}
 .shh .x{min-height:36px;padding:6px 14px;border-radius:999px;background:var(--fill);font-size:15px;font-weight:600;flex:none}
 .sheet .note{font-size:15px;color:var(--tx2);margin:8px 4px 14px}
-.anim{width:100%;height:220px;background:var(--cell);border-radius:var(--r);display:block;margin:0 0 16px}
+.anim{width:100%;height:280px;background:var(--cell);border-radius:var(--r);display:block;margin:0 0 8px}
+.fig3d{position:relative;overflow:hidden;background:radial-gradient(120% 90% at 50% 20%,var(--cell) 55%,var(--fill) 100%)}
+.fig3d canvas{width:100%;height:100%;display:block;touch-action:pan-y;cursor:grab}
+.fig3d svg.fig2d{width:100%;height:100%;display:block}
+.fig-hint{position:absolute;right:10px;bottom:8px;font-size:11px;color:var(--tx2);background:var(--cell);padding:2px 8px;border-radius:999px;opacity:.85;pointer-events:none}
+.mus{font-size:14px;color:var(--tx2);margin:2px 0 4px;line-height:1.7}
+.mus b{color:var(--bad);font-weight:600}
+.mus .mp,.mus .ms{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px;vertical-align:1px}
+.mus .mp{background:#e0262f;animation:mpulse 1s ease-in-out infinite}.mus .ms{background:#f2a49b;margin-left:10px}
+@keyframes mpulse{50%{opacity:.35}}
 .sheet h3{font-size:17px;font-weight:600;margin:20px 4px 6px}
 .sheet ol,.sheet ul.l{margin:0;padding:12px 16px 12px 36px;background:var(--cell);border-radius:var(--r);font-size:16px}
 .sheet li{margin:4px 0}
@@ -265,7 +274,7 @@ body.lock .timer,body:not(.v-today) .timer{display:none}
 .f-pos small{display:block;font-size:13px;font-weight:400;color:var(--tx2)}
 .f-prog{height:4px;border-radius:2px;background:var(--fill);overflow:hidden;margin:6px 0 12px}
 .f-prog i{display:block;height:100%;background:var(--ac);transition:width .4s var(--ease)}
-.f-fig{width:100%;height:clamp(130px,calc(26vh / var(--tz,1)),230px);background:var(--cell);border-radius:16px;display:block}
+.f-fig{width:100%;height:clamp(170px,calc(34vh / var(--tz,1)),320px);background:var(--cell);border-radius:16px;display:block}
 .f-name{font-size:26px;font-weight:700;line-height:1.25;margin:16px 0 2px;letter-spacing:-.01em}
 .f-rx{font-size:16px;color:var(--tx2)}
 .f-sug{font-size:15px;color:var(--ac-ink);margin-top:6px}
@@ -606,7 +615,9 @@ function play(el,id){
   requestAnimationFrame(loop);return {stop(){on=false}};
 }
 function thumbT(id){const ex=P[id];if(!ex)return 0;const d=ex.d||.8,h=ex.hold==null?.25:ex.hold;return h+d+.01}
-return {P,svg,frame,play,has:id=>!!P[id],thumbT};
+return {P,svg,frame,play,has:id=>!!P[id],thumbT,
+  // สำหรับหุ่น 3D: ข้อต่อ 2D ณ เวลา t, ความยาว 1 รอบท่า (วินาที), มุมมอง side/front
+  pose:(id,t)=>solve(P[id],poseAt(P[id],t)),dur:id=>{const ex=P[id];return ex.k.length*(ex.m==="loop"?1:2)*((ex.d||.8)+(ex.hold==null?.25:ex.hold))},view:id=>P[id].v||"side"};
 })();
 if(typeof module!=='undefined')module.exports=FIG;
 
@@ -900,6 +911,31 @@ const EX={
   chest_str:['ยืดอก–ไหล่หน้า (พิงกำแพง)','วางแขนพิงขอบกำแพงระดับไหล่ หมุนตัวออกจนตึงอก',{t:1,u:1}],
   rand_corner:['🎯 สุ่มมุมคอร์ท (ฝึกตอบสนอง)','แอปสุ่มบอกมุม ให้สปลิตสเต็ปแล้วพุ่งไป',{t:1}]
 };
+// กล้ามเนื้อที่ใช้ในแต่ละท่า (หุ่น 3D): 'โดนตรง|ช่วย'  — ชื่อกล้ามดู MUSCLE_TH ใน web/anatomy3d.js
+// quads ต้นขาหน้า · hams หลังต้นขา · glutes ก้นใหญ่ · gmed ก้นข้าง/สะโพกข้าง · adductors ขาหนีบ · hipflex หน้าสะโพก · calves น่อง · tibialis หน้าแข้ง
+// pecs อก · delts ไหล่ · rotcuff ไหล่ส่วนลึก · traps สะบัก/หลังบน · lats ปีก · biceps แขนหน้า · triceps แขนหลัง · forearms ปลายแขน · abs หน้าท้อง · obliques เอว · erectors หลังล่าง
+const MUS={
+  jacks:'delts calves|gmed adductors',leg_swing:'hipflex hams|gmed adductors',arm_circle:'delts rotcuff|traps',wgs:'hipflex hams adductors|obliques glutes',
+  inchworm:'hams delts|abs pecs triceps',air_squat:'quads glutes|adductors',glute_bridge:'glutes|hams erectors',
+  goblet_squat:'quads glutes|adductors erectors abs',db_rdl:'hams glutes|erectors forearms traps',rev_lunge:'quads glutes|hams adductors gmed',
+  lat_lunge:'adductors glutes quads|gmed hams',bss:'quads glutes|hams adductors gmed',sl_rdl:'hams glutes|gmed erectors calves',
+  calf:'calves|tibialis',tib:'tibialis|',copen:'adductors|obliques abs',ham_slide:'hams|glutes erectors',
+  floor_press:'pecs triceps|delts',push_up:'pecs triceps|delts abs',row:'lats traps|biceps delts forearms',ohp:'delts triceps|traps abs obliques',
+  pullover:'lats pecs|triceps abs',rear_fly:'delts traps|rotcuff',push_press:'delts triceps quads|glutes traps abs',
+  ext_rot:'rotcuff|delts',ytw:'traps rotcuff|delts erectors',wrist_curl:'forearms|',prosup:'forearms|',ankle_bal:'calves tibialis|gmed abs',
+  deadbug:'abs|hipflex obliques',side_plank:'obliques gmed|abs delts',suitcase:'obliques forearms|traps gmed abs',woodchop:'obliques abs|delts glutes',
+  pogo:'calves|quads tibialis',skater:'glutes gmed quads|adductors calves',lat_bound:'glutes gmed quads|adductors calves',
+  split_jump:'quads glutes|calves hams',squat_jump:'quads glutes calves|hams',
+  quick_feet:'calves|quads tibialis',split_step:'calves quads|glutes adductors',lat_shuffle:'gmed adductors quads|calves glutes',
+  chasse:'gmed quads calves|adductors',front_back:'quads glutes|calves adductors delts',six_corner:'quads glutes adductors|calves delts',
+  rand_corner:'quads glutes calves|adductors gmed',shadow_int:'quads calves glutes|delts adductors',burpee:'quads pecs delts|triceps abs glutes',
+  mtn_climb:'abs hipflex|delts quads',rope:'calves|delts forearms',
+  hip9090:'glutes gmed|hipflex adductors',tspine:'obliques pecs|traps',ankle_df:'calves|tibialis',sleeper:'rotcuff|delts',
+  calf_str:'calves|hams',hip_flex:'hipflex quads|',ham_str:'hams|erectors',wrist_str:'forearms|',chest_str:'pecs delts|',
+  walk:'|quads hams calves glutes',jog_skip:'calves|quads hams glutes',shadow_swing:'delts pecs|obliques triceps forearms rotcuff',sprint_short:'quads glutes calves|hams'
+};
+const MUS_TH={quads:'ต้นขาหน้า',hams:'หลังต้นขา',glutes:'ก้น',gmed:'สะโพกด้านข้าง',adductors:'ขาหนีบ/ต้นขาด้านใน',hipflex:'หน้าสะโพก',calves:'น่อง',tibialis:'หน้าแข้ง',pecs:'อก',delts:'ไหล่',rotcuff:'ไหล่ส่วนลึก',traps:'สะบัก/หลังบน',lats:'ปีก (หลังกลาง)',biceps:'แขนหน้า',triceps:'แขนหลัง',forearms:'ปลายแขน/ข้อมือ',abs:'หน้าท้อง',obliques:'เอว/ข้างลำตัว',erectors:'หลังล่าง'};
+const musclesOf=id=>{const [p,s]=(MUS[id]||'|').split('|');return {primary:p.split(' ').filter(Boolean),secondary:(s||'').split(' ').filter(Boolean)}};
 const CATS=[['วอร์มอัพ',['jacks','leg_swing','arm_circle','wgs','inchworm','air_squat','glute_bridge','jog_skip','shadow_swing','sprint_short']],['ขา–สะโพก',['goblet_squat','db_rdl','rev_lunge','lat_lunge','bss','sl_rdl','ham_slide','calf','tib','copen']],['บน–ไหล่–แขน',['floor_press','push_up','row','ohp','pullover','rear_fly','push_press']],['ป้องกันบาดเจ็บ',['ext_rot','ytw','wrist_curl','prosup','ankle_bal']],['แกนกลาง',['deadbug','side_plank','suitcase','woodchop']],['พลังระเบิด',['pogo','skater','lat_bound','split_jump','squat_jump']],['ฟุตเวิร์ค',['quick_feet','split_step','lat_shuffle','chasse','front_back','six_corner','rand_corner']],['คาร์ดิโอ',['shadow_int','burpee','mtn_climb','rope']],['ยืดเหยียด–ฟื้นฟู',['walk','hip9090','tspine','ankle_df','sleeper','calf_str','hip_flex','ham_str','chest_str','wrist_str']]];
 
 const I=(id,sets,v,rest=30)=>({id,sets,v,rest});
@@ -1403,7 +1439,7 @@ function exSheet(id){
   const ex=EX[id],D=(window.EXD||{})[id];if(!ex)return;
   const L=a=>(a||[]).map(t=>`<li>${t}</li>`).join('');
   let h=shh(`${ex[0]}${D?`<div class="meta" style="font-weight:400;font-size:15px">${D.m}</div>`:''}`,'ปิด');
-  h+=FIG.has(id)?`<svg class="anim" id="anim" role="img" aria-label="หุ่นสาธิตท่า ${esc(ex[0])}"></svg>`:'';
+  h+=FIG.has(id)?`<div class="anim fig3d" id="anim" role="img" aria-label="หุ่นสาธิตท่า ${esc(ex[0])}"></div>${musLegend(id)}`:'';
   if(D){
     h+=`<div class="why">${ic('shuttle')}<span>${clean(D.w)}</span></div><h3>วิธีทำทีละขั้น</h3><ol>${L(D.s)}</ol>
     <h3>จังหวะ / การหายใจ</h3><p class="body">${D.b}</p><h3>ข้อผิดพลาดที่พบบ่อย</h3><ul class="l">${L(D.x)}</ul>
@@ -1416,8 +1452,30 @@ function exSheet(id){
   if(id==='rand_corner')h+=`<div class="grp" style="margin-top:14px">${rtCfg()}</div><button class="btn" data-act="rctry">ลองเลย 5 รอบ × 30 วิ</button>`;
   h+=`<p class="note">หุ่นเป็นภาพประกอบจังหวะการเคลื่อนไหว ดูวิดีโอประกอบเพื่อรายละเอียดท่าที่ถูกต้อง · เจ็บแหลมหรือชาให้หยุดทันที</p>`;
   sheet(h,'ex');
-  if(FIG.has(id)){if(anim)anim.stop();anim=FIG.play($('#anim'),id)}
+  if(FIG.has(id)){if(anim)anim.stop();anim=mountFig($('#anim'),id,'sheet')}
 }
+
+/* ================= หุ่น 3D (anatomy) =================
+   โหลด web/anatomy3d.js + three.js เมื่อใช้ครั้งแรก · ถ้าเครื่องไม่รองรับ WebGL หรือโหลดไม่ได้ ใช้หุ่น 2D เดิม */
+let A3=null,A3fail=false,A3p=null;const A3V={};
+function load3D(){if(A3||A3fail)return Promise.resolve(A3);
+  if(!A3p)A3p=import('./anatomy3d.js').then(m=>{if(!m.supported())throw new Error('no webgl');A3=m;return m}).catch(()=>{A3fail=true;return null});return A3p}
+function mountFig(box,id,slot){
+  if(!box)return null;
+  if(A3&&A3V[slot]!==false){
+    try{if(!A3V[slot]){const c=document.createElement('canvas');A3V[slot]={c,v:A3.create(c)}}
+      const w=A3V[slot];box.innerHTML='';box.appendChild(w.c);box.insertAdjacentHTML('beforeend','<span class="fig-hint">ลากเพื่อหมุนดูรอบตัว</span>');box.classList.add('is3d');
+      w.v.play(id,musclesOf(id));return {stop(){w.v.stop()}}}
+    catch(e){A3V[slot]=false}
+  }
+  box.innerHTML=`<svg class="fig2d"></svg>`;const a2=FIG.play(box.firstChild,id);
+  let dead=false;const h={stop(){dead=true;a2.stop()}};
+  if(!A3fail&&A3V[slot]!==false)load3D().then(m=>{if(m&&!dead&&box.isConnected){a2.stop();const n=mountFig(box,id,slot);if(n)h.stop=n.stop}});
+  return h;
+}
+function musLegend(id){const m=musclesOf(id);if(!m.primary.length&&!m.secondary.length)return '';
+  const n=a=>a.map(k=>MUS_TH[k]||k).join(', ');
+  return `<p class="mus">${m.primary.length?`<span class="mp"></span>โดนตรง: <b>${n(m.primary)}</b>`:''}${m.secondary.length?`<span class="ms"></span>ช่วย: ${n(m.secondary)}`:''}</p>`}
 
 /* ================= โหมดโฟกัส ================= */
 let F=null,fanim=null;
@@ -1444,15 +1502,15 @@ function renderFocus(){
   $('#focus').innerHTML=`<div class="f-in">
    <div class="f-top"><button class="f-btn" data-act="fclose" aria-label="ปิดโหมดโฟกัส">${ic('down')}</button><div class="f-pos num">ท่า ${F.i+1} จาก ${L.length}<small>${esc(clean(b.t))}</small></div><button class="f-btn" data-act="exinfo" data-id="${it.id}" aria-label="วิธีทำ ${esc(ex[0])}">${ic('info')}</button></div>
    <div class="f-prog" role="progressbar" aria-valuemin="0" aria-valuemax="${tot}" aria-valuenow="${dn}" aria-label="ความคืบหน้าทั้งเซสชัน"><i style="width:${tot?dn/tot*100:0}%"></i></div>
-   ${FIG.has(it.id)?`<svg class="f-fig" id="ffig" role="img" aria-label="หุ่นสาธิตท่า ${esc(ex[0])}"></svg>`:''}
-   <h2 class="f-name">${ex[0]}</h2>
+   ${FIG.has(it.id)?`<div class="f-fig fig3d" id="ffig" role="img" aria-label="หุ่นสาธิตท่า ${esc(ex[0])}"></div>`:''}
+   <h2 class="f-name">${ex[0]}</h2>${musLegend(it.id)}
    <p class="f-rx num">${rxText(it,true)}${it.hi?tip('rir'):''}${it.rest?` · พัก ${it.rest} วิ`:''}</p>${sug?`<p class="f-sug">${sug}</p>`:''}${tag}
    <div class="f-sets" id="fsets"></div>
    <div class="f-ctl" id="fctl"></div>
    <div class="f-nav"><button class="btn plain sq" data-act="fprev" ${F.i===0?'disabled':''} aria-label="ท่าก่อนหน้า">${ic('left')}</button>${canSwap?`<button class="btn plain" data-act="swap" data-k="${it.slot}">${ic('swap')}เปลี่ยนท่า</button>`:''}<button class="btn plain" data-act="fnext" ${F.i>=L.length-1?'disabled':''}>ท่าถัดไป${ic('chev')}</button></div>
   </div>`;
   if(fanim){fanim.stop();fanim=null}
-  if(FIG.has(it.id))fanim=FIG.play($('#ffig'),it.id);
+  if(FIG.has(it.id))fanim=mountFig($('#ffig'),it.id,'focus');
   refreshCtl();
 }
 function refreshCtl(){
@@ -2029,7 +2087,7 @@ document.addEventListener('keydown',e=>{
 });
 /* ปัดชีตลงเพื่อปิด */
 (function(){let y0=null,dy=0;const sh=$('#sheet');
-  sh.addEventListener('touchstart',e=>{y0=sh.scrollTop<=0?e.touches[0].clientY:null;dy=0},{passive:true});
+  sh.addEventListener('touchstart',e=>{y0=sh.scrollTop<=0&&!e.target.closest('.fig3d')?e.touches[0].clientY:null;dy=0},{passive:true});
   sh.addEventListener('touchmove',e=>{if(y0==null)return;dy=e.touches[0].clientY-y0;if(dy>0){sh.style.transform=`translateY(${dy}px)`;sh.style.transition='none'}},{passive:true});
   sh.addEventListener('touchend',()=>{if(y0==null)return;sh.style.transition='transform .25s var(--ease)';if(dy>110)closeSheet();sh.style.transform='';y0=null});
 })();
