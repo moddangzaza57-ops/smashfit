@@ -1,0 +1,1307 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Smash Fit">
+<meta name="theme-color" content="#0e1411">
+<title>Smash Fit – ฟิตเนสนักแบด</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0e1411;--card:#16201b;--card2:#1d2a23;--line:#2a3a31;--tx:#e9f2ec;--mu:#8fa69a;--ac:#c8f23c;--ac2:#4fd1a5;--warn:#ffb547;--bad:#ff6b6b}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--tx)}
+body{font-family:'IBM Plex Sans Thai',system-ui,-apple-system,sans-serif;font-size:16px;line-height:1.45;padding-top:env(safe-area-inset-top);padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-right)}
+main{max-width:560px;margin:0 auto;padding:12px 14px calc(150px + env(safe-area-inset-bottom))}
+.top{display:flex;justify-content:space-between;align-items:center;margin:4px 0 8px}
+.brand{font-weight:700;letter-spacing:.3px}.brand b{color:var(--ac)}
+h1{font-size:22px;margin:2px 0}h2{font-size:17px;margin:0 0 6px}
+.mu{color:var(--mu);font-size:14px}.sm{font-size:13px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;margin:12px 0}
+.chips{display:flex;gap:5px}
+.chip{flex:1;min-width:0;background:var(--card);border:1px solid var(--line);color:var(--tx);border-radius:12px;padding:6px 0 5px;text-align:center;font:inherit;font-size:12px;line-height:1.25}
+.chip .ic{display:block;font-size:17px;margin:2px 0}
+.chip.on{background:var(--ac);color:#10200a;border-color:var(--ac);font-weight:600}
+.chip.td{border-color:var(--ac2)}
+.badge{display:inline-block;padding:2px 10px;border-radius:999px;background:var(--card2);font-size:12px;color:var(--ac2);border:1px solid var(--line)}
+.note{background:rgba(255,181,71,.09);border:1px solid rgba(255,181,71,.35);color:#ffd79a;border-radius:12px;padding:8px 10px;font-size:14px;margin:6px 0}
+.note.good{background:rgba(79,209,165,.09);border-color:rgba(79,209,165,.35);color:#a8f0d5}
+.note.bad{background:rgba(255,107,107,.09);border-color:rgba(255,107,107,.4);color:#ffb3b3}
+code{font-size:12px;background:var(--card2);padding:1px 4px;border-radius:4px;word-break:break-all}
+details summary{cursor:pointer}
+.scale button{font-size:14px}
+.btn{display:block;background:var(--ac);color:#10200a;border:0;border-radius:12px;padding:12px 16px;font:inherit;font-weight:600;width:100%;text-align:center}
+.btn.sec{background:var(--card2);color:var(--tx);border:1px solid var(--line)}
+.btn.sm{display:inline-block;width:auto;padding:6px 12px;font-size:14px}
+.btn.danger{background:transparent;color:var(--bad);border:1px solid var(--bad)}
+.ex{border-top:1px solid var(--line);padding:12px 0}
+.card h2+.ex{border-top:0;padding-top:4px}
+.exn{font-weight:600;cursor:pointer}.exn .i{color:var(--mu);font-weight:400;font-size:13px}
+.rx{color:var(--ac2);font-size:14px}
+.sug{font-size:13px;color:var(--ac);margin-top:2px}
+.cue{font-size:13px;color:var(--mu);margin-top:4px;display:none;background:var(--card2);border-radius:10px;padding:8px 10px}
+.ex.open .cue{display:block}
+.sets{display:grid;gap:6px;margin-top:8px}
+.set{display:grid;grid-template-columns:24px 1fr 1fr 48px;gap:6px;align-items:center}
+.set.t{grid-template-columns:24px 1fr 48px}
+.set>span{color:var(--mu);font-size:13px;text-align:center}
+.set input{width:100%;min-width:0;background:var(--bg);border:1px solid var(--line);color:var(--tx);border-radius:10px;padding:8px;font:inherit;font-size:16px;text-align:center}
+.ck{height:40px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--mu);font-size:18px}
+.ck.on{background:var(--ac);color:#10200a;border-color:var(--ac)}
+.play{height:40px;border-radius:10px;border:1px solid var(--line);background:var(--card2);color:var(--tx);font:inherit;font-size:15px}
+select,input[type=date],input[type=number],input[type=text],textarea{background:var(--bg);border:1px solid var(--line);color:var(--tx);border-radius:10px;padding:9px 10px;font:inherit;font-size:16px;width:100%}
+textarea{min-height:90px;font-size:13px}
+.lbl{font-size:13px;color:var(--mu);margin:10px 0 4px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.day{display:grid;grid-template-columns:76px 1fr;gap:10px;align-items:center;padding:8px 0;border-top:1px solid var(--line)}
+.day:first-of-type{border-top:0}
+.day .w{grid-column:2;font-size:12px;color:#ffd79a;margin-top:-4px}
+.lock{padding:9px 10px;border-radius:10px;background:var(--card2);border:1px dashed var(--ac);font-size:15px}
+.scale{display:flex;gap:5px;margin:4px 0 8px}
+.scale button{flex:1;height:38px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--tx);font:inherit}
+.scale button.on{background:var(--ac2);color:#06231a;border-color:var(--ac2);font-weight:600}
+.rpe{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.rpe button{height:40px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--tx);font:inherit}
+.rpe button.on{background:var(--ac);color:#10200a;border-color:var(--ac);font-weight:700}
+.prog{height:8px;background:var(--line);border-radius:4px;overflow:hidden;margin-top:6px}.prog i{display:block;height:100%;background:var(--ac);width:0;transition:width .3s}
+.bars{display:flex;align-items:flex-end;gap:6px;height:120px;margin-top:8px}
+.bars div{flex:1;background:var(--ac2);border-radius:6px 6px 0 0;min-height:3px;opacity:.75}
+.bars div.cur{background:var(--ac);opacity:1}
+.blbl{display:flex;gap:6px;margin-top:4px}.blbl span{flex:1;text-align:center;font-size:10px;color:var(--mu)}
+.log{display:flex;justify-content:space-between;gap:8px;padding:9px 0;border-top:1px solid var(--line);align-items:center}
+.log:first-of-type{border-top:0}
+.x{background:none;border:1px solid var(--line);color:var(--mu);border-radius:8px;padding:4px 8px;font:inherit;font-size:12px}
+.x.arm{color:var(--bad);border-color:var(--bad)}
+.ph{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin:8px 0}
+.ph div{background:var(--card2);border:1px solid var(--line);border-radius:10px;padding:6px;font-size:11px;text-align:center;line-height:1.3}
+.ph div.on{border-color:var(--ac);color:var(--ac)}
+nav{position:fixed;bottom:0;left:0;right:0;background:rgba(14,20,17,.95);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border-top:1px solid var(--line);z-index:20}
+nav .in{display:flex;max-width:560px;margin:0 auto;padding:6px 6px calc(6px + env(safe-area-inset-bottom))}
+nav button{flex:1;background:none;border:0;color:var(--mu);font:inherit;font-size:12px;padding:4px 0;display:flex;flex-direction:column;align-items:center;gap:1px}
+nav button .ic{font-size:20px;filter:grayscale(1);opacity:.7}
+nav button.on{color:var(--ac)}nav button.on .ic{filter:none;opacity:1}
+.timer{position:fixed;left:10px;right:10px;bottom:calc(68px + env(safe-area-inset-bottom));background:var(--card2);border:1px solid var(--ac);border-radius:16px;padding:10px 14px;display:none;z-index:30;max-width:540px;margin:0 auto;box-shadow:0 8px 30px rgba(0,0,0,.5)}
+.timer.show{display:block}
+.trow{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.tt{font-size:30px;font-weight:700;font-variant-numeric:tabular-nums}
+.tbar{height:6px;background:var(--line);border-radius:3px;overflow:hidden;margin-top:6px}.tbar i{display:block;height:100%;background:var(--ac);width:0}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:flex-end;z-index:40}
+.modal.show{display:flex}
+.sheet{background:var(--card);width:100%;max-width:560px;margin:0 auto;border-radius:20px 20px 0 0;padding:18px 16px calc(18px + env(safe-area-inset-bottom));max-height:90vh;overflow:auto}
+.toast{position:fixed;left:50%;transform:translateX(-50%);top:calc(12px + env(safe-area-inset-top));background:var(--ac);color:#10200a;padding:8px 14px;border-radius:999px;font-size:14px;font-weight:600;z-index:50;opacity:0;transition:opacity .25s;pointer-events:none}
+.toast.show{opacity:1}
+.chk{display:flex;gap:8px;align-items:flex-start;padding:4px 0;font-size:14px}
+ul.tips{margin:6px 0 0;padding-left:20px;font-size:14px;color:var(--mu)}
+.exrow{display:flex;gap:10px;align-items:flex-start}
+.thumb{width:64px;height:52px;flex:none;background:var(--card2);border-radius:10px;overflow:hidden;cursor:pointer}
+.thumb svg{width:100%;height:100%;display:block}
+.exn .i{color:var(--ac2);font-size:12px;font-weight:500;white-space:nowrap}
+.anim{width:100%;height:230px;background:var(--card2);border-radius:14px;display:block;margin:10px 0}
+.shh{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.sheet h3{font-size:15px;margin:14px 0 4px;color:var(--ac)}
+.sheet ol,.sheet ul{margin:0;padding-left:22px;font-size:15px}.sheet li{margin:3px 0}
+.sheet p{margin:0;font-size:15px}
+.mini{background:var(--card2);border-radius:12px;padding:8px 10px;font-size:14px}.mini b{display:block;color:var(--ac2);font-size:13px}
+a.btn{text-decoration:none;margin-top:12px}
+.libi{display:flex;gap:10px;align-items:center;padding:8px 0;border-top:1px solid var(--line);cursor:pointer}
+.card h2+.libi{border-top:0}
+.libi .thumb{width:72px;height:56px}
+.rt{position:fixed;inset:0;background:var(--bg);z-index:45;display:none;flex-direction:column;padding:calc(12px + env(safe-area-inset-top)) 14px calc(16px + env(safe-area-inset-bottom))}
+.rt.show{display:flex}
+.rtop{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.court{flex:1;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr 1fr;gap:8px;margin:12px 0;border:3px solid var(--line);border-top:6px solid var(--ac2);border-radius:12px;padding:8px;max-height:70vh}
+.court div{background:var(--card);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--mu);transition:background .1s}
+.court div.on{background:var(--ac);color:#10200a;font-size:30px;font-weight:700}
+.rtbig{text-align:center;font-size:44px;font-weight:700;font-variant-numeric:tabular-nums}
+.net{text-align:center;font-size:12px;color:var(--ac2);margin-top:8px}
+</style>
+</head>
+<body>
+<main id="app"></main>
+<div class="timer" id="timer">
+  <div class="trow"><div><div class="mu" id="tl">พัก</div><div class="tt" id="tt">0:00</div></div>
+  <div class="row" style="display:flex;gap:6px"><button class="btn sec sm" data-act="t15">+15</button><button class="btn sm" data-act="tskip">ข้าม</button><button class="btn sec sm" data-act="tstop">✕</button></div></div>
+  <div class="tbar"><i id="tb"></i></div>
+</div>
+<div class="modal" id="modal" data-act="mclose"><div class="sheet" id="sheet"></div></div>
+<div class="toast" id="toast"></div>
+<div class="rt" id="rt">
+  <div class="rtop"><div><div class="mu" id="rtPh">เตรียมตัว</div><div class="rtbig" id="rtT">3</div></div><div class="mu" id="rtR"></div><button class="btn sec sm" data-act="rtstop">หยุด</button></div>
+  <div class="net">— เน็ต —</div>
+  <div class="court" id="court"><div>หน้าซ้าย</div><div>หน้าขวา</div><div>กลางซ้าย</div><div>กลางขวา</div><div>หลังซ้าย</div><div>หลังขวา</div></div>
+  <div class="mu sm" style="text-align:center">สปลิตสเต็ป → พุ่งไปมุมที่ขึ้น → ทำท่าตี → กลับกลางทันที</div>
+</div>
+<nav><div class="in">
+  <button data-nav="today"><span class="ic">🏸</span>วันนี้</button>
+  <button data-nav="plan"><span class="ic">🗓️</span>ตาราง</button>
+  <button data-nav="lib"><span class="ic">📚</span>คลังท่า</button>
+  <button data-nav="hist"><span class="ic">📈</span>ก้าวหน้า</button>
+  <button data-nav="set"><span class="ic">⚙️</span>ตั้งค่า</button>
+</div></nav>
+<script>
+/* Smash Fit — หุ่นแอนิเมชันสาธิตท่า (วาดเอง ไม่ใช้รูปภายนอก)
+   พิกัด: พื้น y=0, y ขึ้นบน, หุ่นหันขวา (+x) ในมุมด้านข้าง
+   pose: hip[x,y] t=มุมลำตัวจากแนวตั้ง(+ก้มไปหน้า) a=ข้อเท้า[[x,y]x2] h=มือเทียบไหล่ f=มุมเท้า(+ปลายเท้าชี้ลง)
+         kb/eb=ทิศงอเข่า/ศอก e/he=ศอก(เทียบไหล่)/มือ(เทียบศอก)แบบกำหนดตรง k=เข่าเทียบสะโพกแบบกำหนดตรง
+         ha=มือทั้งสองแบบพิกัดจริง do=ฝ่ามือต่อจากข้อมือ rod=ดัมเบลจับปลาย tl=สเกลลำตัว (มุมมองย่อ) */
+var FIG=(function(){
+'use strict';
+const L={T:52,N:9,HR:10,UA:30,FA:28,TH:44,SH:42,FT:13};
+const R=Math.PI/180;
+const C={near:'#e9f2ec',far:'#7f978a',db:'#c8f23c',rk:'#4fd1a5',gr:'#2a3a31',pr:'#3a5246'};
+function base(v){return {hip:[0,89],t:0,tl:1,hd:0,a:v==='front'?[[10,4],[-10,4]]:[[3,4],[-3,4]],h:v==='front'?[[4,-56],[-4,-56]]:[[2,-56],[-2,-56]],f:[0,0],kb:v==='front'?[1,-1]:[1,1],eb:v==='front'?[1,-1]:[-1,-1]}}
+
+// ---------- ท่าทาง ----------
+const ST={};
+const RDY={hip:[-6,74],t:18,a:[[10,4],[-12,4]],h:[[24,-14],[22,-30]]};
+const FB=[RDY,{hip:[40,52],t:18,a:[[84,4],[-4,6]],f:[-20,30],h:[[46,-4],[-30,-30]]},RDY,{hip:[-40,96],t:-12,a:[[-34,18],[-58,22]],f:[25,30],h:[[-6,54],[30,12]],eb:[-1,1]}];
+const walk=(db,d)=>({db,d:d||.38,hold:0,m:'loop',k:[
+  {hip:[0,86],a:[[20,4],[-20,8]],f:[-10,30],h:[[db?0:-10,-55],[10,-54]]},
+  {hip:[0,89],a:[[0,4],[-4,20]],f:[0,20],h:[[0,-56],[0,-56]]},
+  {hip:[0,86],a:[[-20,8],[20,4]],f:[30,-10],h:[[db?0:10,-55],[-10,-54]]},
+  {hip:[0,89],a:[[-4,20],[0,4]],f:[20,0],h:[[0,-56],[0,-56]]}]});
+const skate=x=>({v:'front',m:'loop',d:.4,k:[
+  {hip:[x,66],t:12,a:[[x+6,4],[x-16,24]],h:[[-34,-36],[34,-30]]},
+  {hip:[0,98],a:[[10,26],[-10,26]],h:[[10,-50],[-10,-50]]},
+  {hip:[-x,66],t:-12,a:[[-x+16,24],[-x-6,4]],h:[[-34,-30],[34,-36]]},
+  {hip:[0,98],a:[[10,26],[-10,26]],h:[[10,-50],[-10,-50]]}]});
+const PL={hip:[-2,42],t:66,a:[[-80,10],[-80,10]],f:[60,60],h:[[0,-59],[0,-59]]};
+const lieSide={hip:[-40,12],t:90,a:[[-118,8],[-120,6]],kb:[-1,-1]};
+const kneelH={hip:[0,50],a:[[42,4],[-42,7]],f:[0,175]};
+const P={
+ jacks:{v:'front',d:.45,hold:.05,k:[{a:[[9,4],[-9,4]]},{hip:[0,91],a:[[30,6],[-30,6]],h:[[34,46],[-34,46]]}]},
+ leg_swing:{d:.7,k:[{a:[[50,30],[-2,4]],h:[[8,-46],[8,-46]]},{a:[[-48,16],[-2,4]],h:[[8,-46],[8,-46]]}]},
+ arm_circle:{m:'loop',hold:0,d:.28,k:[0,60,120,180,240,300].map(g=>({h:[[56*Math.sin(g*R),-56*Math.cos(g*R)],[56*Math.sin(g*R),-56*Math.cos(g*R)]]}))},
+ wgs:{d:.9,k:[{},{hip:[0,44],t:62,a:[[52,4],[-72,8]],f:[0,50],h:[[-6,-60],[-4,-60]]},{hip:[0,44],t:62,a:[[52,4],[-72,8]],f:[0,50],h:[[-6,-60],[2,56]],eb:[-1,1]}]},
+ inchworm:{d:.9,k:[{hip:[-60,89],a:[[-57,4],[-63,4]]},{hip:[-62,88],t:160,a:[[-57,4],[-63,4]],h:[[4,-36],[2,-36]]},{hip:[18,42],t:66,a:[[-60,10],[-60,10]],f:[60,60],h:[[0,-56],[0,-56]]}]},
+ goblet_squat:{db:'g',d:1.1,k:[{t:5,h:[[16,-20],[16,-20]]},{hip:[-22,46],t:35,h:[[18,-22],[18,-22]]}]},
+ db_rdl:{db:'b',d:1.2,k:[{h:[[3,-56],[1,-56]]},{hip:[-20,84],t:78,h:[[0,-56],[0,-56]]}]},
+ rev_lunge:{db:'b',d:1.1,k:[{hip:[8,89],a:[[10,4],[6,4]]},{hip:[-12,48],t:8,a:[[10,4],[-75,11]],f:[0,55]}]},
+ lat_lunge:{v:'front',db:'g',d:1.1,k:[{hip:[-15,89],a:[[-5,4],[-25,4]],h:[[-10,-26],[10,-26]]},{hip:[22,56],t:6,a:[[58,4],[-25,4]],h:[[-10,-26],[10,-26]]}]},
+ bss:{db:'b',d:1.2,props:[{c:'chair',x:-84,w:36,h:42}],k:[{hip:[0,86],t:6,a:[[24,4],[-62,48]],f:[0,175]},{hip:[-6,46],t:16,a:[[24,4],[-62,48]],f:[0,175]}]},
+ sl_rdl:{db:'n',d:1.3,k:[{a:[[3,4],[-10,12]],h:[[1,-56],[0,-56]]},{hip:[-8,84],t:84,a:[[3,4],[-93,78]],f:[0,80],h:[[0,-56],[0,-56]]}]},
+ calf:{db:'f',d:1,props:[{c:'step',x:-20,w:40,h:12},{c:'wall',x:50}],k:[{hip:[3,95],a:[[6,10.5],[-12,45]],f:[-25,10],h:[[40,-6],[0,-56]]},{hip:[6.6,111],a:[[9.6,26],[-9,60]],f:[50,20],h:[[38,-22],[0,-56]]}]},
+ tib:{d:.7,props:[{c:'wall',x:-42}],k:[{hip:[-26,83],t:-6,a:[[10,4],[6,4]]},{hip:[-26,83],t:-6,a:[[10,4],[6,4]],f:[-40,-40]}]},
+ copen:{d:1.2,props:[{c:'chair',x:-75,w:32,h:30}],k:[{hip:[-5,14],t:72,a:[[-90,40],[-82,5]],h:[[24,-36],[-26,-26]]},{hip:[-5,30],t:82,a:[[-90,36],[-75,26]],h:[[24,-39],[-26,-26]]}]},
+ floor_press:{db:'b',d:1.1,k:[{hip:[0,12],t:90,a:[[-46,4],[-46,4]],kb:[-1,-1],e:[[1,29],[1,29]],he:[[0,28],[0,28]]},{hip:[0,12],t:90,a:[[-46,4],[-46,4]],kb:[-1,-1],e:[[-4,-8],[-4,-8]],he:[[2,27],[2,27]]}]},
+ row:{db:'n',d:1,props:[{c:'chair',x:28,w:46,h:44}],k:[{hip:[-12,80],t:74,a:[[8,4],[-38,4]],h:[[0,-54],[12,-48]]},{hip:[-12,80],t:74,a:[[8,4],[-38,4]],e:[[-22,-12],null],he:[[8,-26],null],h:[[0,-54],[12,-48]]}]},
+ ohp:{db:'n',d:1,k:[{...kneelH,e:[[8,-26],[2,-29]],he:[[2,30],[2,-26]]},{...kneelH,e:[[3,29],[2,-29]],he:[[1,28],[2,-26]]}]},
+ pullover:{db:'g',d:1.2,k:[{hip:[0,12],t:90,a:[[-46,4],[-46,4]],kb:[-1,-1],e:[[0,29],[0,29]],he:[[0,28],[0,28]]},{hip:[0,12],t:90,a:[[-46,4],[-46,4]],kb:[-1,-1],e:[[26,12],[26,12]],he:[[26,4],[26,4]]}]},
+ rear_fly:{v:'front',tl:.55,db:'b',d:1,k:[{hip:[0,78],tl:.55,a:[[14,4],[-14,4]],h:[[-6,-50],[6,-50]]},{hip:[0,78],tl:.55,a:[[14,4],[-14,4]],h:[[52,-10],[-52,-10]]}]},
+ push_press:{db:'b',m:'loop',d:.5,k:[{e:[[6,-26],[6,-26]],he:[[2,30],[2,30]]},{hip:[0,80],e:[[6,-26],[6,-26]],he:[[2,30],[2,30]]},{hip:[0,90],a:[[3,8],[-3,8]],f:[25,25],e:[[2,29],[2,29]],he:[[1,28],[1,28]]}]},
+ ext_rot:{db:'n',d:1.2,k:[{...lieSide,h:[[0,0],[22,-8]],e:[[-28,6],null],he:[[0,-22],null]},{...lieSide,h:[[0,0],[22,-8]],e:[[-28,6],null],he:[[0,24],null]}]},
+ ytw:{m:'loop',d:.8,k:[
+   {hip:[0,10],t:90,a:[[-86,9],[-86,7]],f:[150,150],e:[[28,8],[28,8]],he:[[27,6],[27,6]]},
+   {hip:[0,10],t:90,a:[[-86,9],[-86,7]],f:[150,150],e:[[2,10],[2,10]],he:[[1,8],[1,8]]},
+   {hip:[0,10],t:90,a:[[-86,9],[-86,7]],f:[150,150],e:[[-16,12],[-16,12]],he:[[10,8],[10,8]]}]},
+ wrist_curl:{db:'n',d:.6,props:[{c:'chair',x:-42,w:34,h:46}],k:[{hip:[-20,52],t:52,a:[[34,4],[30,4]],e:[[-14,-27],[-12,-27]],he:[[27,0],[27,-1]],do:[[7,-6],null]},{hip:[-20,52],t:52,a:[[34,4],[30,4]],e:[[-14,-27],[-12,-27]],he:[[27,0],[27,-1]],do:[[7,7],null]}]},
+ prosup:{d:.9,props:[{c:'chair',x:-42,w:34,h:46}],k:[{hip:[-20,52],t:52,a:[[34,4],[30,4]],e:[[-14,-27],[-12,-27]],he:[[27,0],[27,-1]],rod:[[2,22],null]},{hip:[-20,52],t:52,a:[[34,4],[30,4]],e:[[-14,-27],[-12,-27]],he:[[27,0],[27,-1]],rod:[[2,-16],null]}]},
+ ankle_bal:{d:.9,k:[{a:[[3,4],[-8,40]],h:[[22,-40],[-22,-40]]},{hip:[2,89],t:3,a:[[3,4],[-6,42]],h:[[26,-36],[-18,-42]]}]},
+ deadbug:{d:1.1,k:[{hip:[0,12],t:90,a:[[-42,56],[-44,56]],kb:[-1,-1],f:[-90,-90],h:[[0,56],[0,56]]},{hip:[0,12],t:90,a:[[-84,14],[-44,56]],kb:[-1,-1],f:[-20,-90],h:[[0,56],[54,6]]}]},
+ side_plank:{d:1.4,k:[{hip:[-5,26],t:74,a:[[-88,5],[-86,7]],h:[[24,-36],[0,48]]},{hip:[-5,32],t:78,a:[[-88,5],[-86,7]],h:[[24,-39],[0,50]]}]},
+ suitcase:walk('n'),
+ woodchop:{v:'front',db:'g',d:.9,k:[{hip:[-4,74],t:-12,a:[[22,4],[-22,4]],ha:[-38,34]},{hip:[4,88],t:10,a:[[22,4],[-22,4]],ha:[44,150]}]},
+ pogo:{d:.22,hold:0,k:[{hip:[0,87],h:[[14,-46],[14,-46]]},{hip:[0,100],a:[[3,16],[-3,16]],f:[35,35],h:[[14,-46],[14,-46]]}]},
+ skater:skate(34),
+ lat_bound:skate(46),
+ split_jump:{m:'loop',d:.4,hold:.1,k:[
+   {hip:[-6,50],a:[[24,4],[-66,11]],f:[0,55],h:[[-14,-50],[16,-48]]},
+   {hip:[0,98],a:[[10,18],[-10,18]],f:[20,20],h:[[0,-54],[0,-54]]},
+   {hip:[6,50],a:[[-54,11],[36,4]],f:[55,0],h:[[16,-48],[-14,-50]]},
+   {hip:[0,98],a:[[10,18],[-10,18]],f:[20,20],h:[[0,-54],[0,-54]]}]},
+ squat_jump:{d:.45,k:[{hip:[-22,48],t:38,h:[[-22,-50],[-22,-50]]},{hip:[0,104],a:[[3,19],[-3,19]],f:[35,35],h:[[8,54],[8,54]]}]},
+ push_up:{d:1,k:[{hip:[-2,42],t:66,a:[[-80,10],[-80,10]],f:[60,60],h:[[0,-59],[0,-59]]},{hip:[-2,26],t:78,a:[[-80,10],[-80,10]],f:[60,60],h:[[0,-38],[0,-38]]}]},
+ quick_feet:{d:.14,hold:0,k:[{hip:[-8,74],t:22,a:[[8,13],[-12,4]],f:[20,0],h:[[22,-26],[22,-28]]},{hip:[-8,74],t:22,a:[[8,4],[-12,13]],f:[0,20],h:[[22,-26],[22,-28]]}]},
+ split_step:{rk:1,m:'loop',d:.35,k:[RDY,{hip:[-6,86],t:14,a:[[12,14],[-14,14]],f:[25,25],h:[[24,-12],[22,-28]]},{hip:[-6,70],t:16,a:[[16,4],[-18,4]],h:[[24,-14],[22,-30]]},{hip:[28,56],t:22,a:[[66,4],[-10,6]],f:[-15,30],h:[[48,-4],[-10,-40]]}]},
+ lat_shuffle:{v:'front',d:.3,hold:.05,k:[-30,-10,10,30].map((x,i)=>i%2?{hip:[x,76],a:[[x+10,4],[x-10,4]],h:[[14,-30],[-14,-30]]}:{hip:[x,72],a:[[x+22,4],[x-22,4]],h:[[14,-30],[-14,-30]]})},
+ chasse:{rk:1,d:.35,k:[{hip:[20,74],t:15,a:[[34,4],[6,4]],h:[[24,-14],[20,-30]]},{hip:[0,80],t:8,a:[[18,10],[-10,4]],f:[20,0],h:[[24,-14],[20,-30]]},{hip:[-20,74],a:[[-4,4],[-36,4]],h:[[10,10],[20,-30]]},{hip:[-40,96],t:-12,a:[[-34,18],[-56,20]],f:[25,30],h:[[-6,54],[30,10]],eb:[-1,1]}]},
+ front_back:{rk:1,m:'loop',d:.5,k:FB},
+ six_corner:{rk:1,m:'loop',d:.45,k:FB},
+ shadow_int:{rk:1,m:'loop',d:.32,hold:.05,k:FB},
+ rand_corner:{rk:1,m:'loop',d:.35,k:[RDY,{hip:[-6,86],t:14,a:[[12,14],[-14,14]],f:[25,25],h:[[24,-12],[22,-28]]},{hip:[40,52],t:18,a:[[84,4],[-4,6]],f:[-20,30],h:[[46,-4],[-30,-30]]},RDY,{hip:[-6,86],t:14,a:[[12,14],[-14,14]],f:[25,25],h:[[24,-12],[22,-28]]},{hip:[-40,96],t:-12,a:[[-34,18],[-58,22]],f:[25,30],h:[[-6,54],[30,12]],eb:[-1,1]}]},
+ burpee:{m:'loop',d:.4,k:[{},{hip:[-14,42],t:80,h:[[0,-47],[0,-47]]},PL,{hip:[-14,42],t:80,h:[[0,-47],[0,-47]]},{hip:[0,104],a:[[3,18],[-3,18]],f:[35,35],h:[[6,54],[6,54]]}]},
+ mtn_climb:{d:.25,hold:0,k:[{...PL,a:[[-18,22],[-80,10]],f:[30,60]},{...PL,a:[[-80,10],[-18,22]],f:[60,30]}]},
+ rope:{d:.22,hold:0,k:[{hip:[0,88],h:[[14,-46],[14,-46]]},{hip:[0,96],a:[[3,12],[-3,12]],f:[30,30],h:[[18,-42],[18,-42]]}]},
+ hip9090:{v:'front',d:1.1,k:[{hip:[0,14],a:[[38,4],[-30,4]],k:[[44,10],[14,34]],h:[[14,-58],[-14,-58]]},{hip:[0,14],a:[[30,4],[-38,4]],k:[[-14,34],[-44,10]],h:[[14,-58],[-14,-58]]}]},
+ tspine:{d:1.4,k:[{...lieSide,a:[[-74,8],[-76,6]],k:[[-30,16],[-30,12]],e:[[0,-28],[0,-28]],he:[[0,-26],[0,-26]]},{...lieSide,a:[[-74,8],[-76,6]],k:[[-30,16],[-30,12]],e:[[0,28],[0,-28]],he:[[0,26],[0,-26]]}]},
+ ankle_df:{d:1,props:[{c:'wall',x:64}],k:[{...kneelH,a:[[34,4],[-42,7]],h:[[58,-4],[58,0]]},{...kneelH,hip:[12,50],a:[[34,4],[-42,7]],h:[[48,-4],[48,0]]}]},
+ sleeper:{d:1.3,k:[{...lieSide,e:[[12,10],[6,-4]],he:[[-6,12],[0,26]]},{...lieSide,e:[[12,10],[6,-4]],he:[[-4,-6],[2,8]]}]},
+ calf_str:{d:1.4,props:[{c:'wall',x:62}],k:[{hip:[4,78],t:22,a:[[26,4],[-40,4]],h:[[38,6],[38,4]]},{hip:[10,74],t:28,a:[[26,4],[-40,4]],h:[[26,0],[26,-2]]}]},
+ hip_flex:{d:1.4,k:[{...kneelH,h:[[30,-30],[30,-30]]},{...kneelH,hip:[14,47],t:-6,h:[[24,-32],[24,-32]]}]},
+ ham_str:{d:1.5,k:[{hip:[0,12],a:[[86,6],[84,6]],f:[-60,-60],ha:[40,22]},{hip:[0,12],t:58,a:[[86,6],[84,6]],f:[-60,-60],ha:[78,14]}]},
+ wrist_str:{d:1.2,k:[{h:[[56,2],[50,6]],do:[[0,-9],null]},{h:[[56,2],[50,6]],do:[[0,9],null]}]},
+ walk:walk(null),
+ jog_skip:{d:.3,hold:0,k:[{hip:[0,92],a:[[6,4],[12,40]],h:[[-16,-46],[16,-40]]},{hip:[0,92],a:[[12,40],[6,4]],h:[[16,-40],[-16,-46]]}]},
+ shadow_swing:{rk:1,m:'loop',d:.35,k:[{t:-6,a:[[14,4],[-18,4]],h:[[-26,26],[30,24]],eb:[-1,1]},{t:6,a:[[14,4],[-18,4]],h:[[14,54],[20,-20]],eb:[-1,1]},{t:14,hip:[2,86],a:[[14,4],[-18,4]],h:[[30,-38],[-10,-40]]}]},
+ sprint_short:{d:.3,k:[RDY,{hip:[30,70],t:35,a:[[60,10],[-6,4]],f:[10,30],h:[[-10,-40],[30,-20]]}]},
+ ham_slide:{d:1.2,k:[{hip:[0,38],t:122,a:[[-36,4],[-38,4]],kb:[-1,-1],f:[-60,-60],h:[[-44,-6],[-44,-6]]},{hip:[0,22],t:103,a:[[-82,4],[-82,4]],kb:[-1,-1],f:[-60,-60],h:[[-46,-6],[-46,-6]]}]}
+};
+
+// ---------- คำนวณ ----------
+function ik(A,B,l1,l2,s){
+  const dx=B[0]-A[0],dy=B[1]-A[1];let d=Math.hypot(dx,dy)||1e-6;const ux=dx/d,uy=dy/d;
+  d=Math.min(Math.max(d,Math.abs(l1-l2)+.01),l1+l2-.01);
+  const a=(l1*l1-l2*l2+d*d)/(2*d),h=Math.sqrt(Math.max(0,l1*l1-a*a));
+  return [[A[0]+a*ux+s*h*(-uy),A[1]+a*uy+s*h*ux],[A[0]+d*ux,A[1]+d*uy]];
+}
+const add=(p,q)=>[p[0]+q[0],p[1]+q[1]];
+function lerp(a,b,t){if(a==null)return b;if(b==null)return a;if(typeof a==='number')return a+(b-a)*t;return a.map((x,i)=>lerp(x,b[i],t))}
+const LK=['hip','t','tl','hd','a','h','f','e','he','k','ha','do','rod'];
+function full(ex,p){return Object.assign(base(ex.v),p)}
+function poseAt(ex,time){
+  const F=ex.k.map(p=>full(ex,p)),n=F.length,d=ex.d||.8,hold=ex.hold==null?.25:ex.hold;
+  const seq=ex.m==='loop'||n<2?F.map((_,i)=>i):[...F.map((_,i)=>i),...F.slice(1,-1).map((_,i)=>n-2-i)];
+  const seg=d+hold,tot=seg*seq.length;let u=((time%tot)+tot)%tot;const i=Math.floor(u/seg);u-=i*seg;
+  const A=F[seq[i]],B=F[seq[(i+1)%seq.length]];
+  let t=u<hold?0:(u-hold)/d;t=.5-.5*Math.cos(Math.PI*t);
+  const o={};LK.forEach(k=>o[k]=lerp(A[k],B[k],t));o.kb=(t<.5?A:B).kb;o.eb=(t<.5?A:B).eb;return o;
+}
+function solve(ex,p){
+  const fr=ex.v==='front',tr=p.t*R,hip=p.hip,S=add(hip,[L.T*p.tl*Math.sin(tr),L.T*p.tl*Math.cos(tr)]);
+  const px=[Math.cos(tr),-Math.sin(tr)];
+  const sh=fr?[add(S,[12*px[0],12*px[1]]),add(S,[-12*px[0],-12*px[1]])]:[S,S];
+  const hp=fr?[add(hip,[8*px[0],8*px[1]]),add(hip,[-8*px[0],-8*px[1]])]:[hip,hip];
+  const ha=(tr+p.hd*R),head=add(S,[(L.N+L.HR)*Math.sin(ha),(L.N+L.HR)*Math.cos(ha)]);
+  const legs=[0,1].map(i=>{let K,A;
+    if(p.k&&p.k[i]){K=add(hp[i],p.k[i]);A=p.a[i]}else{[K,A]=ik(hp[i],p.a[i],L.TH,L.SH,p.kb[i])}
+    const f=p.f[i]*R;let T,H;
+    if(fr){const s=i?-1:1;T=add(A,[s*7,-3]);H=add(A,[-s*1,-3])}else{T=add(A,[L.FT*Math.cos(f),-L.FT*Math.sin(f)]);H=add(A,[-3*Math.cos(f),3*Math.sin(f)])}
+    return {H:hp[i],K,A,T,Hl:H}});
+  const arms=[0,1].map(i=>{let E,W;
+    if(p.e&&p.e[i]){E=add(sh[i],p.e[i]);W=add(E,p.he[i])}
+    else{const tg=p.ha?p.ha:add(sh[i],p.h[i]);[E,W]=ik(sh[i],tg,L.UA,L.FA,p.eb[i])}
+    const D=p.do&&p.do[i]?add(W,p.do[i]):null,Rd=p.rod&&p.rod[i]?add(W,p.rod[i]):null;
+    return {S:sh[i],E,W,D,Rd}});
+  return {hip,S,head,legs,arms,fr,hp,sh};
+}
+
+// ---------- วาด ----------
+const f1=v=>Math.round(v*10)/10;
+const ln=(a,b,c,w)=>`<line x1="${f1(a[0])}" y1="${f1(-a[1])}" x2="${f1(b[0])}" y2="${f1(-b[1])}" stroke="${c}" stroke-width="${w}" stroke-linecap="round"/>`;
+const dot=(a,r,c,s)=>`<circle cx="${f1(a[0])}" cy="${f1(-a[1])}" r="${r}" fill="${c}"${s?` stroke="${s}" stroke-width="2"`:''}/>`;
+function dbAt(p,fr,horiz){if(fr||horiz){return ln([p[0]-11,p[1]],[p[0]+11,p[1]],C.db,4)+`<rect x="${f1(p[0]-15)}" y="${f1(-p[1]-6)}" width="6" height="12" rx="2" fill="${C.db}"/><rect x="${f1(p[0]+9)}" y="${f1(-p[1]-6)}" width="6" height="12" rx="2" fill="${C.db}"/>`}return dot(p,7.5,C.db,'#0e1411')}
+function prop(q){
+  if(q.c==='wall')return `<rect x="${q.x}" y="-230" width="8" height="230" fill="${C.pr}"/>`;
+  if(q.c==='step')return `<rect x="${q.x}" y="${-q.h}" width="${q.w}" height="${q.h}" rx="2" fill="${C.pr}"/>`;
+  if(q.c==='chair')return `<rect x="${q.x}" y="${-q.h}" width="${q.w}" height="6" rx="2" fill="${C.pr}"/><rect x="${q.x+2}" y="${-q.h}" width="4" height="${q.h}" fill="${C.pr}"/><rect x="${q.x+q.w-6}" y="${-q.h}" width="4" height="${q.h}" fill="${C.pr}"/>`;
+  return '';
+}
+function draw(ex,s){
+  let o='';const fr=s.fr;
+  const limbL=(g,c)=>ln(g.H,g.K,c,9)+ln(g.K,g.A,c,8)+ln(g.Hl,g.T,c,6);
+  const limbA=(g,c)=>ln(g.S,g.E,c,8)+ln(g.E,g.W,c,7)+(g.D?ln(g.W,g.D,c,5):'');
+  const nearC=C.near,farC=fr?C.near:C.far;
+  o+=limbL(s.legs[1],farC)+limbA(s.arms[1],farC);
+  if(fr){o+=ln(s.hp[0],s.hp[1],C.near,11)+ln(s.sh[0],s.sh[1],C.near,11)}
+  o+=ln(s.hip,s.S,C.near,fr?20:13);
+  o+=dot(s.head,L.HR,C.near);
+  o+=limbL(s.legs[0],nearC)+limbA(s.arms[0],nearC);
+  const db=ex.db,hands=s.arms.map(g=>g.D||g.W);
+  if(db==='b'){o+=dbAt(hands[1],fr)+dbAt(hands[0],fr)}
+  else if(db==='n')o+=dbAt(hands[0],fr);
+  else if(db==='f')o+=dbAt(hands[1],fr);
+  else if(db==='g')o+=dbAt(fr?[(hands[0][0]+hands[1][0])/2,(hands[0][1]+hands[1][1])/2]:hands[0],false);
+  s.arms.forEach(g=>{if(g.Rd)o+=ln(g.W,g.Rd,C.db,4)+dot(g.Rd,6,C.db)});
+  if(ex.rk){const g=s.arms[0],dx=g.W[0]-g.E[0],dy=g.W[1]-g.E[1],m=Math.hypot(dx,dy)||1,u=[dx/m,dy/m];
+    const e1=add(g.W,[u[0]*20,u[1]*20]),c=add(g.W,[u[0]*34,u[1]*34]),ang=Math.atan2(-u[1],u[0])/R;
+    o+=ln(g.W,e1,C.rk,3)+`<ellipse cx="${f1(c[0])}" cy="${f1(-c[1])}" rx="14" ry="9" transform="rotate(${f1(ang)} ${f1(c[0])} ${f1(-c[1])})" fill="none" stroke="${C.rk}" stroke-width="3"/>`}
+  return o;
+}
+function bounds(ex){
+  let x0=1e9,x1=-1e9,y1=0;const n=ex.k.length*(ex.m==='loop'?1:2)*((ex.d||.8)+(ex.hold==null?.25:ex.hold));
+  for(let i=0;i<=24;i++){const s=solve(ex,poseAt(ex,n*i/24));
+    const pts=[s.head,s.S,s.hip,...s.legs.flatMap(g=>[g.K,g.A,g.T]),...s.arms.flatMap(g=>[g.E,g.W,g.D,g.Rd].filter(Boolean))];
+    pts.forEach(p=>{x0=Math.min(x0,p[0]);x1=Math.max(x1,p[0]);y1=Math.max(y1,p[1])});
+    x0=Math.min(x0,s.head[0]-L.HR);x1=Math.max(x1,s.head[0]+L.HR);y1=Math.max(y1,s.head[1]+L.HR);
+    if(ex.rk){x0-=0;}
+  }
+  (ex.props||[]).forEach(q=>{x0=Math.min(x0,q.x);x1=Math.max(x1,q.x+(q.w||8))});
+  const pad=ex.rk?42:16;x0-=pad;x1+=pad;const top=y1+(ex.rk?40:14);
+  let w=x1-x0,h=top+12;if(w<h*1.25){const c=(x0+x1)/2;w=h*1.25;x0=c-w/2}else{h=w/1.25}
+  return {x:x0,y:-(h-12),w,h};
+}
+const cache={};
+function vb(id){const ex=P[id];if(!cache[id])cache[id]=bounds(ex);return cache[id]}
+function frame(id,time){
+  const ex=P[id];if(!ex)return '';const b=vb(id),s=solve(ex,poseAt(ex,time));
+  return `<line x1="${f1(b.x)}" y1="0" x2="${f1(b.x+b.w)}" y2="0" stroke="${C.gr}" stroke-width="2"/>`+
+    (ex.props||[]).map(prop).join('')+`<ellipse cx="${f1(s.hip[0])}" cy="2" rx="28" ry="3" fill="#000" opacity=".25"/>`+draw(ex,s);
+}
+function svg(id,time,cls){const b=vb(id);return `<svg class="${cls||''}" viewBox="${f1(b.x)} ${f1(b.y)} ${f1(b.w)} ${f1(b.h)}" xmlns="http://www.w3.org/2000/svg">${frame(id,time||0)}</svg>`}
+function play(el,id){
+  if(!P[id])return {stop(){}};const b=vb(id);let on=true,t0=null;
+  el.setAttribute('viewBox',`${f1(b.x)} ${f1(b.y)} ${f1(b.w)} ${f1(b.h)}`);
+  const loop=ts=>{if(!on)return;if(t0==null)t0=ts;el.innerHTML=frame(id,(ts-t0)/1000);requestAnimationFrame(loop)};
+  requestAnimationFrame(loop);return {stop(){on=false}};
+}
+function thumbT(id){const ex=P[id];if(!ex)return 0;const d=ex.d||.8,h=ex.hold==null?.25:ex.hold;return h+d+.01}
+return {P,svg,frame,play,has:id=>!!P[id],thumbT};
+})();
+if(typeof module!=='undefined')module.exports=FIG;
+
+</script>
+<script>
+/* คำอธิบายละเอียดของแต่ละท่า
+   m=กล้ามเนื้อ/ส่วนที่ได้ w=ช่วยแบดยังไง s=ขั้นตอน b=จังหวะ/การหายใจ x=ข้อผิดพลาดที่พบบ่อย e=แบบง่ายลง h=แบบยากขึ้น q=คำค้นวิดีโอ */
+var EXD={
+jacks:{m:'ทั้งตัว (วอร์มอัพ)',w:'เพิ่มอุณหภูมิกล้ามเนื้อและอัตราการเต้นหัวใจก่อนเริ่มฝึก',
+ s:['ยืนเท้าชิด แขนแนบลำตัว','กระโดดกางขาออกกว้างกว่าไหล่เล็กน้อย พร้อมเหวี่ยงแขนขึ้นเหนือศีรษะ','กระโดดกลับท่าเดิม ขาชิด แขนลง','ทำต่อเนื่องเป็นจังหวะ ลงพื้นเบาๆ ด้วยปลายเท้า'],
+ b:'หายใจสม่ำเสมอ เริ่มช้าแล้วเร็วขึ้น',x:['ลงส้นเท้าแรงๆ','เข่าล็อกตรงตอนลงพื้น'],e:'ก้าวเท้าออกข้างทีละข้างแทนการกระโดด',h:'ทำเร็วขึ้น หรือสลับกับ Seal Jacks',q:'jumping jacks proper form'},
+leg_swing:{m:'สะโพก หลังต้นขา ขาหนีบ',w:'เปิดช่วงสะโพกให้ก้าวยาวและลันจ์ได้ลึกโดยไม่ตึง',
+ s:['ยืนข้างผนังหรือเก้าอี้ มือหนึ่งจับไว้ทรงตัว','เหวี่ยงขาข้างนอกไปหน้า–หลังแบบผ่อนคลาย เข่าตึงเล็กน้อย','เริ่มจากวงเล็ก แล้วค่อยๆ เหวี่ยงสูงขึ้น','ครบจำนวนแล้วหันข้าง เหวี่ยงขาซ้าย–ขวาผ่านหน้าลำตัว'],
+ b:'หายใจตามปกติ ลำตัวตั้งตรง ไม่เอนตามขา',x:['เหวี่ยงแรงจนหลังแอ่น','ยืนเขย่งบนขาที่ยืน'],e:'เหวี่ยงวงเล็กลง',h:'เพิ่มจำนวนและความเร็วอย่างควบคุมได้',q:'leg swings warm up front back side'},
+arm_circle:{m:'ไหล่ สะบัก',w:'เตรียมข้อไหล่สำหรับการเหวี่ยงแร็กเก็ต ลดโอกาสไหล่เจ็บ',
+ s:['ยืนเท้ากว้างเท่าสะโพก แขนเหยียดข้างลำตัว','หมุนแขนเป็นวงกลมไปข้างหน้า เริ่มวงเล็ก','ค่อยๆ ขยายเป็นวงใหญ่จนสุดช่วงไหล่','ทำจำนวนเท่ากันโดยหมุนไปข้างหลัง'],
+ b:'หายใจสบายๆ',x:['ยักไหล่ขึ้นหู','หมุนเร็วจนกระชาก'],e:'หมุนทีละข้าง',h:'ถือขวดน้ำเบาๆ',q:'arm circles warm up'},
+wgs:{m:'สะโพก หลังต้นขา หน้าสะโพก กระดูกสันหลังช่วงอก',w:'ท่าวอร์มอัพยอดนิยมของโค้ช ช่วยท่าลันจ์รับลูกหน้าเน็ตและการบิดตัวตอนตบ',
+ s:['ยืนตรง ก้าวขาขวาไปข้างหน้ายาวๆ เป็นท่าลันจ์ เข่าหลังเหยียด','วางมือซ้ายลงพื้นด้านในเท้าขวา','ดันศอกขวาลงไปใกล้ข้อเท้าขวา ค้าง 2 วินาที','บิดลำตัวเปิดแขนขวาชี้ขึ้นฟ้า สายตามองตามมือ','กลับมายืน แล้วสลับข้าง'],
+ b:'หายใจออกตอนบิดตัวขึ้น',x:['เข่าหน้าเลยปลายเท้ามากหรือบิดเข้าใน','หลังงอ'],e:'วางเข่าหลังลงพื้น',h:'ค้างแต่ละตำแหน่งนานขึ้น',q:'worlds greatest stretch'},
+inchworm:{m:'หลังต้นขา ไหล่ แกนกลาง',w:'ยืดหลังขาและปลุกไหล่–แกนกลางพร้อมกัน',
+ s:['ยืนตรง ก้มตัวเอามือแตะพื้น (งอเข่าได้ถ้าตึง)','เดินมือออกไปข้างหน้าทีละนิดจนเป็นท่าวิดพื้น ลำตัวตรง','ค้างครู่หนึ่ง','เดินมือกลับมาหาเท้า แล้วยืนขึ้น'],
+ b:'หายใจออกตอนเดินมือออก',x:['สะโพกตกตอนอยู่ท่าวิดพื้น','เดินมือเร็วจนเสียการทรงตัว'],e:'งอเข่าได้มากขึ้น',h:'เพิ่มวิดพื้น 1 ครั้งตอนอยู่ด้านหน้า',q:'inchworm exercise'},
+goblet_squat:{m:'ต้นขาหน้า ก้น แกนกลาง',w:'เพิ่มแรงขาสำหรับการย่อรับลูก ออกตัว และกระโดด',
+ s:['ยืนเท้ากว้างกว่าไหล่เล็กน้อย ปลายเท้าแบะออก 10–30°','ถือดัมเบลแนวตั้งแนบหน้าอก มือประคองหัวดัมเบล ศอกชี้ลง','หายใจเข้า เกร็งท้อง ย่อลงเหมือนนั่งระหว่างส้นเท้า','ลงจนต้นขาขนานพื้นหรือต่ำกว่าเท่าที่หลังยังตรง','ดันพื้นด้วยฝ่าเท้าทั้งฝ่าเพื่อยืนขึ้น บีบก้นตอนบนสุด'],
+ b:'ลง 2–3 วินาที ขึ้น 1 วินาที · หายใจเข้าก่อนลง หายใจออกตอนผ่านจุดยากขาขึ้น',x:['เข่าหุบเข้าหากัน','ส้นเท้ายก','หลังงอหรือก้มหน้ามากเกินไป'],e:'นั่งลงบนเก้าอี้แล้วลุกขึ้น (Box squat)',h:'หยุดค้างล่างสุด 2 วินาที หรือลงช้า 4 วินาที',q:'goblet squat dumbbell form'},
+db_rdl:{m:'หลังต้นขา ก้น หลังล่าง',w:'สร้างแรงหลังขา (จุดอ่อนที่งานวิจัยพบบ่อยในนักแบด) ช่วยการเบรกและเปลี่ยนทิศ',
+ s:['ยืนเท้ากว้างเท่าสะโพก ถือดัมเบลสองมือด้านหน้าต้นขา','งอเข่าเล็กน้อยแล้วล็อกมุมเข่าไว้','ดันสะโพกไปด้านหลังเหมือนใช้ก้นปิดประตู ลำตัวเอนลงโดยหลังตรง','ให้ดัมเบลไล่ลงตามแนวขาจนรู้สึกตึงหลังต้นขา (ปกติราวกลางหน้าแข้ง)','บีบก้นดันสะโพกกลับมายืนตรง'],
+ b:'ลง 3 วินาที ขึ้น 1 วินาที',x:['หลังงอ','งอเข่ามากเกินจนกลายเป็นสควอท','ดัมเบลห่างจากขา'],e:'ใช้ดัมเบลเบาและลงแค่ระดับเข่า',h:'ทำขาเดียว (Single-leg RDL)',q:'dumbbell romanian deadlift form'},
+rev_lunge:{m:'ต้นขาหน้า ก้น การทรงตัว',w:'แรงขาทีละข้างเหมือนการลันจ์ในเกม และปลอดภัยต่อเข่ากว่าลันจ์ไปหน้า',
+ s:['ยืนตรง ถือดัมเบลสองข้างลำตัว','ก้าวขาหนึ่งถอยหลังยาวพอประมาณ','ย่อลงตรงๆ จนเข่าหลังเกือบแตะพื้น เข่าหน้าอยู่เหนือข้อเท้า','ดันส้นเท้าหน้ากลับมายืน','ทำครบจำนวนแล้วสลับข้าง หรือทำสลับซ้าย–ขวา'],
+ b:'ลง 2 วินาที ขึ้น 1 วินาที',x:['เข่าหน้าบิดเข้าใน','ลำตัวเอนไปหน้ามาก','ก้าวสั้นเกินไป'],e:'ไม่ถือดัมเบล และจับเก้าอี้ช่วยทรงตัว',h:'ถือดัมเบลหนักขึ้น หรือวางเท้าหน้าบนขั้นบันไดต่ำ',q:'dumbbell reverse lunge form'},
+lat_lunge:{m:'ต้นขาด้านใน ก้น ต้นขาหน้า',w:'จำลองการเคลื่อนที่ออกข้างไปรับลูก ช่วยกล้ามเนื้อขาหนีบที่มักบาดเจ็บ',
+ s:['ยืนเท้าชิด ถือดัมเบลแนบอก','ก้าวออกข้างกว้างประมาณ 2 ช่วงไหล่ ปลายเท้าชี้ไปหน้า','นั่งลงที่สะโพกข้างที่ก้าว ขาอีกข้างเหยียดตรง','เข่าชี้ตามปลายเท้า หลังตรง','ดันพื้นแรงๆ กลับมายืน แล้วสลับข้าง'],
+ b:'ลง 2 วินาที ดันกลับเร็ว',x:['เข่าเลยปลายเท้ามาก','ส้นเท้ายก','ลำตัวงอไปหน้า'],e:'ก้าวแคบลงและไม่ใช้น้ำหนัก',h:'ดันกลับแบบระเบิดแรงเหมือนออกตัวในคอร์ท',q:'dumbbell lateral lunge form'},
+bss:{m:'ต้นขาหน้า ก้น การทรงตัว',w:'หนึ่งในท่าขาเดียวที่ดีที่สุด ลดความไม่สมดุลซ้าย–ขวาที่พบบ่อยในนักแบด',
+ s:['ยืนหันหลังให้เก้าอี้ ห่างประมาณหนึ่งก้าวยาว','วางหลังเท้าข้างหลังบนเก้าอี้','ถือดัมเบลสองข้าง ลำตัวเอนหน้าเล็กน้อย','ย่อลงตรงๆ จนต้นขาหน้าเกือบขนานพื้น','ดันส้นเท้าหน้ากลับขึ้น ครบแล้วสลับข้าง'],
+ b:'ลง 3 วินาที ขึ้น 1 วินาที',x:['ยืนใกล้เก้าอี้เกินไป','เข่าหน้าบิดเข้าใน','กระแทกเข่าหลังลงพื้น'],e:'ไม่ใช้น้ำหนัก หรือใช้ Split squat ธรรมดา (เท้าหลังบนพื้น)',h:'ถือดัมเบลหนักขึ้นหรือหยุดค้างล่างสุด',q:'dumbbell bulgarian split squat form'},
+sl_rdl:{m:'หลังต้นขา ก้น ข้อเท้า การทรงตัว',w:'ทรงตัวขาเดียวพร้อมสร้างแรงหลังขา ช่วยลดข้อเท้าพลิกและขาหลังตึง',
+ s:['ยืนขาเดียว เข่างอนิดหน่อย ถือดัมเบลมือฝั่งตรงข้ามกับขาที่ยืน','พับสะโพก เอนลำตัวลงพร้อมยกขาหลังขึ้นเป็นเส้นตรงเดียวกับลำตัว','สะโพกขนานพื้น ไม่บิดเปิด','ลงจนรู้สึกตึงหลังต้นขา แล้วบีบก้นกลับขึ้น'],
+ b:'ช้าและนิ่ง ลง 3 วินาที',x:['สะโพกบิดเปิดออก','หลังงอ','รีบจนเสียหลัก'],e:'ให้ปลายเท้าหลังแตะพื้นเบาๆ ช่วยทรงตัว',h:'ใช้ดัมเบลหนักขึ้นหรือหลับตา (ระวัง)',q:'single leg romanian deadlift dumbbell'},
+calf:{m:'น่อง เอ็นร้อยหวาย',w:'แรงสปริงสำหรับกระโดดและออกตัว และป้องกันเอ็นร้อยหวายซึ่งเป็นจุดเจ็บสำคัญในแบด',
+ s:['ยืนขาเดียวบนขอบขั้นบันได ให้ส้นเท้าลอยพ้นขอบ','มือหนึ่งจับผนัง/ราวเพื่อทรงตัว อีกมือถือดัมเบลได้','ลดส้นเท้าลงต่ำกว่าขั้นช้าๆ จนน่องตึง','เขย่งขึ้นสูงสุด ค้าง 1 วินาที','ลงช้า 3 วินาที'],
+ b:'ขึ้น 1 · ค้าง 1 · ลง 3 วินาที (ช่วงลงช้าสำคัญที่สุดต่อเอ็น)',x:['เด้งขึ้นลงเร็ว','งอเข่าช่วย'],e:'ยืนสองขาบนพื้นราบ',h:'ถือดัมเบลหนักขึ้น',q:'single leg calf raise on step eccentric'},
+tib:{m:'กล้ามเนื้อหน้าแข้ง',w:'ช่วยเบรกและลงพื้นนุ่ม ลดอาการเจ็บหน้าแข้งและข้อเท้าพลิก',
+ s:['ยืนพิงผนัง เท้าห่างจากผนังประมาณ 1 ฟุต','ขาตรง ส้นเท้าติดพื้น','กระดกปลายเท้าขึ้นสูงสุด','ลดลงช้าๆ แต่ไม่ให้แตะพื้นเต็มที่ แล้วกระดกขึ้นใหม่'],
+ b:'ทำต่อเนื่องจนรู้สึกแสบหน้าแข้ง',x:['งอเข่า','ใช้แรงเหวี่ยง'],e:'ยืนใกล้ผนังมากขึ้น',h:'ยืนห่างผนังมากขึ้น หรือทำขาเดียว',q:'tibialis raise wall'},
+copen:{m:'ขาหนีบ (ต้นขาด้านใน) แกนกลางด้านข้าง',w:'ป้องกันขาหนีบเจ็บจากการก้าวกว้างและเปลี่ยนทิศ งานวิจัยกีฬาหลายประเภทใช้ท่านี้',
+ s:['นอนตะแคงข้าง ศอกล่างอยู่ใต้ไหล่','วางเข่าขาบนบนเก้าอี้ (แบบง่าย) ขาล่างอยู่ใต้เก้าอี้','ยกสะโพกขึ้นจนลำตัวเป็นเส้นตรง','ถ้าไหว ยกขาล่างขึ้นแตะใต้เก้าอี้','ค้างตามเวลา แล้วสลับข้าง'],
+ b:'หายใจปกติ ห้ามกลั้น',x:['สะโพกตก','ลำตัวเอนหน้า/หลัง'],e:'ค้างสั้นลง 10 วินาที',h:'วางข้อเท้าแทนเข่า (คานยาวขึ้น)',q:'copenhagen plank short lever'},
+floor_press:{m:'อก ไหล่หน้า หลังแขน',w:'แรงดันส่วนบนให้สมดุลกับแรงดึง ช่วยการตีแบบดันและการรับลูก',
+ s:['นอนหงายบนพื้น ชันเข่า เท้าวางราบ','ถือดัมเบลเหนืออก แขนเหยียด','ลดดัมเบลลงช้าๆ ศอกทำมุมราว 45° กับลำตัว','ให้ต้นแขนแตะพื้นเบาๆ หยุด 1 วินาที','ดันกลับขึ้นจนแขนเหยียด'],
+ b:'ลง 2–3 วินาที ดันขึ้นหายใจออก',x:['ศอกกางตั้งฉากกับลำตัว','กระแทกศอกลงพื้น'],e:'วิดพื้นบนเข่าแทน',h:'ทำทีละแขนเพื่อฝึกแกนกลาง',q:'dumbbell floor press form'},
+row:{m:'หลังกลาง สะบัก หลังไหล่ ไบเซ็ป',w:'แรงดึงช่วยรักษาสมดุลไหล่หน้า–หลัง ลดความเสี่ยงไหล่เจ็บจากการตบซ้ำๆ',
+ s:['มือและเข่าข้างหนึ่งยันเก้าอี้ หรือยืนแยกขาใช้มือยันเก้าอี้','หลังตรงขนานพื้นเกือบเต็มที่ แขนอีกข้างถือดัมเบลห้อยลง','ดึงดัมเบลเข้าหาสะโพก ศอกชิดลำตัว','บีบสะบักเข้าหากระดูกสันหลังตอนบนสุด','ลดลงช้าจนแขนเหยียด'],
+ b:'ดึงขึ้นหายใจออก ลง 2 วินาที',x:['บิดลำตัวเพื่อเหวี่ยงขึ้น','ยักไหล่ขึ้นหู','ดึงเข้าหาอกแทนสะโพก'],e:'ใช้น้ำหนักเบาลงและเน้นบีบสะบัก',h:'หยุดค้างบนสุด 2 วินาที',q:'one arm dumbbell row form'},
+ohp:{m:'ไหล่ หลังแขน แกนกลาง',w:'แรงไหล่สำหรับลูกเหนือศีรษะ ท่าคุกเข่าบังคับให้เกร็งท้อง ไม่แอ่นหลัง',
+ s:['คุกเข่าข้างหนึ่ง เข่าอีกข้างตั้งฉากด้านหน้า','ถือดัมเบลที่ระดับไหล่ข้างเดียวกับเข่าที่วางพื้น','เกร็งท้อง บีบก้นข้างที่คุกเข่า','ดันดัมเบลขึ้นเหนือศีรษะจนแขนเหยียด','ลดลงช้ากลับระดับไหล่'],
+ b:'ดันขึ้นหายใจออก ลง 2 วินาที',x:['แอ่นหลัง','ดันไปหน้ามากกว่าขึ้นตรง'],e:'ยืนดันสองแขนพร้อมกันด้วยน้ำหนักเบา',h:'ลงช้า 4 วินาที',q:'half kneeling single arm dumbbell press'},
+pullover:{m:'หลังกว้าง อก แกนกลาง',w:'เสริมการเหวี่ยงแขนจากด้านหลังศีรษะมาด้านหน้า คล้ายจังหวะตบ',
+ s:['นอนหงายบนพื้นหรือม้านั่ง ชันเข่า','จับดัมเบลหนึ่งลูกด้วยสองมือ แขนเหยียดเหนืออก','ศอกงอเล็กน้อย ลดดัมเบลไปเหนือศีรษะช้าๆ','ลงเท่าที่หลังล่างยังไม่แอ่น','ดึงกลับมาเหนืออก'],
+ b:'ลงหายใจเข้า ดึงขึ้นหายใจออก',x:['หลังแอ่นตอนแขนอยู่เหนือหัว','งอศอกมากจนเป็นท่าหลังแขน'],e:'ลดระยะเหวี่ยง',h:'ทำช้าลงและเพิ่มน้ำหนักเล็กน้อย',q:'dumbbell pullover floor'},
+rear_fly:{m:'หลังไหล่ สะบัก',w:'สร้างกล้ามเนื้อเบรกไหล่หลังการตบ ช่วยป้องกันไหล่เจ็บ',
+ s:['ยืนก้มตัวจากสะโพกให้ลำตัวเอนไปหน้าเกือบขนานพื้น เข่างอเล็กน้อย','ถือดัมเบลเบาห้อยใต้ไหล่ ศอกงอนิดหน่อย','กางแขนออกด้านข้างจนระดับไหล่','บีบสะบักค้าง 1 วินาที แล้วลดลงช้า'],
+ b:'ขึ้น 1 · ค้าง 1 · ลง 2 วินาที',x:['ใช้น้ำหนักมากจนเหวี่ยง','ยักไหล่'],e:'ทำทีละแขนโดยมืออีกข้างยันเก้าอี้',h:'ค้างบนสุด 3 วินาที',q:'dumbbell rear delt fly bent over'},
+push_press:{m:'ไหล่ ขา ทั้งตัว',w:'ฝึกถ่ายแรงจากขาขึ้นแขน หัวใจของการตบให้แรง',
+ s:['ยืนเท้ากว้างเท่าสะโพก ถือดัมเบลที่ระดับไหล่','ย่อเข่าเล็กน้อยอย่างรวดเร็ว (ไม่ใช่สควอท)','ดีดขาขึ้นแรงๆ แล้วใช้แรงส่งนั้นดันดัมเบลขึ้นเหนือศีรษะ','ล็อกแขนบนสุด แล้วลดลงช้ากลับไหล่'],
+ b:'ขึ้นเร็วแบบระเบิด ลงช้า',x:['ย่อลึกเกินไป','ดันด้วยแขนก่อนขาจะดีด'],e:'ใช้ดัมเบลเบามาก ฝึกจังหวะ',h:'ทำทีละแขน',q:'dumbbell push press form'},
+ext_rot:{m:'กล้ามเนื้อหมุนไหล่ออก (Rotator cuff)',w:'งานวิจัยในนักแบดพบว่าแรงหมุนไหล่ออกที่ดีสัมพันธ์กับไหล่ที่แข็งแรงกว่า ท่านี้จึงสำคัญมาก',
+ s:['นอนตะแคง วางผ้าขนหนูม้วนไว้ใต้ศอกข้างบน','ศอกแนบเอว งอ 90° ถือดัมเบลเบาวางพาดหน้าท้อง','หมุนแขนท่อนล่างขึ้นจนชี้เพดาน โดยศอกไม่ขยับออกจากเอว','ลดลงช้าๆ 3 วินาที'],
+ b:'ขึ้น 1 · ลง 3 วินาที · น้ำหนักเบามาก (1–3 กก.)',x:['ศอกยกออกจากลำตัว','บิดลำตัวช่วย','ใช้น้ำหนักหนักเกิน'],e:'ไม่ใช้น้ำหนัก',h:'ค้างบนสุด 3 วินาทีแล้วลงช้า 5 วินาที',q:'side lying external rotation dumbbell'},
+ytw:{m:'สะบัก หลังไหล่ หลังส่วนบน',w:'ทำให้สะบักมั่นคง ไหล่เคลื่อนไหวได้ถูกจังหวะตอนยกแขนตี',
+ s:['นอนคว่ำ หน้าผากวางบนผ้า แขนเหยียดเหนือศีรษะ','Y: ยกแขนเป็นตัว Y นิ้วโป้งชี้ขึ้น ค้าง 2 วินาที','T: กางแขนออกข้างเป็นตัว T ยกขึ้น ค้าง 2 วินาที','W: งอศอกดึงลงข้างลำตัวเป็นตัว W บีบสะบัก','3 ท่า = 1 รอบ'],
+ b:'ช้า ค้างทุกตำแหน่ง',x:['ยกคอหรือแอ่นหลัง','ยักไหล่'],e:'ทำบนเตียงหรือม้านั่งเอียง',h:'ถือดัมเบล 0.5–1 กก.',q:'prone Y T W exercise'},
+wrist_curl:{m:'ปลายแขน ข้อมือ',w:'ข้อมือแข็งแรงช่วยลูกสะบัดข้อมือและลดอาการข้อศอกอักเสบ (Tennis elbow)',
+ s:['นั่งเก้าอี้ วางปลายแขนบนต้นขา ให้ข้อมือยื่นพ้นเข่า','งอ: หงายมือถือดัมเบล งอข้อมือขึ้น–ลง','เหยียด: คว่ำมือ ยกหลังมือขึ้น–ลง','ทำอย่างละครึ่งของจำนวนครั้ง'],
+ b:'ลงช้า 3 วินาที',x:['ยกแขนท่อนล่างขึ้นจากต้นขา','ใช้น้ำหนักหนักเกิน'],e:'ใช้ขวดน้ำ',h:'ลงช้า 5 วินาที',q:'dumbbell wrist curl and extension'},
+prosup:{m:'กล้ามเนื้อหมุนปลายแขน',w:'การตีแบดใช้การหมุนปลายแขนมาก ท่านี้เพิ่มความแข็งแรงและป้องกันข้อศอก',
+ s:['นั่ง วางปลายแขนบนต้นขา','จับดัมเบลที่ปลายด้านเดียว ให้ดัมเบลตั้งชี้เพดาน','หมุนข้อมือช้าๆ ให้ดัมเบลเอียงลงไปทางนิ้วโป้ง','กลับมาตั้ง แล้วหมุนไปทางนิ้วก้อย','ควบคุมตลอด ไม่ให้ดัมเบลตกเอง'],
+ b:'ช้า 2–3 วินาทีต่อทิศ',x:['จับใกล้กลางดัมเบลจนไม่มีแรงต้าน','ปลายแขนยกขึ้น'],e:'จับใกล้ตรงกลางมากขึ้น',h:'จับปลายสุด หรือใช้ค้อน',q:'dumbbell pronation supination'},
+ankle_bal:{m:'ข้อเท้า การทรงตัว',w:'ลดความเสี่ยงข้อเท้าพลิก ซึ่งเป็นการบาดเจ็บเฉียบพลันที่พบบ่อยในแบด',
+ s:['ยืนขาเดียว เข่างอเล็กน้อย','ยกขาอีกข้างงอเข่าขึ้น','มองจุดหนึ่งข้างหน้า ทรงตัวให้นิ่ง','ถ้าง่ายแล้ว ให้หลับตา หรือยืนบนหมอน/ผ้าพับ'],
+ b:'หายใจปกติ',x:['ล็อกเข่าตึง','ยืนใกล้สิ่งของที่อาจล้มทับ'],e:'แตะนิ้วเท้าอีกข้างลงพื้นบางครั้ง',h:'หลับตา หรือยืนบนพื้นนุ่ม + ส่งของมือไปมา',q:'single leg balance exercise ankle'},
+deadbug:{m:'แกนกลางส่วนหน้า',w:'สร้างแกนกลางที่มั่นคงขณะแขนขาเคลื่อน ซึ่งเป็นสิ่งที่เกิดขึ้นตลอดในเกม',
+ s:['นอนหงาย ยกแขนชี้เพดาน ยกขาเข่างอ 90° (ท่าโต๊ะ)','กดหลังล่างให้แนบพื้นตลอด','ค่อยๆ เหยียดแขนข้างหนึ่งไปเหนือศีรษะพร้อมเหยียดขาฝั่งตรงข้ามลง','หยุดก่อนหลังล่างจะลอย แล้วกลับ','สลับข้าง'],
+ b:'หายใจออกยาวขณะเหยียด',x:['หลังล่างแอ่นลอยจากพื้น','ทำเร็ว'],e:'เหยียดเฉพาะขา',h:'ถือดัมเบลเบาที่มือ',q:'dead bug exercise form'},
+side_plank:{m:'แกนกลางด้านข้าง สะโพก',w:'เพิ่มความมั่นคงลำตัวตอนเอื้อมรับลูกข้างตัวและลงพื้นขาเดียว',
+ s:['นอนตะแคง ศอกล่างอยู่ใต้ไหล่','ขาเหยียดซ้อนกัน หรือวางเท้าหน้า–หลัง','ยกสะโพกขึ้นให้ศีรษะถึงเท้าเป็นเส้นตรง','ค้างตามเวลา แล้วสลับข้าง'],
+ b:'หายใจปกติ ห้ามกลั้น',x:['สะโพกตกหรือดันก้นไปหลัง','ไหล่ยักขึ้นหู'],e:'งอเข่า วางเข่าลงพื้น',h:'ยกขาบนขึ้น หรือหมุนลำตัว',q:'side plank proper form'},
+suitcase:{m:'แกนกลางด้านข้าง แรงบีบมือ',w:'ฝึกลำตัวไม่ให้เอียงเวลามีแรงดึงข้างเดียว คล้ายตอนเอื้อมตีข้างตัว',
+ s:['ถือดัมเบลหนักข้างเดียว แขนเหยียดข้างลำตัว','ยืนตรง ไหล่เสมอกัน ไม่เอียงตามน้ำหนัก','เดินช้าๆ ไปกลับตามเวลา','สลับมือ'],
+ b:'หายใจปกติ เกร็งท้องเบาๆ',x:['ลำตัวเอียง','เดินเร็วจนแกว่ง'],e:'ใช้น้ำหนักเบาลง',h:'ใช้ดัมเบลที่หนักที่สุด',q:'suitcase carry dumbbell'},
+woodchop:{m:'แกนกลาง (กล้ามเนื้อบิดลำตัว) ไหล่',w:'ฝึกส่งแรงจากสะโพกผ่านลำตัวไปแขน เหมือนจังหวะหมุนตัวตอนตบ',
+ s:['ยืนเท้ากว้าง จับดัมเบลสองมือที่ข้างเข่าฝั่งหนึ่ง ย่อตัวเล็กน้อย','หมุนสะโพกและลำตัว ยกดัมเบลทแยงขึ้นเหนือไหล่อีกฝั่ง','หมุนเท้าหลังตามลำตัว','ลดกลับทางเดิมอย่างควบคุม','ครบแล้วสลับฝั่ง'],
+ b:'ขึ้นเร็ว ลงช้า หายใจออกตอนยก',x:['บิดจากหลังล่างอย่างเดียว ไม่หมุนสะโพก','แขนงอมาก'],e:'ไม่ใช้น้ำหนัก',h:'เพิ่มความเร็วตอนขึ้นแบบระเบิดแรง',q:'dumbbell woodchop low to high'},
+pogo:{m:'น่อง ข้อเท้า เอ็นร้อยหวาย',w:'ฝึกสปริงข้อเท้าให้เด้งเร็ว ใช้ในสปลิตสเต็ปและการออกตัว',
+ s:['ยืนตรง เท้ากว้างเท่าสะโพก','กระโดดเบาๆ ด้วยข้อเท้าเป็นหลัก เข่างอน้อยมาก','ลงที่ปลายเท้าแล้วเด้งขึ้นทันที','ทำให้เร็วและนุ่มเหมือนลูกบอลเด้ง'],
+ b:'หายใจสม่ำเสมอ',x:['ลงส้นเท้า','งอเข่ามากจนกลายเป็นสควอทจัมพ์'],e:'กระโดดต่ำลงหรือทำเป็นเขย่งเร็ว',h:'กระโดดขาเดียว',q:'pogo hops plyometric'},
+skater:{m:'ก้น ต้นขา การทรงตัว',w:'ฝึกออกแรงด้านข้างและเบรกขาเดียว เหมือนการพุ่งไปรับลูกซ้าย–ขวา',
+ s:['ยืนขาขวา ย่อเล็กน้อย','กระโดดไปทางซ้ายลงขาซ้าย','ลงนุ่ม เข่าชี้ตามปลายเท้า ขาขวาไขว้หลัง ทรงตัว 1 วินาที','กระโดดกลับไปทางขวา'],
+ b:'ช่วงนิ่งสำคัญกว่าความไกล',x:['เข่าบิดเข้าใน','ลงแข็ง'],e:'ก้าวข้างแทนกระโดด',h:'กระโดดไกลขึ้นหรือไม่หยุดนิ่ง',q:'skater jumps exercise'},
+lat_bound:{m:'ก้น ต้นขา แรงระเบิดด้านข้าง',w:'แรงระเบิดด้านข้างสำหรับการพุ่งไปรับลูกไกล',
+ s:['ยืนขาเดียว ย่อเตรียม','ระเบิดแรงกระโดดไปด้านข้างให้ไกลที่สุด','ลงขาตรงข้ามและหยุดนิ่ง 2 วินาที','ทำอีกฝั่ง'],
+ b:'พักให้หายเหนื่อยก่อนครั้งถัดไป',x:['ลงไม่นิ่ง','เข่าบิด'],e:'ใช้ Skater jump ระยะสั้น',h:'กระโดดต่อเนื่องไม่หยุด',q:'lateral bound and stick'},
+split_jump:{m:'ต้นขา ก้น',w:'พลังขาในท่าลันจ์ คล้ายการพุ่งเข้าหน้าเน็ตแล้วดีดกลับ',
+ s:['เริ่มในท่าลันจ์ ขาหนึ่งหน้า ขาหนึ่งหลัง','กระโดดขึ้นตรงๆ แล้วสลับขากลางอากาศ','ลงนุ่มในท่าลันจ์ฝั่งตรงข้าม','กระโดดต่อเนื่อง'],
+ b:'คุณภาพก่อนความเร็ว',x:['เข่าหน้าบิด','ลงแข็งกระแทก'],e:'สลับขาแบบก้าวโดยไม่กระโดด',h:'กระโดดสูงขึ้น',q:'split squat jump form'},
+squat_jump:{m:'ต้นขา ก้น น่อง',w:'แรงกระโดดสำหรับจัมพ์สแมช',
+ s:['ยืนเท้ากว้างเท่าไหล่','ย่อลงครึ่งหนึ่งพร้อมเหวี่ยงแขนไปหลัง','ระเบิดแรงกระโดดสูงสุด แขนเหวี่ยงขึ้น','ลงนุ่มบนปลายเท้าแล้วย่อซับแรง','ยืนนิ่ง แล้วค่อยกระโดดครั้งต่อไป'],
+ b:'พักให้เต็มทุกครั้ง เน้นสูงสุดไม่ใช่จำนวน',x:['ลงเข่าบิดเข้าใน','ทำต่อเนื่องจนเหนื่อย'],e:'กระโดดต่ำลง',h:'ถือดัมเบลเบา',q:'squat jump landing technique'},
+push_up:{m:'อก ไหล่ หลังแขน แกนกลาง',w:'แรงดันส่วนบนแบบไม่ใช้อุปกรณ์',
+ s:['วางมือกว้างกว่าไหล่เล็กน้อย ลำตัวตรงจากศีรษะถึงส้นเท้า','ลดตัวลงจนอกใกล้พื้น ศอกทำมุม 45°','ดันกลับขึ้น'],
+ b:'ลง 2 วินาที ขึ้นหายใจออก',x:['สะโพกตก','ศอกกางมาก'],e:'วางเข่าลงพื้น',h:'ยกเท้าบนเก้าอี้',q:'push up proper form'},
+quick_feet:{m:'น่อง การประสานเท้า',w:'เพิ่มความถี่ของเท้าเพื่อปรับจังหวะก่อนตี',
+ s:['ยืนท่าเตรียมรับ เข่างอ ลำตัวต่ำเล็กน้อย','ซอยเท้าอยู่กับที่ให้ถี่ที่สุด','ยกเท้าต่ำ ลงที่ปลายเท้า','แขนอยู่ด้านหน้าเหมือนถือไม้'],
+ b:'หายใจเร็วเป็นจังหวะ',x:['ยกเท้าสูงเกิน','ลำตัวตั้งตรงเกินไป'],e:'ทำช้าลงเพื่อจังหวะ',h:'สลับกับพุ่งออกตัวเมื่อได้ยินสัญญาณ',q:'quick feet drill'},
+split_step:{m:'ขา ข้อเท้า การตอบสนอง',w:'สปลิตสเต็ปคือพื้นฐานที่ทำให้ออกตัวไปทุกทิศได้เร็ว',
+ s:['ยืนกลางคอร์ทท่าเตรียม','จังหวะที่คู่แข่งกำลังตี ให้กระโดดเบาๆ แยกเท้าออก','ลงพร้อมกันสองเท้าแล้วพุ่งไปทิศที่กำหนดทันที 1–2 ก้าว','กลับกลางคอร์ทแล้วทำซ้ำ (ใช้โหมดสุ่มมุมช่วยได้)'],
+ b:'ทุกครั้งที่ลงพื้นคือการออกตัว',x:['กระโดดสูงเกินไป','ลงเท้าแข็ง ไม่เด้ง'],e:'ทำช้าและพุ่งไปทิศเดิม',h:'ใช้สัญญาณสุ่ม',q:'badminton split step'},
+lat_shuffle:{m:'ก้น ต้นขาด้านนอก/ใน',w:'การเคลื่อนข้างแบบมั่นคงเพื่อรับลูกกลางคอร์ทและด้านข้าง',
+ s:['ย่อตัวต่ำ เท้ากว้างกว่าไหล่','สไลด์เท้านำออกข้าง แล้วเท้าตามชิดเข้ามา (ไม่ให้เท้าชนหรือไขว้กัน)','ลำตัวต่ำและนิ่ง ไม่กระดกขึ้นลง','ไป 3–4 ก้าวแล้วเปลี่ยนทิศ'],
+ b:'หายใจเป็นจังหวะ',x:['ยืนสูง','เท้าไขว้'],e:'ทำช้า',h:'เพิ่มระยะและความเร็ว',q:'lateral shuffle drill'},
+chasse:{m:'ขา ก้น น่อง',w:'ฟุตเวิร์คหลักสำหรับถอยไปท้ายคอร์ท ก่อนตบหรือเคลียร์',
+ s:['เริ่มกลางคอร์ท หันข้างตามมือที่ถือไม้','ก้าวเท้าหลังถอยไป แล้วเท้าหน้าตามไปชิด (ไม่ไขว้)','ทำ 2–3 ครั้งไปถึงท้ายคอร์ท','จบด้วยการกระโดดหรือตีลม แล้ววิ่งกลับกลาง'],
+ b:'กลับกลางให้เร็วกว่าตอนไป',x:['วิ่งถอยหลังแบบหันหน้าตรง','เท้าไขว้กัน'],e:'ทำช้าไม่กระโดด',h:'จบด้วยจัมพ์สแมช',q:'badminton chasse step footwork'},
+front_back:{m:'ขา ก้น ความอึด',w:'จำลองการวิ่งหน้า–หลังของเกมจริง',
+ s:['เริ่มกลางคอร์ท','พุ่งไปหน้าเน็ตด้วยท่าลันจ์ ขาที่ถือไม้นำ แขนเอื้อมเหมือนตีลูกหยอด','ดันกลับกลาง','ถอยแบบ chassé ไปท้ายคอร์ท ทำท่าตบหรือกระโดดตบ','กลับกลางแล้วทำซ้ำ'],
+ b:'ใช้แรงแค่พอ เน้นท่าที่ถูก',x:['ลันจ์แล้วเข่าบิด','ไม่กลับกลางคอร์ท'],e:'เดินแทนวิ่ง',h:'เพิ่มความเร็ว',q:'badminton front back footwork'},
+six_corner:{m:'ขา ความอึด การเปลี่ยนทิศ',w:'ฝึกเคลื่อนไปทุกมุมคอร์ทเหมือนเกมจริง',
+ s:['เริ่มกลางคอร์ทท่าเตรียม','ไปหน้าซ้าย → กลับกลาง → ไปหน้าขวา → กลับกลาง','ไปกลางซ้าย/ขวา (ก้าวข้าง) → กลับกลาง','ไปหลังซ้าย/ขวา (chassé) ทำท่าตี → กลับกลาง','ทำครบ 6 มุมแล้ววนซ้ำ หรือใช้โหมดสุ่มมุม'],
+ b:'กลับกลางทุกครั้ง',x:['ตัดมุม ไม่ไปถึงจริง','ลืมสปลิตสเต็ปที่กลางคอร์ท'],e:'ทำเฉพาะ 4 มุม',h:'ใช้โหมดสุ่มมุม',q:'badminton 6 corner shadow footwork'},
+shadow_int:{m:'ทั้งตัว ความอึดแบบหนัก',w:'สร้างความอึดเฉพาะแบด ให้เล่นเกมท้ายๆ ได้ดีเท่าเกมแรก',
+ s:['ทำฟุตเวิร์คเต็มคอร์ทให้เร็วที่สุดตามเวลา','พักตามที่กำหนด','รักษาท่าให้ถูกแม้เหนื่อย'],
+ b:'ช่วงทำงาน 80–90% ของแรงสูงสุด',x:['ท่าพังเมื่อเหนื่อย'],e:'ลดเวลาทำงาน',h:'เพิ่มรอบ',q:'badminton shadow footwork interval'},
+rand_corner:{m:'ขา การตอบสนอง',w:'แอปจะสุ่มบอกมุมคอร์ทเหมือนลูกที่มาแบบคาดเดาไม่ได้ ช่วยลดการเดาล่วงหน้าและฝึกออกตัวให้ไว',
+ s:['ยืนกลางพื้นที่ จินตนาการว่าเป็นคอร์ท','กด ▶ เริ่ม แอปจะแสดงมุมและส่งเสียง','สปลิตสเต็ป แล้วพุ่งไปมุมนั้น ทำท่าตี','กลับกลางทันที รอสัญญาณถัดไป'],
+ b:'ทำงานตามเวลา แล้วพัก',x:['ออกตัวก่อนสัญญาณ','ไม่กลับกลาง'],e:'ตั้งความเร็ว "ช้า"',h:'ตั้งความเร็ว "เร็ว"',q:'badminton random footwork reaction drill'},
+burpee:{m:'ทั้งตัว',w:'ความอึดและการลุก–ลงที่รวดเร็ว',
+ s:['ยืนตรง ย่อลงวางมือบนพื้น','กระโดดเท้าไปหลังเป็นท่าวิดพื้น','กระโดดเท้ากลับมาหามือ','กระโดดขึ้นพร้อมยกแขน'],
+ b:'หายใจเป็นจังหวะ',x:['สะโพกตกในท่าวิดพื้น','ลงแข็ง'],e:'ก้าวเท้าแทนกระโดด ไม่ต้องกระโดดตอนท้าย',h:'เพิ่มวิดพื้น 1 ครั้ง',q:'burpee proper form'},
+mtn_climb:{m:'แกนกลาง ไหล่ ขา',w:'ความอึดและแกนกลางที่มั่นคงขณะขาเคลื่อนเร็ว',
+ s:['ท่าวิดพื้น มืออยู่ใต้ไหล่','ดึงเข่าขวาเข้าหาอก แล้วสลับเข่าซ้าย','ทำเร็วต่อเนื่อง สะโพกนิ่ง'],
+ b:'หายใจเร็วเป็นจังหวะ',x:['ก้นโด่ง','ไหล่เลยมือไปหน้ามาก'],e:'ทำช้า หรือมือวางบนเก้าอี้',h:'ทำเร็วขึ้น',q:'mountain climber form'},
+rope:{m:'น่อง ความอึด',w:'สปริงข้อเท้าและจังหวะเท้า',
+ s:['กระโดดเบาๆ ด้วยปลายเท้า','ศอกแนบลำตัว หมุนข้อมือ (ถ้าไม่มีเชือกก็ทำท่าจำลอง)','ลงนุ่ม เข่างอเล็กน้อย'],
+ b:'หายใจสม่ำเสมอ',x:['กระโดดสูงเกิน','ลงส้นเท้า'],e:'ทำช้า',h:'สลับเท้าแบบวิ่งอยู่กับที่',q:'jump rope basics'},
+hip9090:{m:'สะโพก (หมุนเข้า–ออก)',w:'สะโพกที่หมุนได้ดีช่วยการบิดตัวตอนตีและลดภาระที่หลัง/เข่า',
+ s:['นั่งพื้น ชันเข่า เท้ากว้างกว่าไหล่ มือยันพื้นด้านหลัง','ล้มเข่าทั้งสองไปทางขวาจนชิดพื้น (จะได้ท่า 90/90)','ยกกลับ แล้วล้มไปทางซ้าย','เคลื่อนช้าๆ'],
+ b:'หายใจออกตอนเข่าลง',x:['ฝืนจนเจ็บ','หลังงอมาก'],e:'มือยันพื้นช่วยมากขึ้น',h:'ไม่ใช้มือยัน',q:'hip 90 90 windshield wipers mobility'},
+tspine:{m:'กระดูกสันหลังช่วงอก ไหล่',w:'หลังส่วนอกที่บิดได้ดีช่วยลดภาระที่ไหล่ตอนเหวี่ยงไม้',
+ s:['นอนตะแคง เข่างอ 90° แขนเหยียดไปข้างหน้าซ้อนกัน','ค่อยๆ ยกแขนบนข้ามลำตัวไปอีกฝั่ง เปิดอกเหมือนเปิดหนังสือ','สายตามองตามมือ เข่าติดกันไว้','ค้าง 2 วินาที แล้วกลับ'],
+ b:'หายใจออกตอนเปิดอก',x:['เข่าแยก','ฝืนจนเจ็บไหล่'],e:'ลดระยะ',h:'ค้างนานขึ้น',q:'open book thoracic rotation stretch'},
+ankle_df:{m:'ข้อเท้า น่อง',w:'ข้อเท้าที่งอได้มากช่วยลันจ์ลึกและลดภาระเข่า',
+ s:['คุกเข่าข้างหนึ่งหันหน้าเข้าผนัง เท้าหน้าห่างผนังประมาณ 1 ฝ่ามือ','ดันเข่าหน้าไปแตะผนัง โดยส้นเท้าไม่ยก','กลับแล้วทำซ้ำ','ถ้าแตะง่าย ขยับเท้าออกห่างอีก'],
+ b:'ช้าๆ ค้างปลายทาง 2 วินาที',x:['ส้นเท้ายก','เข่าบิดเข้าใน'],e:'ลดระยะห่างจากผนัง',h:'เพิ่มระยะห่าง',q:'knee to wall ankle mobility'},
+sleeper:{m:'ไหล่ด้านหลัง',w:'ช่วยให้ไหล่หมุนเข้าได้ดี (ปัญหาที่พบบ่อยในนักกีฬาเหวี่ยงแขน)',
+ s:['นอนตะแคงทับไหล่ข้างที่ถือไม้','ยกแขนล่างตั้งฉากลำตัว ศอกงอ 90° นิ้วชี้เพดาน','ใช้มืออีกข้างกดปลายแขนลงเข้าหาพื้นเบาๆ','ค้างตามเวลา'],
+ b:'หายใจช้าๆ ยืดแบบตึงพอดี ไม่เจ็บ',x:['กดแรงจนเจ็บ','ม้วนตัวไปหน้า'],e:'เอนตัวไปหลังเล็กน้อย',h:'ค้างนานขึ้น',q:'sleeper stretch shoulder'},
+calf_str:{m:'น่อง เอ็นร้อยหวาย',w:'คลายน่องหลังวิ่งและกระโดดมาก',
+ s:['ยืนหันหน้าเข้าผนัง มือยันผนัง','ขาหลังเหยียด ส้นเท้าติดพื้น','งอเข่าหน้าแล้วเอนตัวเข้าผนังจนตึงน่อง','ค้างตามเวลา แล้วงอเข่าหลังเล็กน้อยเพื่อยืดน่องส่วนล่าง'],
+ b:'หายใจช้า',x:['ส้นเท้ายก','ปลายเท้าบิดออก'],e:'ลดการเอน',h:'ยืดบนขอบขั้นบันได',q:'standing calf stretch wall'},
+hip_flex:{m:'หน้าสะโพก',w:'ลดอาการตึงหน้าสะโพกจากการนั่งทำงานนาน ช่วยให้ก้าวยาวขึ้น',
+ s:['คุกเข่าข้างหนึ่ง (รองเข่าด้วยผ้า)','เกร็งก้นข้างที่คุกเข่า','ดันสะโพกไปด้านหน้าเล็กน้อยจนตึงหน้าสะโพก','ยกแขนข้างเดียวกับเข่าที่คุกขึ้นเหนือศีรษะเพื่อเพิ่มการยืด'],
+ b:'ค้าง หายใจช้า',x:['แอ่นหลังแทนการดันสะโพก'],e:'ลดการดันสะโพก',h:'ยกเท้าหลังพาดโซฟา (Couch stretch)',q:'half kneeling hip flexor stretch'},
+ham_str:{m:'หลังต้นขา',w:'ลดความตึงหลังขาหลังเกม',
+ s:['นั่งเหยียดขาไปข้างหน้า','หลังตรง พับตัวจากสะโพกไปหาปลายเท้า','ไปจนรู้สึกตึง ไม่ต้องแตะเท้า','ค้างตามเวลา'],
+ b:'หายใจออกตอนพับ',x:['หลังงอแทนการพับสะโพก','เด้งตัว'],e:'งอเข่าเล็กน้อย',h:'ใช้ผ้าคล้องเท้า',q:'seated hamstring stretch'},
+wrist_str:{m:'ข้อมือ ปลายแขน',w:'คลายปลายแขนหลังจับไม้นาน',
+ s:['เหยียดแขนตรงไปข้างหน้า','คว่ำมือ ใช้มืออีกข้างดึงนิ้วลงเข้าหาตัว ค้าง','หงายมือ ดึงนิ้วลงเข้าหาตัว ค้าง','สลับข้าง'],
+ b:'ยืดเบาๆ',x:['ดึงแรงเกิน'],e:'งอศอกเล็กน้อย',h:'ค้างนานขึ้น',q:'wrist flexor extensor stretch'},
+walk:{m:'ทั้งตัว (ฟื้นฟู)',w:'ให้เลือดไหลเวียน ช่วยฟื้นตัวหลังเล่นหนัก',
+ s:['เดินหรือปั่นจักรยานเบาๆ','ความเหนื่อยระดับยังคุยได้สบาย'],b:'หายใจสบาย',x:['ทำหนักเกินไปในวันฟื้นฟู'],e:'เดินช้า',h:'เดินเร็วขึ้น',q:'active recovery walk'},
+jog_skip:{m:'ทั้งตัว',w:'เพิ่มอุณหภูมิร่างกายก่อนลงสนาม',
+ s:['จ็อกเบาๆ รอบสนามหรืออยู่กับที่','สลับ Skip ยกเข่าสูง','ค่อยๆ เร่งความเร็วขึ้น'],b:'เริ่มเบาแล้วเพิ่ม',x:['เริ่มเร็วเกิน'],e:'เดินเร็ว',h:'เพิ่มการวิ่งถอยหลังและวิ่งข้าง',q:'dynamic warm up skipping'},
+shadow_swing:{m:'ไหล่ แขน ลำตัว',w:'ปลุกจังหวะการตีทุกท่าก่อนลงเกม',
+ s:['ถือแร็กเก็ต ทำท่าเคลียร์ ดรอป ตบ ตีลม','เริ่มเบาๆ แล้วเพิ่มความเร็วจนใกล้จริง','ทำทั้งโฟร์แฮนด์และแบ็กแฮนด์'],b:'ผ่อนคลายไหล่',x:['ตีแรงเต็มที่ตั้งแต่แรก'],e:'เหวี่ยงช้า',h:'เพิ่มฟุตเวิร์คประกอบ',q:'badminton shadow swing warm up'},
+sprint_short:{m:'ขา การออกตัว',w:'ปลุกระบบประสาทให้พร้อมเร่งความเร็ว',
+ s:['ยืนท่าเตรียม','สปลิตสเต็ปแล้วพุ่ง 3–4 ก้าวเต็มแรง','เดินกลับ แล้วทำซ้ำในทิศต่างกัน'],b:'พักให้หายก่อนครั้งต่อไป',x:['ทำต่อเนื่องจนเหนื่อย'],e:'ลดความเร็ว',h:'ใช้สัญญาณสุ่ม',q:'acceleration sprint drill short'},
+ham_slide:{m:'หลังต้นขา ก้น',w:'เสริมแรงงอเข่า (หลังขา) ซึ่งงานวิจัยพบว่ามักอ่อนกว่าต้นขาหน้าในนักแบด ช่วยป้องกันหลังขาเจ็บและเข่า',
+ s:['นอนหงาย วางส้นเท้าบนผ้าขนหนูบนพื้นลื่น (กระเบื้อง/ไม้)','ยกสะโพกขึ้นเป็นท่าสะพาน','ค่อยๆ ไถส้นเท้าออกจนขาเกือบตรง โดยสะโพกยังลอย','ดึงส้นเท้ากลับเข้าหาก้น บีบก้นตลอด'],
+ b:'ไถออกช้า 3 วินาที ดึงกลับ 1 วินาที',x:['สะโพกตกลงพื้น','แอ่นหลังล่าง'],e:'ไถออกอย่างเดียว แล้ววางสะโพกลงก่อนดึงกลับ',h:'ทำขาเดียว',q:'towel hamstring curl slider'}
+};
+if(typeof module!=='undefined')module.exports=EXD;
+
+</script>
+<script>
+'use strict';
+/* ================= ค่าคงที่ ================= */
+const KEY='smashfit.v1';
+const GAME_DOW=5; // วันศุกร์ = ตีเกม (ล็อก)
+const DN=['อา','จ','อ','พ','พฤ','ศ','ส'];
+const DNF=['อาทิตย์','จันทร์','อังคาร','พุธ','พฤหัสบดี','ศุกร์','เสาร์'];
+const TM=['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
+const ORDER=[1,2,3,4,5,6,0];
+
+// load: 0 พัก, 1 เบา, 2 ปานกลาง, 3 หนัก | legs: ใช้ขาหนัก
+const TYPES={
+  game:{n:'ตีเกมแบด',ic:'🏸',load:3,legs:true},
+  lower:{n:'เวทขา–สะโพก',ic:'🦵',load:3,legs:true},
+  upper:{n:'เวทบน–ไหล่–แขน',ic:'💪',load:2,legs:false},
+  full:{n:'เวททั้งตัว',ic:'🏋️',load:3,legs:true},
+  power:{n:'พลังระเบิด + สปีด',ic:'⚡',load:3,legs:true},
+  footwork:{n:'ฟุตเวิร์ค',ic:'👟',load:2,legs:true},
+  cardio:{n:'คาร์ดิโอแบบแบด (HIIT)',ic:'🔥',load:3,legs:true},
+  prehab:{n:'ป้องกันบาดเจ็บ + แกนกลาง',ic:'🛡️',load:1,legs:false},
+  mobility:{n:'ยืดเหยียด / ฟื้นฟู',ic:'🧘',load:1,legs:false},
+  rest:{n:'พัก',ic:'😴',load:0,legs:false},
+  desk:{n:'ยืดระหว่างทำงาน 5 นาที',ic:'🪑',load:0,legs:false,extra:true}
+};
+
+// รอบ 4 สัปดาห์ (periodization)
+// lo–hi = ช่วงจำนวนครั้ง (Double progression) · rir = เหลือแรงอีกกี่ครั้งตอนจบเซ็ต
+const PH=[
+  {n:'ปรับพื้นฐาน',d:'เน้นท่าถูก 3 เซ็ต × 10–12 ครั้ง เหลือแรง ~3 ครั้ง',sets:3,lo:10,hi:12,rir:'3',rest:60,rounds:3,plus:0},
+  {n:'สร้างแรง',d:'3 เซ็ต × 8–10 ครั้ง เหลือแรง ~2 ครั้ง',sets:3,lo:8,hi:10,rir:'2',rest:75,rounds:4,plus:0},
+  {n:'หนัก + พลัง',d:'4 เซ็ต × 6–8 ครั้ง เหลือแรง 1–2 ครั้ง พลังระเบิดเพิ่ม 1 เซ็ต',sets:4,lo:6,hi:8,rir:'1–2',rest:90,rounds:4,plus:10},
+  {n:'Deload',d:'2 เซ็ต น้ำหนัก ~80% เหลือแรง ~4 ครั้ง ให้ร่างกายซ่อมแซม',sets:2,lo:8,hi:10,rir:'4',rest:60,rounds:2,plus:0}
+];
+
+// คลังท่า: [ชื่อ, วิธีทำ, flags]  t=จับเวลา(วินาที) u=ทีละข้าง db=เวทดัมเบลหลัก p=ท่ากระโดด
+const EX={
+  jacks:['Jumping Jacks','วอร์มให้ตัวอุ่น หายใจสม่ำเสมอ',{t:1}],
+  leg_swing:['เหวี่ยงขา หน้า–หลัง / ข้าง','จับผนัง เหวี่ยงขาผ่อนคลาย เพิ่มระยะทีละน้อย',{u:1}],
+  arm_circle:['หมุนแขน + หมุนไหล่','วงเล็กไปวงใหญ่ ทั้งไปหน้าและไปหลัง',{}],
+  wgs:["World's Greatest Stretch",'ก้าวยาว ศอกลงข้างเท้าหน้า แล้วบิดลำตัวเปิดแขนขึ้นฟ้า',{u:1}],
+  inchworm:['Inchworm','ก้มแตะพื้น เดินมือออกไปถึงท่าวิดพื้น แล้วเดินมือกลับ',{}],
+  goblet_squat:['Goblet Squat','ถือดัมเบลแนบอก ย่อจนต้นขาขนานพื้น เข่าชี้ตามปลายเท้า หลังตรง',{db:1}],
+  db_rdl:['Romanian Deadlift (ดัมเบล)','เข่างอนิดเดียว พับสะโพกไปด้านหลัง หลังตรง ดัมเบลไล่ลงตามแนวขาจนตึงหลังต้นขา',{db:1}],
+  rev_lunge:['Reverse Lunge','ก้าวถอยหลัง เข่าหลังเกือบแตะพื้น ดันส้นเท้าหน้ากลับที่เดิม',{db:1,u:1}],
+  lat_lunge:['Lateral Lunge','ก้าวออกข้างกว้าง นั่งลงที่สะโพกฝั่งที่ก้าว เหมือนรับลูกข้างคอร์ท แล้วดันกลับเร็ว',{db:1,u:1}],
+  bss:['Bulgarian Split Squat','เท้าหลังพาดเก้าอี้ ลงตรงๆ ลำตัวเอนหน้าเล็กน้อย คุมเข่าไม่ให้บิดเข้าใน',{db:1,u:1}],
+  sl_rdl:['Single-leg RDL','ยืนขาเดียว พับสะโพก ขาหลังยืดเป็นเส้นตรง ฝึกทรงตัวและหลังต้นขา',{db:1,u:1}],
+  calf:['Single-leg Calf Raise','ยืนขอบบันไดขาเดียว ขึ้นสุด ลงช้า 3 วินาที ช่วยเอ็นร้อยหวาย (ถือดัมเบลได้)',{u:1}],
+  tib:['Tibialis Raise','พิงกำแพง เท้าห่างออกมา ยกปลายเท้าขึ้น–ลง ช่วยหน้าแข้งและข้อเท้า',{}],
+  copen:['Copenhagen Plank (แบบง่าย)','นอนตะแคง เข่าบนพาดเก้าอี้ ยกสะโพกค้างไว้ ป้องกันขาหนีบ',{t:1,u:1}],
+  floor_press:['DB Floor Press','นอนหงายบนพื้น ศอกทำมุม ~45° กับลำตัว ดันขึ้นแล้วลงช้า',{db:1}],
+  row:['One-arm DB Row','มือหนึ่งยันเก้าอี้ ดึงดัมเบลเข้าหาสะโพก บีบสะบัก',{db:1,u:1}],
+  ohp:['Half-kneeling DB Press','คุกเข่าข้างเดียว เกร็งท้อง ดันดัมเบลขึ้นเหนือหัว ไม่แอ่นหลัง',{db:1,u:1}],
+  pullover:['DB Pullover','นอนหงาย ถือดัมเบลสองมือ เหยียดไปเหนือหัวแล้วดึงกลับ เสริมแรงตบ',{db:1}],
+  rear_fly:['Rear Delt Fly','ก้มตัว กางแขนออกข้าง บีบสะบัก ใช้น้ำหนักเบา',{}],
+  push_press:['DB Push Press','ย่อเล็กน้อยแล้วส่งแรงจากขาดันดัมเบลขึ้นเหนือหัวอย่างเร็ว',{db:1}],
+  ext_rot:['Side-lying External Rotation','นอนตะแคง ศอกแนบลำตัว งอ 90° หมุนแขนขึ้นช้าๆ ใช้น้ำหนักเบามาก (ป้องกันไหล่)',{u:1}],
+  ytw:['Prone Y-T-W','นอนคว่ำ ยกแขนเป็นตัว Y, T, W อย่างละครั้ง = 1 รอบ (มือเปล่าหรือดัมเบลเบามาก)',{}],
+  wrist_curl:['Wrist Curl + Extension','วางแขนบนเข่า งอและเหยียดข้อมืออย่างละครึ่ง ช่วยข้อมือ/ข้อศอก',{u:1}],
+  prosup:['Pronation / Supination','จับปลายดัมเบลด้านเดียว หมุนข้อมือคว่ำ–หงายช้าๆ (สำคัญกับการตีแบด)',{u:1}],
+  ankle_bal:['ยืนขาเดียว','ยืนขาเดียวบนพื้นนุ่ม ถ้าง่ายไปให้หลับตา ป้องกันข้อเท้าพลิก',{t:1,u:1}],
+  deadbug:['Dead Bug','นอนหงาย หลังล่างแนบพื้นตลอด เหยียดแขน–ขาฝั่งตรงข้ามสลับกัน',{u:1}],
+  side_plank:['Side Plank','ลำตัวตรงจากหัวถึงเท้า สะโพกไม่ตก',{t:1,u:1}],
+  suitcase:['Suitcase Carry','ถือดัมเบลข้างเดียว เดินตัวตรง ไม่เอียงตามน้ำหนัก',{t:1,u:1}],
+  woodchop:['DB Woodchop','หมุนลำตัวจากสะโพก สวิงดัมเบลทแยงขึ้น เลียนแบบการตบ',{u:1}],
+  pogo:['Pogo Hops','กระเด้งข้อเท้าเร็วๆ เข่างอน้อย ลงเบาที่ปลายเท้า',{t:1,p:1}],
+  skater:['Skater Jump','กระโดดไปด้านข้างลงขาเดียว ทรงตัวนิ่ง 1 วินาที',{u:1,p:1}],
+  lat_bound:['Lateral Bound + Stick','กระโดดข้างให้ไกลที่สุด ลงขาเดียวนิ่ง',{u:1,p:1}],
+  split_jump:['Split Squat Jump','กระโดดสลับขาหน้า–หลัง ลงนุ่ม คุมเข่า',{p:1}],
+  squat_jump:['Squat Jump','ย่อครึ่งเดียวแล้วกระโดดสุดแรง ลงนุ่ม พักให้เต็มทุกเซ็ต',{p:1}],
+  quick_feet:['Quick Feet','ซอยเท้าถี่ที่สุดอยู่กับที่ ลำตัวต่ำแบบท่าเตรียมรับ',{t:1}],
+  split_step:['Split-step + ออกตัว 4 ทิศ','สปลิตสเต็ปแล้วพุ่งออกทิศสุ่ม 1–2 ก้าว กลับกลางคอร์ท',{t:1}],
+  lat_shuffle:['Lateral Shuffle','สไลด์ข้างต่ำๆ เท้าไม่ไขว้กัน',{t:1}],
+  chasse:['Chassé ถอยหลัง','ถอยแบบสไลด์ข้างไปท้ายคอร์ท แล้วกลับกลาง',{t:1}],
+  front_back:['หน้าเน็ต ↔ ท้ายคอร์ท','ลันจ์รับหน้าเน็ต แล้วถอย chassé ไปกระโดดตบ',{t:1}],
+  six_corner:['Shadow 6 มุมคอร์ท','จำลองคอร์ท ไปแตะ 6 มุมพร้อมทำท่าตี กลับกลางทุกครั้ง',{t:1}],
+  shadow_int:['Shadow Interval (เร็วสุด)','ฟุตเวิร์คเต็มคอร์ทเร็วที่สุดในเวลาที่กำหนด',{t:1}],
+  burpee:['Burpee','ลงวิดพื้นแล้วกระโดดขึ้น ถ้าหนักไปให้ตัดการกระโดดออก',{t:1}],
+  mtn_climb:['Mountain Climber','ท่าวิดพื้น สลับดึงเข่าเข้าอกเร็วๆ',{t:1}],
+  rope:['กระโดดเชือก (หรือจำลอง)','กระโดดเบาๆ ด้วยข้อเท้า',{t:1}],
+  hip9090:['Hip 90/90','นั่งขาทั้งสองงอ 90° สลับหมุนเข่าซ้าย–ขวาช้าๆ',{t:1}],
+  tspine:['Open Book (หมุนอก)','นอนตะแคง เข่างอ เปิดแขนบนหมุนอกไปอีกฝั่ง',{u:1}],
+  ankle_df:['Ankle Mobility พิงกำแพง','ดันเข่าไปแตะกำแพง ส้นเท้าไม่ยก',{u:1}],
+  sleeper:['Sleeper Stretch (ไหล่)','นอนตะแคงทับไหล่ ใช้มืออีกข้างกดแขนลงเบาๆ',{t:1,u:1}],
+  calf_str:['ยืดน่อง','ดันกำแพง ขาหลังตรง ส้นเท้าติดพื้น',{t:1,u:1}],
+  hip_flex:['ยืดสะโพกหน้า','คุกเข่าข้างเดียว ดันสะโพกไปหน้า เกร็งก้น',{t:1,u:1}],
+  ham_str:['ยืดหลังต้นขา','นั่งเหยียดขา พับตัวจากสะโพก',{t:1}],
+  wrist_str:['ยืดข้อมือ / แขนท่อนล่าง','เหยียดแขน ดึงนิ้วลงและขึ้นเบาๆ',{t:1}],
+  walk:['เดิน / ปั่นจักรยานเบาๆ','ให้เลือดไหลเวียน ยังคุยได้สบาย',{t:1}],
+  jog_skip:['จ็อก / Skip เบาๆ','ให้ตัวอุ่นก่อนเริ่ม',{t:1}],
+  shadow_swing:['สวิงแร็กเก็ตเปล่า','ตีลมทุกท่า เริ่มเบาไปแรง',{t:1}],
+  sprint_short:['พุ่งสั้น 3–4 ก้าว','ปลุกความเร็วก่อนลงเกม',{}],
+  push_up:['Push-up','ลำตัวตรงเป็นแผ่นเดียว (ทำบนเข่าได้)',{}],
+  ham_slide:['Towel Hamstring Curl','นอนหงาย ส้นเท้าบนผ้า ยกสะโพก ไถออก–ดึงเข้า',{}],
+  rand_corner:['🎯 สุ่มมุมคอร์ท (ฝึกตอบสนอง)','แอปสุ่มบอกมุม ให้สปลิตสเต็ปแล้วพุ่งไป',{t:1}]
+};
+const CATS=[['วอร์มอัพ',['jacks','leg_swing','arm_circle','wgs','inchworm','jog_skip','shadow_swing','sprint_short']],['ขา–สะโพก',['goblet_squat','db_rdl','rev_lunge','lat_lunge','bss','sl_rdl','ham_slide','calf','tib','copen']],['บน–ไหล่–แขน',['floor_press','push_up','row','ohp','pullover','rear_fly','push_press']],['ป้องกันบาดเจ็บ',['ext_rot','ytw','wrist_curl','prosup','ankle_bal']],['แกนกลาง',['deadbug','side_plank','suitcase','woodchop']],['พลังระเบิด',['pogo','skater','lat_bound','split_jump','squat_jump']],['ฟุตเวิร์ค',['quick_feet','split_step','lat_shuffle','chasse','front_back','six_corner','rand_corner']],['คาร์ดิโอ',['shadow_int','burpee','mtn_climb','rope']],['ยืดเหยียด–ฟื้นฟู',['walk','hip9090','tspine','ankle_df','sleeper','calf_str','hip_flex','ham_str','wrist_str']]];
+
+const I=(id,sets,v,rest=30)=>({id,sets,v,rest});
+const WARM={t:'วอร์มอัพ',fixed:1,items:[I('jacks',1,60,0),I('leg_swing',1,10,0),I('arm_circle',1,15,0),I('wgs',1,5,0),I('inchworm',1,5,0)]};
+const COOL={t:'คูลดาวน์',fixed:1,items:[I('calf_str',1,30,0),I('hip_flex',1,30,0),I('sleeper',1,30,0)]};
+const GAME_WARM={t:'วอร์มอัพก่อนลงสนาม (~10 นาที)',fixed:1,items:[I('jog_skip',1,180,0),I('leg_swing',1,10,0),I('arm_circle',1,15,0),I('wgs',1,4,0),I('ext_rot',1,15,0),I('lat_shuffle',1,20,0),I('split_step',1,20,0),I('shadow_swing',1,60,0),I('sprint_short',1,4,0)]};
+const GAME_COOL={t:'คูลดาวน์หลังเกม',fixed:1,items:[I('walk',1,180,0),I('calf_str',1,45,0),I('hip_flex',1,45,0),I('ham_str',1,45,0),I('sleeper',1,45,0),I('wrist_str',1,30,0)]};
+
+function mk(ctx){
+  const lv=ctx.level;
+  const S=id=>{let s=ctx.P.sets; if(lv==='beg')s=Math.min(3,s); if(lv==='adv'&&ctx.ph!==3)s+=1; return {id,sets:s,v:ctx.P.lo,hi:ctx.P.hi,rir:ctx.P.rir,rest:ctx.P.rest,db:1}};
+  const P=(id,v)=>({id,sets:Math.max(2,3+(ctx.ph===2?1:0)-(ctx.ph===3?1:0)),v,rest:75});
+  const R=(id,sec,rest=40)=>({id,sets:ctx.P.rounds+(lv==='adv'?1:0),v:sec+ctx.P.plus,rest});
+  return {S,P,R};
+}
+const TPL={
+  lower:c=>{const {S}=mk(c);return [WARM,{t:'เวทหลัก',items:[S('goblet_squat'),S('db_rdl'),S('rev_lunge'),S('lat_lunge')]},{t:'เสริม / หลังขา–ข้อเท้า–ขาหนีบ',pr:2,items:[I('ham_slide',2,8,45),I('calf',3,15,45),I('tib',2,15,30),I('copen',2,20,30)]},COOL]},
+  upper:c=>{const {S}=mk(c);return [WARM,{t:'เวทหลัก',items:[S('floor_press'),S('row'),S('ohp'),S('pullover')]},{t:'ไหล่–ข้อมือ (แรงตบ + ป้องกัน)',pr:2,items:[I('rear_fly',3,15,45),I('ext_rot',2,15,30),I('wrist_curl',2,15,30),I('prosup',2,12,30)]},{t:'แกนกลาง',pr:2,items:[I('woodchop',3,10,45)]},COOL]},
+  full:c=>{const {S}=mk(c);return [WARM,{t:'เวทหลัก',items:[S('goblet_squat'),S('row'),S('sl_rdl'),S('ohp'),S('lat_lunge')]},{t:'แกนกลาง',pr:2,items:[I('suitcase',2,30,30),I('side_plank',2,30,20)]},COOL]},
+  power:c=>{const {S,P}=mk(c);return [WARM,{t:'พลังระเบิด (ทำตอนสด พักให้เต็ม)',items:[P('pogo',20),P('skater',5),P('lat_bound',4),P('split_jump',5),P('squat_jump',5)]},{t:'แรง',items:[S('bss'),S('push_press')]},{t:'แกนกลาง',pr:2,items:[I('woodchop',3,8,45)]},COOL]},
+  footwork:c=>{const {R}=mk(c);return [WARM,{t:'ฟุตเวิร์ค (เน้นคุณภาพ ไม่ใช่เหนื่อย)',items:[R('quick_feet',20),R('split_step',30),R('lat_shuffle',30),R('chasse',30),R('front_back',30),R('six_corner',40,60)]},{t:'🎯 ฝึกตอบสนอง (สุ่มมุม)',pr:2,items:[R('rand_corner',30,30)]},{t:'ข้อเท้า',pr:2,items:[I('ankle_bal',2,30,15),I('calf',2,15,30)]},COOL]},
+  cardio:c=>{const {R}=mk(c);return [WARM,{t:'วงจร HIIT',items:[R('shadow_int',30,30),R('burpee',30,30),R('mtn_climb',30,30),R('rope',60,60)]},COOL]},
+  prehab:()=>[{t:'ไหล่–ข้อมือ',items:[I('ext_rot',3,15,30),I('ytw',3,6,30),I('wrist_curl',2,15,30),I('prosup',2,12,30)]},{t:'ขา–ข้อเท้า',pr:2,items:[I('tib',2,20,30),I('ankle_bal',2,30,15),I('copen',2,20,30)]},{t:'แกนกลาง',pr:2,items:[I('deadbug',3,8,30),I('side_plank',2,30,20)]}],
+  mobility:()=>[{t:'ฟื้นฟู ~20 นาที',items:[I('walk',1,300,0),I('hip9090',2,60,0),I('tspine',2,8,0),I('ankle_df',2,10,0),I('hip_flex',1,45,0),I('ham_str',1,60,0),I('sleeper',1,45,0),I('calf_str',1,45,0),I('wrist_str',1,30,0)]}],
+  rest:()=>[],
+  desk:()=>[{t:'ยืดระหว่างวัน (ยืนข้างโต๊ะได้)',items:[I('arm_circle',1,15,0),I('wrist_str',1,30,0),I('leg_swing',1,10,0),I('calf_str',1,30,0),I('hip_flex',1,30,0)]}]
+};
+const PRESETS={
+  balanced:{n:'สมดุล (แนะนำ)',w:{1:'lower',2:'footwork',3:'upper',4:'mobility',6:'prehab',0:'rest'}},
+  perf:{n:'เน้นสมรรถนะ',w:{0:'power',1:'upper',2:'lower',3:'footwork',4:'mobility',6:'prehab'}},
+  busy:{n:'งานยุ่ง (2 วันเวท)',w:{1:'full',2:'rest',3:'upper',4:'rest',6:'mobility',0:'rest'}}
+};
+
+
+// ท่าทดแทน (ปุ่มเปลี่ยนท่า และใช้ตอนมีอาการเจ็บ)
+const ALT={goblet_squat:['rev_lunge','bss','sl_rdl','ham_slide'],db_rdl:['sl_rdl','ham_slide'],rev_lunge:['bss','goblet_squat','sl_rdl'],lat_lunge:['rev_lunge','copen','side_plank'],
+ bss:['rev_lunge','goblet_squat'],sl_rdl:['db_rdl','ham_slide'],ham_slide:['sl_rdl','db_rdl'],floor_press:['push_up','row'],push_up:['floor_press'],
+ row:['rear_fly','ytw'],ohp:['floor_press','rear_fly'],pullover:['row','rear_fly'],push_press:['ohp','goblet_squat'],rear_fly:['ytw','row'],
+ calf:['tib','ankle_bal'],tib:['calf'],copen:['side_plank','deadbug'],woodchop:['deadbug','suitcase'],deadbug:['woodchop'],
+ side_plank:['deadbug','suitcase'],suitcase:['side_plank','deadbug'],pogo:['quick_feet','rope'],skater:['lat_lunge','ankle_bal'],lat_bound:['skater','lat_lunge'],
+ split_jump:['rev_lunge'],squat_jump:['goblet_squat','push_press'],burpee:['mtn_climb','shadow_int'],mtn_climb:['deadbug','burpee'],
+ shadow_int:['six_corner','quick_feet'],six_corner:['front_back','lat_shuffle'],front_back:['six_corner','lat_shuffle'],chasse:['lat_shuffle'],
+ lat_shuffle:['quick_feet'],quick_feet:['split_step'],rope:['quick_feet'],ext_rot:['ytw','rear_fly'],ytw:['ext_rot','rear_fly'],
+ wrist_curl:['prosup','wrist_str'],prosup:['wrist_curl','wrist_str'],ankle_bal:['tib'],rand_corner:['six_corner']};
+
+// อาการเจ็บ → ท่าที่ลงน้ำหนักบริเวณนั้น
+const AREAS={shoulder:'ไหล่',elbow:'ข้อศอก/ข้อมือ',back:'หลังล่าง',hip:'สะโพก/ขาหนีบ',knee:'เข่า',ham:'หลังต้นขา',calf:'น่อง/เอ็นร้อยหวาย',ankle:'ข้อเท้า'};
+const JUMPY=['pogo','skater','lat_bound','split_jump','squat_jump','burpee','rope','jacks','quick_feet','split_step','sprint_short','jog_skip','front_back','six_corner','shadow_int','rand_corner','chasse'];
+const RISK={
+ shoulder:['ohp','push_press','pullover','floor_press','push_up','burpee','mtn_climb','woodchop','side_plank','copen','inchworm','shadow_swing'],
+ elbow:['wrist_curl','prosup','push_up','floor_press','row','suitcase','pullover','shadow_swing','burpee','mtn_climb','side_plank'],
+ back:['db_rdl','sl_rdl','row','push_press','burpee','woodchop','squat_jump','goblet_squat','suitcase'],
+ hip:['lat_lunge','copen','bss','skater','lat_bound','split_jump','wgs','lat_shuffle','six_corner','front_back','shadow_int','rand_corner','hip9090'],
+ knee:['goblet_squat','bss','rev_lunge','lat_lunge','ankle_df',...JUMPY,'mtn_climb'],
+ ham:['db_rdl','sl_rdl','ham_slide','leg_swing','inchworm','sprint_short','split_jump','squat_jump','front_back','shadow_int'],
+ calf:['calf',...JUMPY],
+ ankle:['calf','lat_lunge','lat_shuffle','ankle_bal','skater',...JUMPY]
+};
+
+// ทดสอบสมรรถภาพทุก 4 สัปดาห์
+const TESTS=[
+ {id:'hop',n:'กระโดดไกลขาเดียว',u:'ซม.',lr:1,hi:1,how:'ยืนขาเดียวหลังเส้น กระโดดไปข้างหน้าให้ไกลที่สุดแล้วลงขาเดิมนิ่ง 2 วินาที วัดจากเส้นถึงส้นเท้า ทำข้างละ 2 ครั้งเอาค่าดีที่สุด'},
+ {id:'six',n:'Shadow 6 มุม 12 จุด',u:'วินาที',hi:0,how:'เริ่มกลางพื้นที่ ไปแตะ หน้าซ้าย→หน้าขวา→กลางซ้าย→กลางขวา→หลังซ้าย→หลังขวา กลับกลางทุกครั้ง ทำ 2 รอบ (12 จุด) จับเวลา'},
+ {id:'gob',n:'Goblet squat จำนวนครั้งสูงสุด',u:'ครั้ง',hi:1,w:1,how:'ใช้ดัมเบลน้ำหนักเดิมทุกครั้ง ทำจนท่าเริ่มเสีย (ไม่ใช่จนหมดแรง) บันทึกน้ำหนักด้วย'},
+ {id:'sp',n:'Side plank ค้างนานสุด',u:'วินาที',lr:1,hi:1,how:'ค้างจนสะโพกเริ่มตก ทำทั้งสองข้าง'},
+ {id:'push',n:'วิดพื้นจำนวนครั้งสูงสุด',u:'ครั้ง',hi:1,how:'ท่าเดียวกันทุกครั้ง (เต็มตัวหรือบนเข่า) ทำจนท่าเริ่มเสีย'}
+];
+const MISTAKES=['เสิร์ฟเสีย','ตีติดเน็ต','ตีออก','ฟุตเวิร์คช้า','เหนื่อยท้ายเกม','รับตบไม่ได้','ตัดสินใจผิด','สื่อสารคู่ไม่ดี'];
+
+</script>
+<script>
+'use strict';
+/* ================= วันที่ ================= */
+const p2=n=>String(n).padStart(2,'0');
+const ds=d=>`${d.getFullYear()}-${p2(d.getMonth()+1)}-${p2(d.getDate())}`;
+const pd=s=>{const [y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d)};
+const addD=(s,n)=>{const d=pd(s);d.setDate(d.getDate()+n);return ds(d)};
+const mon=s=>{const d=pd(s);d.setDate(d.getDate()-((d.getDay()+6)%7));return ds(d)};
+const today=()=>ds(new Date());
+const dayDiff=(a,b)=>Math.round((pd(b)-pd(a))/864e5);
+const thd=s=>{const d=pd(s);return `${DNF[d.getDay()]} ${d.getDate()} ${TM[d.getMonth()]}`};
+const sdd=s=>{const d=pd(s);return `${d.getDate()}/${d.getMonth()+1}`};
+
+/* ================= State ================= */
+function defState(){return {settings:{level:'inter',goal:'power',start:mon(today()),dumbbells:'2, 4, 6, 8, 10, 12',rtSpd:'mid',voice:true,tourn:'',lastBackup:''},week:{...PRESETS.balanced.w,5:'game'},overrides:{},checkins:{},logs:[],lastW:{},drafts:{},pain:{},tests:[],swaps:{},health:{},budget:{}}}
+function normalize(s){
+  const d=defState();s.settings=Object.assign(d.settings,s.settings||{});
+  if(s.settings.rtVoice===false&&s.voice==null)s.settings.voice=false;
+  ['overrides','checkins','lastW','drafts','pain','swaps','health','budget'].forEach(k=>s[k]=s[k]||{});
+  s.logs=s.logs||[];s.tests=s.tests||[];s.week=s.week||d.week;return s;
+}
+let state;
+try{state=JSON.parse(localStorage.getItem(KEY))}catch(e){state=null}
+state=state&&state.week?normalize(state):defState();
+function save(){try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}}
+(function(){const lim=addD(today(),-14);for(const k in state.drafts){if(k.split('|')[0]<lim)delete state.drafts[k]}
+  ['overrides','swaps','budget'].forEach(o=>{for(const k in state[o]){if(k<lim)delete state[o][k]}})})();
+
+const FRAMED=(()=>{try{return window.top!==window.self}catch(e){return true}})();
+let view='today',sel=today(),cur=null,rpeSel=0,gRpe=0,deskMode=false,gMist=new Set(),libCat='',anim=null;
+
+/* ================= ตัวช่วยคำนวณ ================= */
+const typeOf=date=>{const dow=pd(date).getDay();if(dow===GAME_DOW)return 'game';return state.overrides[date]||state.week[dow]||'rest'};
+function phaseIdx(date){const w=Math.floor(dayDiff(mon(state.settings.start),mon(date))/7);return ((w%4)+4)%4}
+const weekLoad=wk=>state.logs.filter(l=>mon(l.date)===wk).reduce((a,l)=>a+(l.load||0),0);
+function acwr(date){const wk=mon(date),c=weekLoad(wk);const prev=[1,2,3].map(i=>weekLoad(addD(wk,-7*i))).filter(x=>x>0);if(prev.length<2)return null;const avg=prev.reduce((a,b)=>a+b,0)/prev.length;return {ratio:c/avg,cur:c,avg}}
+const sleepScore=h=>h>=8?5:h>=7?4:h>=6?3:h>=5?2:1;
+function readiness(date){const c=state.checkins[date];if(!c||!c.sleep||!c.energy||!c.sore)return null;return {score:c.sleep+c.energy+(6-c.sore)}}
+function rhrBase(date){const v=[];for(let i=1;i<=14;i++){const h=state.health[addD(date,-i)];if(h&&h.rhr)v.push(h.rhr)}return v.length>=3?v.reduce((a,b)=>a+b,0)/v.length:null}
+function tournDays(date){const t=state.settings.tourn;if(!t)return null;const d=dayDiff(date,t);return d>=0?d:null}
+function activePain(date){
+  const out={};
+  for(const a in AREAS){for(let i=0;i<=10;i++){const p=state.pain[addD(date,-i)];if(p&&p[a]!=null){if(p[a]>0)out[a]=p[a];break}}}
+  return out;
+}
+const riskAreas=(id,pain,min=3)=>Object.keys(pain).filter(a=>pain[a]>=min&&RISK[a].includes(id));
+function ctxAdjust(date,type){
+  const T=TYPES[type],dow=pd(date).getDay(),o={mult:1,noPlyo:false,notes:[]};
+  if(!T||!T.legs||T.load<2||type==='game')return o;
+  const to=(GAME_DOW-dow+7)%7,af=(dow-GAME_DOW+7)%7;
+  if(to===1){o.mult*=.5;o.noPlyo=true;o.notes.push('พรุ่งนี้ตีเกม 🏸 ลดปริมาณครึ่งหนึ่ง ตัดท่ากระโดด ใช้น้ำหนักเบา ให้ขาสดในวันศุกร์')}
+  else if(to===2&&T.load>=3){o.mult*=.8;o.notes.push('อีก 2 วันตีเกม — ลดปริมาณงานขา 20%')}
+  if(af===1){o.mult*=.7;o.notes.push('เมื่อวานตีเกม ขายังล้า — ลด 30% (ถ้าปวดมากเปลี่ยนเป็นยืดเหยียด)')}
+  else{const pt=typeOf(addD(date,-1));if(pt!=='game'&&TYPES[pt]&&TYPES[pt].legs&&TYPES[pt].load>=3&&T.load>=3){o.mult*=.85;o.notes.push(`เมื่อวานเล่นขาหนัก (${TYPES[pt].n}) — ลด 15%`)}}
+  return o;
+}
+function subst(it,alt,ctx){
+  const n={...it,id:alt,orig:it.orig||it.id},fo=EX[it.id][2],fn=EX[alt][2];
+  if(!!fo.t!==!!fn.t){n.v=fn.t?30:10;delete n.hi;delete n.rir}
+  if(fn.db&&!it.db)Object.assign(n,{db:1,v:ctx.P.lo,hi:ctx.P.hi,rir:ctx.P.rir,rest:ctx.P.rest});
+  if(!fn.db&&it.db){delete n.db;delete n.hi;delete n.rir;n.v=fn.t?30:12}
+  return n;
+}
+function estSec(it){const f=EX[it.id][2],reps=it.hi?(it.v+it.hi)/2:it.v;let w=f.t?it.v:reps*(it.db?4:3);if(f.u)w*=2;return it.sets*(w+(it.rest||0))+15}
+const estMin=blocks=>Math.round(blocks.reduce((a,b)=>a+b.items.reduce((x,it)=>x+estSec(it),0),0)/60);
+function trimTo(blocks,B){
+  const est=()=>estMin(blocks);let guard=200;
+  const items=pr=>blocks.flatMap(b=>(b.pr||(b.fixed?0:1))===pr?b.items.map(it=>({b,it})):[]);
+  while(est()>B&&guard--){
+    const p3=items(3);if(p3.length){const x=p3[p3.length-1];x.b.items.pop();continue}
+    const fx=blocks.find(b=>b.fixed&&b.items.length>(b===blocks[0]?3:1));if(fx){fx.items.pop();continue}
+    const r2=items(2).filter(x=>x.it.sets>1).sort((a,b)=>b.it.sets-a.it.sets)[0];if(r2){r2.it.sets--;continue}
+    const d2=items(2);if(d2.length){const x=d2[d2.length-1];x.b.items.splice(x.b.items.indexOf(x.it),1);continue}
+    const r1=items(1).filter(x=>x.it.sets>2).sort((a,b)=>b.it.sets-a.it.sets)[0];if(r1){r1.it.sets--;continue}
+    const r0=items(1).filter(x=>x.it.sets>1).sort((a,b)=>b.it.sets-a.it.sets)[0];if(r0){r0.it.sets--;continue}
+    break;
+  }
+  return blocks.filter(b=>b.items.length);
+}
+function buildSession(date,forced){
+  const type=forced||typeOf(date),ph=phaseIdx(date),P=PH[ph];
+  const s={date,type,ph,notes:[],blocks:[],swap:false,est:0};
+  const pain=activePain(date),painA=Object.keys(pain),td=tournDays(date);
+  const ctx={ph,P,level:state.settings.level};
+  if(painA.length){const hi=painA.filter(a=>pain[a]>=6);
+    if(hi.length)s.notes.push({t:`⚠️ ปวด${hi.map(a=>AREAS[a]).join(', ')} ระดับสูง — พักส่วนนี้ ถ้าไม่ดีขึ้นใน 1–2 สัปดาห์ หรือบวม/ชา ควรพบแพทย์หรือนักกายภาพ`,bad:1});}
+  if(td!=null&&td<=10){
+    if(td===0)s.notes.push({t:'🏆 วันแข่งรายการ! ทำแค่วอร์มอัพเบาๆ เก็บแรงไว้แข่ง',bad:1});
+    else s.notes.push({t:`🏆 อีก ${td} วันแข่ง — ช่วงลดปริมาณ (Taper) คงความหนักแต่ลดจำนวนเซ็ต`});
+  }
+  let blocks;
+  if(type==='game'){blocks=[GAME_WARM,GAME_COOL].map(b=>({...b,items:b.items.map(i=>({...i}))}));
+    if(painA.length&&!painA.some(a=>pain[a]>=6))s.notes.push({t:`มีอาการเจ็บ${painA.map(a=>AREAS[a]).join(', ')} — เล่นได้แต่ฟังร่างกาย ลดเกมถ้าเจ็บเพิ่ม`});}
+  else if(type==='rest')return s;
+  else{
+    const c=ctxAdjust(date,type);let mult=c.mult,noP=c.noPlyo;c.notes.forEach(t=>s.notes.push({t}));
+    if(td!=null&&td<=10&&type!=='desk'){
+      if(td<=2){mult*=.4;noP=true;s.swap=true}else if(TYPES[type].load>=2)mult*=.6;
+      if(type==='cardio'&&td<=5)mult*=.5;
+    }
+    const r=readiness(date),hh=state.health[date]||{},base=rhrBase(date);
+    if(type!=='mobility'&&type!=='desk'){
+      if(r){
+        if(r.score>=12)s.notes.push({t:`ความพร้อม ${r.score}/15 ดีมาก — ทำเต็มโปรแกรมได้`,good:1});
+        else if(r.score>=9){mult*=.85;s.notes.push({t:`ความพร้อม ${r.score}/15 ปานกลาง — ลดเซ็ต 15%`})}
+        else if(r.score>=6){mult*=.7;noP=true;s.notes.push({t:`ความพร้อม ${r.score}/15 ต่ำ — ลดเซ็ต 30% และตัดท่ากระโดด`})}
+        else{mult*=.6;noP=true;s.swap=true;s.notes.push({t:`ความพร้อม ${r.score}/15 ต่ำมาก — แนะนำเปลี่ยนเป็นวันยืดเหยียด`})}
+      }
+      if(hh.rhr&&base&&hh.rhr>=base+5){mult*=.9;s.notes.push({t:`ชีพจรตอนตื่น ${hh.rhr} สูงกว่าปกติ (~${Math.round(base)}) — ร่างกายอาจยังไม่ฟื้น ลด 10%`})}
+      const a=acwr(date);
+      if(a&&a.ratio>1.3&&TYPES[type].load>=2){mult*=.85;s.notes.push({t:`ภาระสัปดาห์นี้สูงกว่าค่าเฉลี่ย ${Math.round((a.ratio-1)*100)}% — ลด 15% เพื่อเลี่ยงบาดเจ็บ`})}
+    }
+    blocks=TPL[type](ctx).map(b=>({...b,items:b.items.map(i=>({...i}))}));
+    const g=state.settings.goal,{P:Pl,R}=mk(ctx);
+    if(g==='power'&&(type==='lower'||type==='full'))blocks.splice(1,0,{t:'⚡ พลังระเบิด (ตามเป้าหมาย)',pr:3,items:[Pl('pogo',20),Pl('skater',4)]});
+    if(g==='endurance'&&['lower','upper','full','footwork'].includes(type))blocks.splice(blocks.length-1,0,{t:'🔥 Finisher ความอึด (ตามเป้าหมาย)',pr:3,items:[R('shadow_int',30,30)]});
+    if(g==='prevention'&&!['prehab','mobility','desk'].includes(type))blocks.splice(blocks.length-1,0,{t:'🛡️ ป้องกันบาดเจ็บ (ตามเป้าหมาย)',pr:3,items:[I('ext_rot',2,15,30),I('prosup',2,12,30),I('tib',2,15,30)]});
+    s._mult=mult;s._noP=noP;
+  }
+  // ระบุตำแหน่งท่าแบบคงที่ (ใช้เก็บข้อมูลที่บันทึก)
+  blocks.forEach((b,bi)=>b.items.forEach((it,ii)=>it.slot=`${bi}-${ii}`));
+  // ท่าที่ผู้ใช้เปลี่ยนเอง
+  const sw=state.swaps[date]||{};
+  blocks=blocks.map(b=>({...b,items:b.items.map(it=>sw[it.slot]&&EX[sw[it.slot]]?subst(it,sw[it.slot],ctx):it)}));
+  // อาการเจ็บ → เปลี่ยน/ตัดท่า
+  if(painA.length){let subN=[],rem=[];const used=new Set(blocks.flatMap(b=>b.items.map(i=>i.id)));
+    blocks=blocks.map(b=>({...b,items:b.items.flatMap(it=>{
+      const ra=riskAreas(it.id,pain);if(!ra.length)return [it];
+      const alt=(ALT[it.orig||it.id]||[]).find(x=>!riskAreas(x,pain).length&&x!==it.id&&!used.has(x));
+      if(alt&&!ra.some(a=>pain[a]>=6)){used.add(alt);const n=subst(it,alt,ctx);n.painSub=ra.map(a=>AREAS[a]).join(', ');subN.push(EX[it.id][0]);return [n]}
+      rem.push(EX[it.id][0]);return [];
+    })})).filter(b=>b.items.length);
+    if(subN.length||rem.length)s.notes.push({t:`🩹 ปรับตามอาการเจ็บ${painA.map(a=>`${AREAS[a]} ${pain[a]}/10`).join(', ')}: ${subN.length?`เปลี่ยนท่า ${subN.length} ท่า`:''}${subN.length&&rem.length?' · ':''}${rem.length?`ตัดออก ${rem.length} ท่า`:''}`});
+  }
+  if(s._mult!=null){let removed=0;const mult=s._mult;
+    blocks=blocks.map(b=>{if(b.fixed)return b;let items=b.items.filter(i=>{if(s._noP&&EX[i.id][2].p){removed++;return false}return true});items=items.map(i=>({...i,sets:Math.max(1,Math.round(i.sets*mult))}));return {...b,items}}).filter(b=>b.items.length);
+    if(removed)s.notes.push({t:`ตัดท่ากระโดดออก ${removed} ท่า`});
+    if(mult<.999)s.notes.push({t:`ปริมาณรวมวันนี้ ≈ ${Math.round(mult*100)}% ของปกติ`});
+  }
+  // จำกัดเวลา
+  const B=state.budget[date];
+  if(B&&type!=='game'){const before=estMin(blocks);if(before>B){blocks=trimTo(blocks,B);s.notes.push({t:`⏱ ปรับให้พอดี ${B} นาที (จาก ~${before} นาที) — เก็บท่าหลักไว้ ตัดท่าเสริมก่อน`})}}
+  s.blocks=blocks;s.est=estMin(blocks);
+  return s;
+}
+
+/* ================= น้ำหนักดัมเบล (Double progression) ================= */
+const dbList=()=>String(state.settings.dumbbells||'').split(/[\s,]+/).map(Number).filter(x=>x>0).sort((a,b)=>a-b);
+const upW=w=>{const n=dbList().find(x=>x>w);return n??w};
+const downW=x=>{const l=dbList();let r=l[0]||x;for(const v of l)if(v<=x)r=v;return r};
+function suggestW(id,ph,it){
+  const lw=state.lastW[id];if(!lw||!lw.w)return null;
+  const lo=it?it.v:8,hi=it&&it.hi?it.hi:lo;
+  let w=lw.w,why=`ใช้น้ำหนักเดิม พยายามเพิ่มทีละ 1 ครั้งจนทำได้ ${hi} ครั้งทุกเซ็ต`;
+  if(lw.ok){const n=upW(w);if(n>w){w=n;why=`ครั้งก่อนทำถึงเพดานครบทุกเซ็ต → เพิ่มน้ำหนัก แล้วเริ่มที่ ${lo} ครั้ง`}else why='ถึงดัมเบลหนักสุดแล้ว → ลงช้า 4 วินาที หรือทำเพิ่ม 1 เซ็ต'}
+  if(ph===3){w=downW(w*.8);why='สัปดาห์ Deload → เบาลง ~80% ให้ร่างกายฟื้น'}
+  return {w,why};
+}
+
+/* ================= Render ================= */
+const $=s=>document.querySelector(s);
+const fmtSec=s=>s>=60?(s%60?`${Math.floor(s/60)}:${p2(s%60)} นาที`:`${s/60} นาที`):`${s} วิ`;
+const fmtClock=s=>`${Math.floor(s/60)}:${p2(s%60)}`;
+const getDraft=(date,type)=>{const k=date+'|'+type;return state.drafts[k]||(state.drafts[k]={start:null,data:{}})};
+const isLogged=(date,type)=>state.logs.some(l=>l.date===date&&l.type===type);
+const thumb=id=>(window.FIG&&FIG.has(id))?FIG.svg(id,FIG.thumbT(id)):'';
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+const noteH=n=>`<div class="note ${n.good?'good':''}${n.bad?' bad':''}">${n.t}</div>`;
+
+function render(){
+  document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.nav===view));
+  $('#app').innerHTML=({today:vToday,plan:vPlan,lib:vLib,hist:vHist,set:vSet})[view]();
+  if(view==='today')updProg();
+}
+function header(sub){return `<div class="top"><div class="brand">Smash<b>Fit</b> 🏸</div><div class="mu">${sub||''}</div></div>`}
+
+function testDue(){const t=state.tests[state.tests.length-1];return !t||dayDiff(t.date,today())>=28}
+
+function vToday(){
+  const td=today(),m=mon(td);
+  const chips=[0,1,2,3,4,5,6].map(i=>{const d=addD(m,i),t=typeOf(d);return `<button class="chip ${d===sel?'on':''} ${d===td?'td':''}" data-act="sel" data-d="${d}">${DN[pd(d).getDay()]}<span class="ic">${TYPES[t].ic}</span>${pd(d).getDate()}</button>`}).join('');
+  const s=buildSession(sel,deskMode?'desk':null);cur=s;
+  const P=PH[s.ph],T=TYPES[s.type],dow=pd(sel).getDay();
+  let h=header(`รอบสัปดาห์ ${s.ph+1}/4 · ${P.n}`)+`<div class="chips">${chips}</div>`;
+  h+=`<div class="card"><div class="mu">${thd(sel)}${sel===td?' · วันนี้':''}</div><h1>${T.ic} ${T.n}</h1>`;
+  if(deskMode)h+=`<button class="btn sec sm" data-act="desk">← กลับเซสชันหลักของวัน</button>`;
+  else if(dow===GAME_DOW)h+=`<div class="mu">วันศุกร์ล็อกเป็นวันตีเกมเสมอ</div>`;
+  else h+=`<div class="lbl">เปลี่ยนเซสชันเฉพาะวันนี้</div><select data-ch="swapday">${Object.keys(TYPES).filter(k=>k!=='game'&&!TYPES[k].extra).map(k=>`<option value="${k}" ${k===s.type?'selected':''}>${TYPES[k].ic} ${TYPES[k].n}${k===state.week[dow]?' (ตามตาราง)':''}</option>`).join('')}</select>`;
+  if(s.type!=='game'&&s.type!=='rest'&&!deskMode){const B=state.budget[sel]||0;
+    h+=`<div class="lbl">วันนี้มีเวลาเท่าไร</div><div class="scale">${[[0,'เต็ม'],[45,'45 นาที'],[30,'30 นาที'],[20,'20 นาที']].map(([v,l])=>`<button class="${B===v?'on':''}" data-act="budget" data-v="${v}">${l}</button>`).join('')}</div>`;}
+  if(s.est)h+=`<div class="mu sm">⏱ ใช้เวลาประมาณ ${s.est} นาที</div>`;
+  h+=`</div>`;
+  if(!deskMode&&sel===td&&testDue()&&state.logs.length>=3)h+=`<div class="note good">📏 ถึงรอบทดสอบสมรรถภาพแล้ว (ทุก 4 สัปดาห์) <button class="btn sm" style="margin-left:6px" data-act="testopen">ทดสอบ</button></div>`;
+  h+=vPain();
+  if(s.type==='game')return h+vGame(s);
+  if(!['rest','mobility','desk'].includes(s.type))h+=vReady();
+  s.notes.forEach(n=>h+=noteH(n));
+  if(s.swap)h+=`<button class="btn sec" data-act="tomob">เปลี่ยนวันนี้เป็นยืดเหยียด / ฟื้นฟู</button>`;
+  if(s.type==='rest')return h+`<div class="card"><h2>วันพัก 😴</h2><div class="mu">การพักคือส่วนหนึ่งของการฝึก — นอน 7–8 ชม. ดื่มน้ำให้พอ เดินเบาๆ ได้</div><div style="height:10px"></div><button class="btn sec" data-act="tomob">อยากขยับ: เปลี่ยนเป็นยืดเหยียด 20 นาที</button></div>${deskBtn()}`;
+  if(isLogged(sel,s.type))h+=`<div class="note good">✓ บันทึกเซสชันนี้แล้ว</div>`;
+  h+=`<div class="card"><div class="mu" id="pgt">ความคืบหน้า</div><div class="prog"><i id="pg"></i></div><div class="mu sm" style="margin-top:6px">แตะรูปหรือชื่อท่าเพื่อดูวิธีทำ · ✓ แล้วจับเวลาพักให้อัตโนมัติ · 🔄 เปลี่ยนท่าได้</div></div>`;
+  h+=renderBlocks(s);
+  h+=`<button class="btn" data-act="finish">จบเซสชัน & บันทึก</button>`;
+  if(!deskMode)h+=deskBtn();
+  return h;
+}
+const deskBtn=()=>`<div style="height:10px"></div><button class="btn sec" data-act="desk">🪑 ยืดระหว่างทำงาน 5 นาที</button>`;
+function vPain(){
+  const p=activePain(sel),a=Object.keys(p);
+  return `<div class="card"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><div><h2 style="margin:0">อาการเจ็บ</h2><div class="mu sm">${a.length?a.map(k=>`${AREAS[k]} <b style="color:${p[k]>=6?'var(--bad)':'var(--warn)'}">${p[k]}/10</b>`).join(' · '):'ไม่มีอาการเจ็บ ✓'}</div></div><button class="btn sec sm" data-act="painopen">${a.length?'อัปเดต':'บันทึก'}</button></div></div>`;
+}
+function painSheet(){
+  const p=activePain(sel);
+  sheet(`<div class="shh"><h2 style="margin:0">เจ็บตรงไหน ระดับเท่าไร</h2><button class="x" data-act="fcancel">เสร็จ ✓</button></div>
+  <div class="mu sm" style="margin:6px 0">0 = ไม่เจ็บ · 3–5 = เจ็บแต่ขยับได้ (แอปจะเปลี่ยนท่าที่เสี่ยง) · 6+ = เจ็บมาก (แอปจะตัดท่าที่ใช้ส่วนนั้นและแนะนำพัก) · กด 0 เมื่อหายแล้ว</div>
+  ${Object.entries(AREAS).map(([k,n])=>`<div class="lbl">${n}</div><div class="scale">${[0,2,4,6,8,10].map(v=>`<button class="${(p[k]||0)===v?'on':''}" data-act="painset" data-a="${k}" data-v="${v}">${v}</button>`).join('')}</div>`).join('')}
+  <div class="mu sm" style="margin-top:8px">แอปไม่ใช่การวินิจฉัยทางการแพทย์ ถ้าบวม ชา ปวดตอนกลางคืน หรือไม่ดีขึ้น ควรพบแพทย์</div>`);
+}
+function vReady(){
+  const c=state.checkins[sel]||{},r=readiness(sel),hh=state.health[sel]||{},base=rhrBase(sel);
+  const sc=(f,lo,hi)=>`<div class="mu sm">${lo} → ${hi}</div><div class="scale">${[1,2,3,4,5].map(v=>`<button class="${c[f]===v?'on':''}" data-act="ci" data-f="${f}" data-v="${v}">${v}</button>`).join('')}</div>`;
+  return `<div class="card"><h2>เช็กความพร้อมก่อนฝึก ${r?`<span class="badge">${r.score}/15</span>`:''}</h2>
+  <div class="grid2"><div><div class="lbl">นอนกี่ชั่วโมง</div><input type="number" inputmode="decimal" step="0.5" data-ch="sleepH" value="${hh.sleep??''}" placeholder="เช่น 7"></div><div><div class="lbl">ชีพจรตอนตื่น</div><input type="number" inputmode="numeric" data-ch="rhr" value="${hh.rhr??''}" placeholder="${base?'ปกติ ~'+Math.round(base):'ไม่บังคับ'}"></div></div>
+  <div class="lbl">คุณภาพการนอน</div>${sc('sleep','1 แย่มาก','5 ดีมาก')}
+  <div class="lbl">พลังงานตอนนี้</div>${sc('energy','1 หมดแรง','5 เต็มที่')}
+  <div class="lbl">ความล้า / ปวดกล้ามเนื้อ</div>${sc('sore','1 ไม่ปวด','5 ปวดมาก')}
+  <div class="mu sm">โปรแกรมด้านล่างปรับตามคะแนนทันที · ตั้งคำสั่งลัดให้ดึงข้อมูลจากแอป Health อัตโนมัติได้ (ดูในตั้งค่า)</div></div>`;
+}
+function renderBlocks(s,only){
+  const dr=getDraft(s.date,s.type);
+  return (only||s.blocks).map(b=>`<div class="card"><h2>${b.t}</h2>${b.items.map(it=>renderItem(it,dr,s.ph,s.date)).join('')}</div>`).join('');
+}
+function renderItem(it,dr,ph,date){
+  const k=it.slot,ex=EX[it.id],f=ex[2],d=dr.data[k]||[],per=f.u?' /ข้าง':'';
+  const rx=f.t?`${it.sets} × ${fmtSec(it.v)}${per}`:it.hi?`${it.sets} × ${it.v}–${it.hi} ครั้ง${per} · เหลือแรง ~${it.rir}`:`${it.sets} × ${it.v} ครั้ง${per}`;
+  let sug='';const sw=it.db?suggestW(it.id,ph,it):null;
+  if(it.db)sug=sw?`<div class="sug">แนะนำ ${sw.w} กก.${per?'/มือ':''} · ${sw.why}</div>`:`<div class="sug">ครั้งแรก: เลือกน้ำหนักที่ทำได้ ${it.v} ครั้งแล้วยังเหลือแรงอีก ~${it.rir||2} ครั้ง</div>`;
+  const tag=it.painSub?`<div class="sug" style="color:var(--warn)">🩹 แทน ${EX[it.orig][0]} (เจ็บ${it.painSub})</div>`:it.orig&&it.orig!==it.id?`<div class="mu sm">🔄 แทน ${EX[it.orig][0]}</div>`:'';
+  const canSwap=!!ALT[it.orig||it.id];
+  const rph=it.hi?`${it.v}–${it.hi}`:`${it.v}`;
+  let rows='';
+  if(it.id==='rand_corner'){
+    rows=`<button class="btn sec" data-act="rcstart">🎯 เริ่มสุ่มมุม ${it.sets} รอบ × ${fmtSec(it.v)}</button><div style="display:flex;gap:6px;margin-top:6px">${Array.from({length:it.sets},(_,i)=>`<button class="ck ${(d[i]||{}).done?'on':''}" style="flex:1" data-act="ck" data-i="${i}">${i+1}</button>`).join('')}</div>`;
+  }else for(let i=0;i<it.sets;i++){
+    const x=d[i]||{},ck=`<button class="ck ${x.done?'on':''}" data-act="ck" data-i="${i}">✓</button>`;
+    if(f.t)rows+=`<div class="set t"><span>${i+1}</span><button class="play" data-act="play" data-i="${i}">▶ เริ่ม ${fmtSec(it.v)}</button>${ck}</div>`;
+    else if(it.db)rows+=`<div class="set"><span>${i+1}</span><input data-in="w" data-i="${i}" inputmode="decimal" placeholder="${sw?sw.w:'กก.'} กก." value="${x.w??''}"><input data-in="r" data-i="${i}" inputmode="numeric" placeholder="${rph} ครั้ง" value="${x.r??''}">${ck}</div>`;
+    else rows+=`<div class="set t"><span>${i+1}</span><input data-in="r" data-i="${i}" inputmode="numeric" placeholder="${rph} ครั้ง" value="${x.r??''}">${ck}</div>`;
+  }
+  return `<div class="ex" data-k="${k}"><div class="exrow"><div class="thumb" data-act="exinfo" data-id="${it.id}">${thumb(it.id)}</div><div style="flex:1;min-width:0"><div class="exn" data-act="exinfo" data-id="${it.id}">${ex[0]} <span class="i">วิธีทำ ›</span></div><div class="rx">${rx}${it.rest?` · พัก ${it.rest} วิ`:''}</div>${tag}${sug}</div>${canSwap?`<button class="x" data-act="swap" title="เปลี่ยนท่า">🔄</button>`:''}</div><div class="sets">${rows}</div></div>`;
+}
+const itemByKey=k=>{for(const b of cur.blocks)for(const it of b.items)if(it.slot===k)return it;return null};
+function updProg(){
+  if(!cur||!$('#pg'))return;const dr=getDraft(cur.date,cur.type);let tot=0,dn=0;
+  cur.blocks.forEach(b=>b.items.forEach(it=>{tot+=it.sets;const d=dr.data[it.slot]||[];for(let i=0;i<it.sets;i++)if(d[i]&&d[i].done)dn++}));
+  $('#pg').style.width=(tot?dn/tot*100:0)+'%';$('#pgt').textContent=`ความคืบหน้า ${dn}/${tot} เซ็ต`;
+}
+function exSheet(id){
+  const ex=EX[id],D=(window.EXD||{})[id];if(!ex)return;
+  const L=a=>(a||[]).map(t=>`<li>${t}</li>`).join('');
+  let h=`<div class="shh"><div><h2 style="margin:0">${ex[0]}</h2>${D?`<div class="mu sm">${D.m}</div>`:''}</div><button class="x" data-act="fcancel">ปิด ✕</button></div>`;
+  h+=FIG.has(id)?`<svg class="anim" id="anim"></svg>`:'';
+  if(D){
+    h+=`<div class="note good">🏸 ${D.w}</div><h3>วิธีทำทีละขั้น</h3><ol>${L(D.s)}</ol>
+    <h3>จังหวะ / การหายใจ</h3><p>${D.b}</p><h3>ข้อผิดพลาดที่พบบ่อย</h3><ul>${L(D.x)}</ul>
+    <div class="grid2" style="margin-top:12px"><div class="mini"><b>⬇ แบบง่ายลง</b>${D.e}</div><div class="mini"><b>⬆ แบบยากขึ้น</b>${D.h}</div></div>`;
+    if(ex[2].u)h+=`<div class="note">ท่าข้างเดียว: เริ่มข้างที่อ่อนกว่า (มักเป็นข้างที่ไม่ได้ถือไม้) และทำจำนวนเท่ากันทั้งสองข้าง ช่วยลดความไม่สมดุลซ้าย–ขวา</div>`;
+    const ra=Object.keys(RISK).filter(a=>RISK[a].includes(id));
+    if(ra.length)h+=`<div class="mu sm" style="margin-top:8px">ระวังถ้าเจ็บ: ${ra.map(a=>AREAS[a]).join(', ')}${ALT[id]?` · ท่าทดแทน: ${ALT[id].map(x=>EX[x][0]).join(', ')}`:''}</div>`;
+    h+=`<a class="btn sec" href="https://www.youtube.com/results?search_query=${encodeURIComponent(D.q)}" target="_blank" rel="noopener">▶ ดูวิดีโอสาธิตจริงบน YouTube</a>`;
+  }else h+=`<p class="mu">${ex[1]}</p>`;
+  if(id==='rand_corner')h+=`<div style="height:8px"></div>${rtCfg()}<div style="height:8px"></div><button class="btn" data-act="rctry">ลองเลย 5 รอบ × 30 วิ</button>`;
+  h+=`<div class="mu sm" style="margin-top:10px">หุ่นเป็นภาพประกอบจังหวะการเคลื่อนไหว ดูวิดีโอประกอบเพื่อรายละเอียดท่าที่ถูกต้อง · เจ็บแหลมหรือชาให้หยุดทันที</div>`;
+  sheet(h);
+  if(FIG.has(id)){if(anim)anim.stop();anim=FIG.play($('#anim'),id)}
+}
+
+function vGame(s){
+  const lg=state.logs.find(l=>l.date===sel&&l.type==='game');
+  let h=vReady();
+  s.notes.forEach(n=>h+=noteH(n));
+  h+=`<div class="note good">วันตีเกม: วอร์มอัพให้ครบก่อนลงสนาม ดื่มน้ำทุกช่วงพักเกม และคูลดาวน์หลังเล่นเพื่อให้พร้อมสำหรับวันเสาร์</div>`;
+  h+=renderBlocks(s,[s.blocks[0]]);
+  if(lg)h+=`<div class="card"><h2>บันทึกเกมแล้ว ✓</h2><div>${lg.minutes} นาที · ${lg.games||0} เกม${lg.wins!=null?` · ชนะ ${lg.wins} แพ้ ${lg.losses}`:''} · RPE ${lg.rpe}</div>${lg.partner?`<div class="mu">คู่: ${esc(lg.partner)}</div>`:''}${lg.mist&&lg.mist.length?`<div class="mu">จุดพลาด: ${lg.mist.join(', ')}</div>`:''}${lg.feel?`<div class="mu">ร่างกาย: ${lg.feel}</div>`:''}${lg.notes?`<div class="mu">${esc(lg.notes)}</div>`:''}</div>`;
+  else h+=`<div class="card"><h2>บันทึกการตีเกม</h2>
+   <div class="grid2"><div><div class="lbl">เวลาเล่น (นาที)</div><input type="number" id="gm" inputmode="numeric" value="120"></div><div><div class="lbl">คู่ที่เล่นด้วย</div><input type="text" id="gp" placeholder="ไม่บังคับ"></div></div>
+   <div class="grid2"><div><div class="lbl">ชนะ (เกม)</div><input type="number" id="gw" inputmode="numeric" placeholder="0"></div><div><div class="lbl">แพ้ (เกม)</div><input type="number" id="gl" inputmode="numeric" placeholder="0"></div></div>
+   <div class="lbl">ความเหนื่อยโดยรวม (RPE 1–10)</div><div class="rpe">${[1,2,3,4,5,6,7,8,9,10].map(v=>`<button data-act="grpe" data-v="${v}" class="${gRpe===v?'on':''}">${v}</button>`).join('')}</div>
+   <div class="lbl">จุดที่พลาดบ่อยวันนี้ (เลือกได้หลายข้อ)</div><div style="display:flex;flex-wrap:wrap;gap:6px">${MISTAKES.map(m=>`<button class="chip ${gMist.has(m)?'on':''}" style="flex:none;padding:6px 10px" data-act="gmist" data-m="${m}">${m}</button>`).join('')}</div>
+   <div class="lbl">ร่างกายรู้สึก</div><select id="gf"><option value="">—</option><option>ตัวเบา เล่นดี</option><option>ปกติ</option><option>ตัวหนัก / ขาล้า</option><option>เจ็บบางจุด</option></select>
+   <div class="lbl">โน้ต (จุดที่อยากพัฒนา)</div><textarea id="gn" style="min-height:60px;font-size:16px"></textarea>
+   <div style="height:10px"></div><button class="btn" data-act="gsave">บันทึกเกม</button></div>`;
+  h+=renderBlocks(s,[s.blocks[1]]);
+  return h;
+}
+
+function vPlan(){
+  const td=today(),m=mon(td),ph=phaseIdx(td),tdays=tournDays(td);
+  let h=header('ตารางสัปดาห์')+`<div class="card"><h2>รอบฝึก 4 สัปดาห์</h2><div class="ph">${PH.map((p,i)=>`<div class="${i===ph?'on':''}">สัปดาห์ ${i+1}<br><b>${p.n}</b></div>`).join('')}</div><div class="mu">ตอนนี้: <b style="color:var(--ac)">${PH[ph].n}</b> — ${PH[ph].d}</div><div style="height:8px"></div><button class="btn sec sm" data-act="cycle">เริ่มรอบใหม่ตั้งแต่สัปดาห์นี้</button></div>`;
+  h+=`<div class="card"><h2>🏆 โหมดก่อนแข่ง</h2><div class="mu sm">ใส่วันแข่งรายการ แอปจะลดปริมาณการฝึก 10 วันก่อนแข่ง (Taper) ให้ร่างกายสดที่สุดในวันจริง</div><div class="lbl">วันแข่งรายการถัดไป</div><input type="date" data-ch="tourn" value="${state.settings.tourn||''}">${tdays!=null?`<div class="note good">อีก ${tdays} วันแข่ง</div>`:''}${state.settings.tourn?`<div style="height:6px"></div><button class="btn sec sm" data-act="tournclr">ล้างวันแข่ง</button>`:''}</div>`;
+  h+=`<div class="card"><h2>วันฝึกประจำสัปดาห์</h2><div class="mu sm" style="margin-bottom:6px">วันศุกร์ล็อกเป็นวันตีเกม วันอื่นเลือกได้อิสระ ระบบจะปรับความหนักให้อัตโนมัติ</div>`;
+  ORDER.forEach(dow=>{
+    const d=addD(m,(dow+6)%7);
+    if(dow===GAME_DOW){h+=`<div class="day"><b>${DNF[dow]}</b><div class="lock">🏸 ตีเกมแบด (ล็อก)</div></div>`;return}
+    const t=state.week[dow]||'rest',w=ctxAdjust(d,t).notes;
+    h+=`<div class="day"><b>${DNF[dow]}</b><select data-ch="week" data-d="${dow}">${Object.keys(TYPES).filter(k=>k!=='game'&&!TYPES[k].extra).map(k=>`<option value="${k}" ${k===t?'selected':''}>${TYPES[k].ic} ${TYPES[k].n}</option>`).join('')}</select>${w.length?`<div class="w">⚠︎ ${w[0].split(' — ')[0]} — ระบบจะลดความหนักให้</div>`:''}</div>`;
+  });
+  h+=`</div><div class="card"><h2>ตารางสำเร็จรูป</h2><div style="display:grid;gap:8px">${Object.entries(PRESETS).map(([k,p])=>`<button class="btn sec" data-act="preset" data-p="${k}">${p.n}</button>`).join('')}</div></div>`;
+  h+=`<div class="card"><h2>หลักการที่ระบบใช้ปรับโปรแกรม</h2><ul class="tips">
+  <li>วันพฤหัส (ก่อนเกม) งานขาหนักจะถูกลดครึ่งและตัดท่ากระโดด</li>
+  <li>วันพุธ (2 วันก่อนเกม) งานขาหนักลด 20% · วันเสาร์ (หลังเกม) ลด 30%</li>
+  <li>งานขาหนัก 2 วันติดกัน วันที่สองลด 15%</li>
+  <li>คะแนนความพร้อมต่ำ หรือชีพจรตอนตื่นสูงกว่าปกติ → ลดเซ็ต / ตัดกระโดด / แนะนำพัก</li>
+  <li>มีอาการเจ็บ → เปลี่ยนเป็นท่าที่ไม่ลงน้ำหนักจุดนั้น หรือตัดออกถ้าเจ็บมาก</li>
+  <li>ภาระสัปดาห์นี้สูงกว่าค่าเฉลี่ย 3 สัปดาห์ก่อนเกิน 30% → ลด 15%</li>
+  <li>เวลาน้อย → ตัดท่าเสริมก่อน เก็บท่าหลักไว้</li>
+  <li>เวทใช้ช่วงจำนวนครั้ง (Double progression): น้ำหนักเดิมเพิ่มทีละครั้งจนถึงเพดานทุกเซ็ต แล้วค่อยขยับดัมเบล</li>
+  <li>คุมความหนักด้วย “เหลือแรง” (RIR) ไม่ฝืนจนหมดแรง เพื่อให้ขายังสดสำหรับการตีแบด</li></ul></div>`;
+  return h;
+}
+
+/* ================= คลังท่า ================= */
+function vLib(){
+  let h=header('คลังท่า')+`<div class="card"><h2>คลังท่าทั้งหมด</h2><div class="mu sm">แตะท่าเพื่อดูหุ่นสาธิต วิธีทำทีละขั้น ข้อผิดพลาด และลิงก์วิดีโอ</div><div style="height:8px"></div><input type="text" id="libq" placeholder="ค้นหาท่า เช่น squat, ไหล่, ข้อเท้า"></div>`;
+  h+=`<div class="chips" style="flex-wrap:wrap">${CATS.map(([c])=>`<button class="chip ${libCat===c?'on':''}" style="flex:none;padding:6px 10px" data-act="libcat" data-c="${c}">${c}</button>`).join('')}</div>`;
+  return h+`<div id="liblist">${libList('')}</div>`;
+}
+function libList(q){
+  q=q.trim().toLowerCase();
+  return CATS.filter(([c])=>!libCat||libCat===c).map(([c,ids])=>{
+    const items=ids.filter(id=>{if(!q)return true;const D=(window.EXD||{})[id]||{};return (EX[id][0]+' '+EX[id][1]+' '+(D.m||'')+' '+c).toLowerCase().includes(q)});
+    if(!items.length)return '';
+    return `<div class="card"><h2>${c}</h2>${items.map(id=>`<div class="libi" data-act="exinfo" data-id="${id}"><div class="thumb">${thumb(id)}</div><div style="min-width:0"><b>${EX[id][0]}</b><div class="mu sm">${((window.EXD||{})[id]||{}).m||EX[id][1]}</div></div></div>`).join('')}</div>`;
+  }).join('')||'<div class="mu">ไม่พบท่าที่ค้นหา</div>';
+}
+
+/* ================= ความก้าวหน้า ================= */
+function spark(vals,hiGood){
+  if(vals.length<2)return '';const w=120,h=32,mn=Math.min(...vals),mx=Math.max(...vals),r=mx-mn||1;
+  const pts=vals.map((v,i)=>`${(i/(vals.length-1)*w).toFixed(1)},${(h-4-(v-mn)/r*(h-8)).toFixed(1)}`).join(' ');
+  const up=vals[vals.length-1]>vals[0],good=hiGood?up:!up;
+  return `<svg viewBox="0 0 ${w} ${h}" width="${w}" height="${h}"><polyline points="${pts}" fill="none" stroke="${good?'var(--ac)':'var(--warn)'}" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/></svg>`;
+}
+const asym=(l,r)=>l&&r?Math.round(Math.abs(l-r)/Math.max(l,r)*100):null;
+function lastAsym(){const t=state.tests[state.tests.length-1];if(!t)return null;return asym(t.r.hopL,t.r.hopR)}
+function weekSummary(){
+  const td=today(),m=mon(td),days=[0,1,2,3,4,5,6].map(i=>addD(m,i));
+  const planned=days.filter(d=>!['rest'].includes(typeOf(d))).length;
+  const done=new Set(state.logs.filter(l=>mon(l.date)===m&&l.type!=='desk').map(l=>l.date+l.type)).size;
+  const sl=days.map(d=>(state.health[d]||{}).sleep).filter(Boolean),slAvg=sl.length?Math.round(sl.reduce((a,b)=>a+b,0)/sl.length*10)/10:null;
+  const a=acwr(td),pain=activePain(td),pa=Object.keys(pain),as=lastAsym();
+  const games=state.logs.filter(l=>l.type==='game'&&mon(l.date)===m);
+  const rec=[];
+  if(a&&a.ratio>1.3)rec.push('ภาระสัปดาห์นี้สูงกว่าปกติมาก — สัปดาห์หน้าลดวันหนักลง 1 วัน');
+  if(a&&a.ratio<.7&&done>0)rec.push('ภาระต่ำกว่าปกติ — ค่อยๆ เพิ่มกลับ ไม่เพิ่มทีเดียวเกิน 10–20%');
+  if(done<planned-1&&td>=addD(m,4))rec.push('ฝึกได้น้อยกว่าแผน — ลองใช้ปุ่ม “20 นาที” ในวันที่ยุ่ง จะได้ฝึกต่อเนื่อง');
+  if(pa.length)rec.push(`มีอาการเจ็บ${pa.map(x=>AREAS[x]).join(', ')} — เพิ่มวันป้องกันบาดเจ็บ และถ้าไม่ดีขึ้นใน 1–2 สัปดาห์ควรพบผู้เชี่ยวชาญ`);
+  if(slAvg&&slAvg<6.5)rec.push(`นอนเฉลี่ย ${slAvg} ชม. — การนอน 7–9 ชม. ช่วยฟื้นตัวและความเร็วในการตอบสนอง`);
+  if(as!=null&&as>=15)rec.push(`ขาซ้าย–ขวาแรงต่างกัน ${as}% — ทำท่าขาเดียวโดยเริ่มขาที่อ่อนกว่า และเพิ่ม 1 เซ็ตให้ขาที่อ่อน`);
+  if(testDue()&&state.logs.length>=3)rec.push('ถึงรอบทดสอบสมรรถภาพ (ทุก 4 สัปดาห์)');
+  const lb=state.settings.lastBackup;if(state.logs.length>3&&(!lb||dayDiff(lb,td)>14))rec.push('ไม่ได้สำรองข้อมูลเกิน 2 สัปดาห์ — ไปที่ตั้งค่า → สำรองข้อมูล');
+  if(!rec.length)rec.push('ทุกอย่างอยู่ในเกณฑ์ดี ทำต่อแบบนี้ 👍');
+  return `<div class="card"><h2>สรุปสัปดาห์นี้</h2><div class="grid2"><div><div class="mu sm">ฝึกแล้ว / แผน</div><h1>${done}/${planned}</h1></div><div><div class="mu sm">เกมสัปดาห์นี้</div><h1>${games.reduce((s,l)=>s+(+l.wins||0),0)}–${games.reduce((s,l)=>s+(+l.losses||0),0)}</h1><div class="mu sm">ชนะ–แพ้</div></div></div>
+  <div class="mu sm" style="margin-top:4px">${slAvg?`นอนเฉลี่ย ${slAvg} ชม. · `:''}ภาระ ${weekLoad(m)}${a?` (เฉลี่ย ${Math.round(a.avg)})`:''}</div>
+  <div class="lbl">สัปดาห์หน้าควรเน้น</div><ul class="tips">${rec.map(r=>`<li>${r}</li>`).join('')}</ul></div>`;
+}
+function vTests(){
+  const T=state.tests,last=T[T.length-1];
+  let h=`<div class="card"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><div><h2 style="margin:0">ทดสอบสมรรถภาพ</h2><div class="mu sm">${last?`ล่าสุด ${thd(last.date)}${testDue()?' · ถึงรอบแล้ว':` · ครั้งถัดไป ${sdd(addD(last.date,28))}`}`:'ยังไม่เคยทดสอบ — ทดสอบครั้งแรกเพื่อใช้เทียบ'}</div></div><button class="btn sm" data-act="testopen">ทดสอบ</button></div>`;
+  if(T.length){
+    TESTS.forEach(t=>{
+      const keys=t.lr?[t.id+'L',t.id+'R']:[t.id];
+      const rows=keys.map(k=>{const vals=T.map(x=>x.r[k]).filter(v=>v!=null&&v!=='').map(Number);if(!vals.length)return '';const lv=vals[vals.length-1],pv=vals.length>1?vals[vals.length-2]:null;
+        const dlt=pv!=null?lv-pv:null,good=dlt==null?null:(t.hi?dlt>0:dlt<0);
+        return `<div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><div class="sm">${t.lr?(k.endsWith('L')?'ซ้าย':'ขวา'):''} <b>${lv}</b> ${t.u}${dlt!=null&&dlt!==0?` <span style="color:${good?'var(--ac)':'var(--warn)'}">${dlt>0?'+':''}${Math.round(dlt*10)/10}</span>`:''}</div>${spark(vals,t.hi)}</div>`}).join('');
+      if(!rows)return;
+      const a=t.lr&&last?asym(+last.r[t.id+'L'],+last.r[t.id+'R']):null;
+      h+=`<div class="log" style="display:block"><b>${t.n}</b>${t.w&&last&&last.r.gobW?` <span class="mu sm">(${last.r.gobW} กก.)</span>`:''}${rows}${a!=null?`<div class="sm" style="color:${a>=15?'var(--warn)':'var(--mu)'}">ซ้าย–ขวาต่างกัน ${a}%${a>=15?' — ควรเสริมข้างที่อ่อน':' — อยู่ในเกณฑ์ดี (<15%)'}</div>`:''}</div>`;
+    });
+  }
+  return h+`</div>`;
+}
+function testSheet(){
+  sheet(`<div class="shh"><h2 style="margin:0">ทดสอบสมรรถภาพ</h2><button class="x" data-act="fcancel">ปิด ✕</button></div>
+  <div class="mu sm" style="margin:6px 0">วอร์มอัพก่อน 10 นาที ทดสอบในวันที่ร่างกายสด (ไม่ใช่วันหลังเกม) และใช้วิธีเดิมทุกครั้งเพื่อเทียบผลได้ ข้ามข้อที่ทำไม่ได้</div>
+  ${TESTS.map(t=>`<div class="card" style="margin:8px 0"><b>${t.n}</b> <span class="mu sm">(${t.u}${t.hi?' · มากดี':' · น้อยดี'})</span><div class="mu sm">${t.how}</div>
+   <div class="grid2" style="margin-top:6px">${t.lr?`<input type="number" inputmode="decimal" id="t_${t.id}L" placeholder="ซ้าย"><input type="number" inputmode="decimal" id="t_${t.id}R" placeholder="ขวา">`:`<input type="number" inputmode="decimal" id="t_${t.id}" placeholder="${t.u}">${t.w?`<input type="number" inputmode="decimal" id="t_gobW" placeholder="น้ำหนัก กก.">`:''}`}</div></div>`).join('')}
+  <button class="btn" data-act="testsave">บันทึกผลทดสอบ</button>`);
+}
+function gameInsights(){
+  const g=state.logs.filter(l=>l.type==='game').sort((a,b)=>a.date.localeCompare(b.date));if(!g.length)return '';
+  const W=g.reduce((s,l)=>s+(+l.wins||0),0),Lo=g.reduce((s,l)=>s+(+l.losses||0),0);
+  const mc={};g.slice(-8).forEach(l=>(l.mist||[]).forEach(m=>mc[m]=(mc[m]||0)+1));
+  const top=Object.entries(mc).sort((a,b)=>b[1]-a[1]).slice(0,3);
+  const grp=[[],[]];g.forEach(l=>{const r=readiness(l.date);if(r&&(+l.wins||+l.losses))grp[r.score>=12?0:1].push(l)});
+  const wr=a=>{const w=a.reduce((s,l)=>s+(+l.wins||0),0),t=a.reduce((s,l)=>s+(+l.wins||0)+(+l.losses||0),0);return t?Math.round(w/t*100):null};
+  let cmp='';if(grp[0].length>=2&&grp[1].length>=2){const a=wr(grp[0]),b=wr(grp[1]);cmp=`<div class="sm" style="margin-top:6px">วันที่ความพร้อมดี (≥12) ชนะ ${a}% · วันที่ความพร้อมต่ำ ชนะ ${b}%${a-b>=10?' — การพักผ่อนส่งผลต่อเกมชัดเจน':''}</div>`}
+  return `<div class="card"><h2>🏸 สถิติการตีเกม</h2><div>รวม ${g.length} ครั้ง · ชนะ ${W} แพ้ ${Lo}${W+Lo?` · ชนะ ${Math.round(W/(W+Lo)*100)}%`:''}</div>${top.length?`<div class="lbl">จุดที่พลาดบ่อย (8 ครั้งล่าสุด)</div><div class="sm">${top.map(([m,c])=>`${m} (${c})`).join(' · ')}</div>`:''}${cmp}</div>`;
+}
+function vHist(){
+  const td=today(),m=mon(td);
+  const wks=[7,6,5,4,3,2,1,0].map(i=>addD(m,-7*i)),loads=wks.map(weekLoad),mx=Math.max(1,...loads);
+  const a=acwr(td);
+  let h=header('ความก้าวหน้า')+weekSummary()+vTests()+gameInsights();
+  h+=`<div class="card"><h2>ภาระการฝึกรายสัปดาห์</h2><div class="mu sm">ภาระ = นาที × RPE (ทั้งเวทและตีแบด)</div><div class="bars">${loads.map((v,i)=>`<div class="${i===7?'cur':''}" style="height:${v/mx*100}%"></div>`).join('')}</div><div class="blbl">${wks.map(w=>`<span>${sdd(w)}</span>`).join('')}</div>
+  <div class="mu" style="margin-top:8px">${a?(a.ratio>1.3?`<span style="color:var(--warn)">สัปดาห์นี้สูงกว่าค่าเฉลี่ย ${Math.round((a.ratio-1)*100)}% ระวังบาดเจ็บ</span>`:`สัปดาห์นี้ ${a.cur} / ค่าเฉลี่ย ${Math.round(a.avg)} — อยู่ในช่วงปลอดภัย`):'บันทึกต่อเนื่อง 3 สัปดาห์ขึ้นไปจะเห็นการเตือนภาระเกิน'}</div></div>`;
+  const ws=Object.entries(state.lastW).filter(([id])=>EX[id]);
+  if(ws.length)h+=`<div class="card"><h2>น้ำหนักล่าสุดต่อท่า</h2>${ws.map(([id,w])=>`<div class="log"><div>${EX[id][0]}<div class="mu sm">${sdd(w.date)}</div></div><div style="text-align:right"><b>${w.w} กก.</b><div class="sm" style="color:${w.ok?'var(--ac)':'var(--mu)'}">${w.ok?'↑ พร้อมเพิ่ม':'เพิ่มจำนวนครั้งก่อน'}</div></div></div>`).join('')}</div>`;
+  const logs=[...state.logs].sort((x,y)=>y.date.localeCompare(x.date)||y.id-x.id).slice(0,40);
+  h+=`<div class="card"><h2>ประวัติ</h2>${logs.length?logs.map(l=>`<div class="log"><div><b>${TYPES[l.type]?.ic||''} ${TYPES[l.type]?.n||l.type}</b><div class="mu sm">${thd(l.date)} · ${l.minutes} นาที · RPE ${l.rpe}${l.type==='game'&&l.wins!=null?` · ชนะ ${l.wins} แพ้ ${l.losses}`:''}${l.total?` · ${l.done}/${l.total} เซ็ต`:''}</div>${l.notes?`<div class="mu sm">${esc(l.notes)}</div>`:''}</div><button class="x" data-act="del" data-id="${l.id}">ลบ</button></div>`).join(''):'<div class="mu">ยังไม่มีบันทึก</div>'}</div>`;
+  return h;
+}
+
+/* ================= ตั้งค่า ================= */
+function vSet(){
+  const st=state.settings,opt=(arr,v)=>arr.map(([k,n])=>`<option value="${k}" ${k===v?'selected':''}>${n}</option>`).join('');
+  const lb=st.lastBackup;
+  return header('ตั้งค่า')+`<div class="card"><h2>โปรไฟล์การฝึก</h2>
+  <div class="lbl">ระดับ</div><select data-ch="level">${opt([['beg','เริ่มต้น (เพิ่งเริ่มเวท)'],['inter','กลาง (เล่นเวทสม่ำเสมอ)'],['adv','สูง (เพิ่มเซ็ต/รอบ)']],st.level)}</select>
+  <div class="lbl">เป้าหมายหลัก</div><select data-ch="goal">${opt([['power','สปีด + พลังกระโดด/ตบ'],['endurance','ความอึด เล่นได้หลายเกม'],['prevention','ป้องกันบาดเจ็บ (ไหล่ เข่า ข้อเท้า)']],st.goal)}</select>
+  <div class="lbl">ดัมเบลที่มี (กก. ต่อข้าง คั่นด้วย ,)</div><input type="text" data-ch="db" value="${esc(st.dumbbells)}">
+  <div class="lbl">วันเริ่มรอบ 4 สัปดาห์</div><input type="date" data-ch="start" value="${st.start}"></div>
+  <div class="card"><h2>เสียง</h2><label class="chk"><input type="checkbox" data-ch="voice" ${st.voice!==false?'checked':''}> เสียงพูดภาษาไทย (เริ่ม, อีก 10 วินาที, มุมคอร์ท)</label>${rtCfg(true)}</div>
+  <div class="card"><h2>ดึงข้อมูลจากแอป Health อัตโนมัติ</h2><div class="mu sm">ใช้แอป “คำสั่งลัด” (Shortcuts) บน iPhone ส่งชั่วโมงนอนและชีพจรตอนตื่นเข้ามา (ใช้ได้เมื่อแอปอยู่บนเว็บของคุณเอง)</div><ol class="tips">
+  <li>เปิดแอปคำสั่งลัด → สร้างคำสั่งลัดใหม่ ชื่อ “SmashFit เช้า”</li>
+  <li>เพิ่ม “ค้นหาตัวอย่างสุขภาพ” → ประเภท การนอน (Sleep Analysis) ช่วง 1 วันล่าสุด → รวมเป็นชั่วโมง</li>
+  <li>เพิ่ม “ค้นหาตัวอย่างสุขภาพ” → ชีพจรขณะพัก (Resting Heart Rate) ค่าล่าสุด</li>
+  <li>เพิ่ม “เปิด URL”: <code>https://เว็บของคุณ/?sleep=[ชั่วโมงนอน]&amp;rhr=[ชีพจร]</code></li>
+  <li>ตั้งระบบอัตโนมัติให้รันทุกเช้า หรือกดก่อนฝึก</li></ol></div>
+  <div class="card"><h2>สำรองข้อมูล</h2><div class="mu sm">${lb?`สำรองล่าสุด ${thd(lb)}`:'ยังไม่เคยสำรอง'} · ข้อมูลเก็บในเครื่องนี้เท่านั้น ควรสำรองทุก 1–2 สัปดาห์</div><div style="height:8px"></div>
+  ${FRAMED?'<div class="note">หน้าตัวอย่างนี้ดาวน์โหลดไฟล์ไม่ได้ ใช้ปุ่มคัดลอกด้านล่างแล้ววางเก็บใน Notes (เวอร์ชันบนเว็บของคุณเองจะดาวน์โหลดเป็นไฟล์ได้)</div>':'<button class="btn" data-act="dl">⬇ ดาวน์โหลดไฟล์สำรอง (.json)</button><div style="height:8px"></div>'}
+  <div class="lbl">กู้คืนจากไฟล์</div><input type="file" accept=".json,application/json" data-ch="impfile">
+  <details style="margin-top:10px" ${FRAMED?'open':''}><summary class="mu sm">คัดลอก/วางข้อความแทนไฟล์</summary><textarea id="exp" readonly>${esc(JSON.stringify(state))}</textarea><div style="height:6px"></div><button class="btn sec" data-act="copy">คัดลอกข้อมูลสำรอง</button>
+  <div class="lbl">วางข้อมูลสำรอง</div><textarea id="imp" placeholder='{"settings":...}'></textarea><div style="height:6px"></div><button class="btn sec" data-act="import">กู้คืนจากข้อความ</button></details></div>
+  <div class="card"><h2>ใช้งานเหมือนแอปบน iPhone</h2><ul class="tips"><li>เปิดหน้าเว็บของแอปใน Safari</li><li>กดปุ่มแชร์ ⬆︎ → “เพิ่มไปยังหน้าจอโฮม”</li></ul></div>
+  <div class="card"><button class="btn danger" data-act="reset">ล้างข้อมูลทั้งหมด</button></div>`;
+}
+
+/* ================= โหมดสุ่มมุมคอร์ท ================= */
+const RT_SPD={slow:[2200,3000],mid:[1500,2200],fast:[1000,1500]};
+const RT_LBL=['หน้าซ้าย','หน้าขวา','กลางซ้าย','กลางขวา','หลังซ้าย','หลังขวา'];
+function rtCfg(noVoice){const s=state.settings.rtSpd||'mid';
+  return `<div class="lbl">ความเร็วสัญญาณโหมดสุ่มมุม</div><select data-ch="rtspd"><option value="slow" ${s==='slow'?'selected':''}>ช้า (มือใหม่)</option><option value="mid" ${s==='mid'?'selected':''}>กลาง</option><option value="fast" ${s==='fast'?'selected':''}>เร็ว</option></select>${noVoice?'':`<label class="chk" style="margin-top:6px"><input type="checkbox" data-ch="voice" ${state.settings.voice!==false?'checked':''}> เสียงพูดบอกมุม</label>`}`}
+let RT=null;
+function say(t){if(state.settings.voice===false)return;try{const u=new SpeechSynthesisUtterance(t);u.lang='th-TH';u.rate=1.2;speechSynthesis.cancel();speechSynthesis.speak(u)}catch(e){}}
+function rtStart(rounds,work,rest,onDone){
+  unlockAudio();stopTimer();rtStop();
+  const sp=RT_SPD[state.settings.rtSpd||'mid'];
+  RT={rounds,work,rest,onDone,round:1,phase:'prep',end:Date.now()+3000,next:0,last:-1,cells:[...document.querySelectorAll('#court div')]};
+  $('#rt').classList.add('show');keepAwake();
+  const clear=()=>RT.cells.forEach(c=>c.classList.remove('on'));
+  RT.iv=setInterval(()=>{
+    if(!RT)return;const now=Date.now(),left=Math.max(0,Math.ceil((RT.end-now)/1000));
+    $('#rtT').textContent=RT.phase==='work'?fmtClock(left):left;$('#rtR').textContent=`รอบ ${RT.round}/${RT.rounds}`;
+    $('#rtPh').textContent=RT.phase==='prep'?'เตรียมตัว…':RT.phase==='work'?'ทำงาน!':'พัก — เดินกลับกลางคอร์ท หายใจ';
+    if(RT.phase==='work'&&now>=RT.next){clear();let i;do{i=Math.floor(Math.random()*6)}while(i===RT.last);RT.last=i;RT.cells[i].classList.add('on');beep(880,.12);say(RT_LBL[i]);RT.next=now+sp[0]+Math.random()*(sp[1]-sp[0]);setTimeout(()=>{if(RT&&RT.last===i)RT.cells[i].classList.remove('on')},Math.min(900,sp[0]-200))}
+    if(now>=RT.end){
+      if(RT.phase==='prep'){RT.phase='work';RT.end=now+RT.work*1000;RT.next=now+400;beep(990,.3)}
+      else if(RT.phase==='work'){clear();beep(990,.35);setTimeout(()=>beep(990,.35),400);
+        if(RT.round>=RT.rounds){const d=RT.onDone;rtStop();toast('ครบทุกรอบ เยี่ยมมาก 🏸');say('ครบทุกรอบ');d&&d();return}
+        RT.phase='rest';RT.end=now+RT.rest*1000;say('พัก')}
+      else{RT.round++;RT.phase='work';RT.end=now+RT.work*1000;RT.next=now+400;beep(990,.3)}
+    }
+  },100);
+}
+function rtStop(){if(RT){clearInterval(RT.iv);RT=null}$('#rt').classList.remove('show');document.querySelectorAll('#court div').forEach(c=>c.classList.remove('on'));try{speechSynthesis.cancel()}catch(e){}}
+
+/* ================= Timer ================= */
+let T=null,actx=null,wl=null;
+function unlockAudio(){try{actx=actx||new(window.AudioContext||window.webkitAudioContext)();if(actx.state==='suspended')actx.resume()}catch(e){}}
+function beep(f=880,d=.18){try{if(!actx)return;const o=actx.createOscillator(),g=actx.createGain();o.frequency.value=f;o.connect(g);g.connect(actx.destination);g.gain.setValueAtTime(.25,actx.currentTime);g.gain.exponentialRampToValueAtTime(.001,actx.currentTime+d);o.start();o.stop(actx.currentTime+d)}catch(e){}}
+function keepAwake(){try{if(navigator.wakeLock&&!wl)navigator.wakeLock.request('screen').then(l=>{wl=l;l.addEventListener('release',()=>wl=null)}).catch(()=>{})}catch(e){}}
+function startTimer(label,sec,done,isRest){
+  unlockAudio();if(T)clearInterval(T.iv);
+  T={label,end:Date.now()+sec*1000,total:sec,done,last:null,isRest};
+  $('#tl').textContent=label;$('#timer').classList.add('show');
+  T.iv=setInterval(tick,200);tick();keepAwake();
+  if(!isRest)say('เริ่ม');
+}
+function tick(){
+  if(!T)return;const left=Math.max(0,(T.end-Date.now())/1000),s=Math.ceil(left);
+  $('#tt').textContent=fmtClock(s);$('#tb').style.width=Math.min(100,100-left/T.total*100)+'%';
+  if(s!==T.last){if(s===10&&T.total>=20)say('อีก 10 วินาที');if(s>0&&s<=3)beep(660,.12)}T.last=s;
+  if(left<=0){const d=T.done,r=T.isRest;stopTimer();beep(990,.35);setTimeout(()=>beep(990,.35),400);if(r)say('ไปต่อ');d&&d()}
+}
+function stopTimer(){if(T){clearInterval(T.iv);T=null}$('#timer').classList.remove('show')}
+
+/* ================= Helpers ================= */
+function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('show');clearTimeout(e._t);e._t=setTimeout(()=>e.classList.remove('show'),1800)}
+function sheet(h){$('#sheet').innerHTML=h;$('#modal').classList.add('show')}
+function closeSheet(){$('#modal').classList.remove('show');if(anim){anim.stop();anim=null}}
+function setArr(k,i){const dr=getDraft(cur.date,cur.type);if(!dr.start)dr.start=Date.now();const a=dr.data[k]||(dr.data[k]=[]);a[i]=a[i]||{};return a[i]}
+function markDone(k,i,val){
+  const x=setArr(k,i),it=itemByKey(k);x.done=val;
+  if(val&&!EX[it.id][2].t){if(x.r==null||x.r==='')x.r=it.v;if(it.db&&(x.w==null||x.w==='')){const sw=suggestW(it.id,cur.ph,it);if(sw)x.w=sw.w}
+    const ex=document.querySelector(`.ex[data-k="${k}"]`);if(ex){const r=ex.querySelector(`input[data-in="r"][data-i="${i}"]`),w=ex.querySelector(`input[data-in="w"][data-i="${i}"]`);if(r&&!r.value)r.value=x.r;if(w&&!w.value&&x.w!=null)w.value=x.w}}
+  save();const b=document.querySelector(`.ex[data-k="${k}"] .ck[data-i="${i}"]`);if(b)b.classList.toggle('on',val);updProg();
+}
+const keepScroll=fn=>{const y=window.scrollY;fn();window.scrollTo(0,y)};
+function dlBackup(){
+  try{const blob=new Blob([JSON.stringify(state)],{type:'application/json'}),a=document.createElement('a');
+    a.href=URL.createObjectURL(blob);a.download=`smashfit-backup-${today()}.json`;document.body.appendChild(a);a.click();a.remove();
+    setTimeout(()=>URL.revokeObjectURL(a.href),4000);state.settings.lastBackup=today();save();toast('ดาวน์โหลดไฟล์สำรองแล้ว — เก็บไว้ใน iCloud Drive');
+  }catch(e){toast('ดาวน์โหลดไม่ได้ ใช้วิธีคัดลอกแทน')}
+}
+function loadBackup(txt){try{const s=JSON.parse(txt);if(!s.week||!Array.isArray(s.logs))throw 0;state=normalize(s);save();render();toast('กู้คืนสำเร็จ')}catch(err){toast('ข้อมูลไม่ถูกต้อง')}}
+function importHealth(){
+  let sl=null,rh=null;
+  try{const q=new URLSearchParams(location.search);if(q.get('sleep'))sl=+q.get('sleep');if(q.get('rhr'))rh=+q.get('rhr')}catch(e){}
+  const m=(location.hash||'').match(/^#h-s(\d+)(?:-r(\d+))?/);if(m){sl=+m[1]/10;rh=m[2]?+m[2]:null}
+  if((sl==null||isNaN(sl))&&!rh)return;
+  const d=today(),h=state.health[d]||(state.health[d]={});
+  if(sl!=null&&!isNaN(sl)&&sl>0){h.sleep=Math.round(sl*10)/10;(state.checkins[d]=state.checkins[d]||{}).sleep=sleepScore(sl)}
+  if(rh)h.rhr=rh;save();setTimeout(()=>toast('นำเข้าข้อมูลจากแอป Health แล้ว'),300);
+  try{history.replaceState(null,'',location.pathname)}catch(e){}
+}
+
+/* ================= Events ================= */
+document.addEventListener('click',e=>{
+  const nb=e.target.closest('[data-nav]');if(nb){view=nb.dataset.nav;deskMode=false;render();window.scrollTo(0,0);return}
+  const b=e.target.closest('[data-act]');if(!b)return;const a=b.dataset.act;
+  if(a==='mclose'){if(e.target===b)closeSheet();return}
+  unlockAudio();
+  const exEl=b.closest('.ex'),k=exEl&&exEl.dataset.k,i=+b.dataset.i;
+  switch(a){
+    case 'sel':sel=b.dataset.d;gRpe=0;gMist=new Set();deskMode=false;render();break;
+    case 'exinfo':exSheet(b.dataset.id);break;
+    case 'swap':{const it=itemByKey(k),o=it.orig||it.id,list=[o,...ALT[o]];const nx=list[(list.indexOf(it.id)+1)%list.length];
+      const sw=state.swaps[cur.date]||(state.swaps[cur.date]={});if(nx===o)delete sw[k];else sw[k]=nx;
+      const dr=getDraft(cur.date,cur.type);delete dr.data[k];save();keepScroll(render);toast(`เปลี่ยนเป็น ${EX[nx][0]}`);break}
+    case 'ck':{const x=setArr(k,i),v=!x.done;markDone(k,i,v);const it=itemByKey(k);if(v&&it.rest&&it.id!=='rand_corner'){const last=i===it.sets-2;startTimer(`พัก · ${last?'เซ็ตสุดท้ายต่อไป':'ต่อไป: '+EX[it.id][0]}`,it.rest,null,true);if(last)say('ต่อไปเซ็ตสุดท้าย')}break}
+    case 'play':{const it=itemByKey(k);startTimer(`${EX[it.id][0]} · เซ็ต ${i+1}`,it.v,()=>{markDone(k,i,true);if(it.rest&&i<it.sets-1)startTimer('พัก',it.rest,null,true)});break}
+    case 'rcstart':{const it=itemByKey(k);rtStart(it.sets,it.v,it.rest,()=>{for(let j=0;j<it.sets;j++)markDone(k,j,true)});break}
+    case 'rctry':closeSheet();rtStart(5,30,30,null);break;
+    case 'rtstop':rtStop();break;
+    case 't15':if(T){T.end+=15000;T.total+=15}break;
+    case 'tskip':if(T){const d=T.done;stopTimer();d&&d()}break;
+    case 'tstop':stopTimer();break;
+    case 'ci':{const c=state.checkins[sel]||(state.checkins[sel]={});c[b.dataset.f]=+b.dataset.v;save();keepScroll(render);break}
+    case 'budget':{const v=+b.dataset.v;if(v)state.budget[sel]=v;else delete state.budget[sel];save();keepScroll(render);break}
+    case 'painopen':painSheet();break;
+    case 'painset':{const p=state.pain[sel]||(state.pain[sel]={});p[b.dataset.a]=+b.dataset.v;save();painSheet();keepScroll(render);break}
+    case 'desk':deskMode=!deskMode;render();window.scrollTo(0,0);break;
+    case 'tomob':state.overrides[sel]='mobility';save();render();break;
+    case 'testopen':testSheet();break;
+    case 'testsave':{const r={};document.querySelectorAll('#sheet input[id^="t_"]').forEach(x=>{if(x.value!=='')r[x.id.slice(2)]=+x.value});
+      if(!Object.keys(r).length){toast('ใส่ผลอย่างน้อย 1 ข้อ');break}state.tests.push({date:today(),r});save();closeSheet();view='hist';render();toast('บันทึกผลทดสอบแล้ว 📏');break}
+    case 'finish':{
+      const dr=getDraft(cur.date,cur.type);const mins=dr.start?Math.min(180,Math.max(5,Math.round((Date.now()-dr.start)/60000))):(cur.est||30);rpeSel=0;
+      sheet(`<h2>จบเซสชัน: ${TYPES[cur.type].n}</h2><div class="lbl">ใช้เวลา (นาที)</div><input type="number" id="fm" inputmode="numeric" value="${mins}">
+      <div class="lbl">ความหนักโดยรวม (RPE) — 5 สบาย · 7 หนักแต่คุมได้ · 9 เกือบหมดแรง</div><div class="rpe">${[1,2,3,4,5,6,7,8,9,10].map(v=>`<button data-act="rpe" data-v="${v}">${v}</button>`).join('')}</div>
+      <div class="lbl">โน้ต</div><textarea id="fn" style="min-height:60px;font-size:16px"></textarea><div style="height:12px"></div>
+      <button class="btn" data-act="fsave">บันทึก</button><div style="height:8px"></div><button class="btn sec" data-act="fcancel">ยกเลิก</button>`);break}
+    case 'rpe':rpeSel=+b.dataset.v;b.parentNode.querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));break;
+    case 'fcancel':closeSheet();break;
+    case 'fsave':{
+      if(!rpeSel){toast('เลือก RPE ก่อน');break}
+      const dr=getDraft(cur.date,cur.type),mins=+$('#fm').value||0;let tot=0,dn=0;const items=[];
+      cur.blocks.forEach(bl=>bl.items.forEach(it=>{const d=dr.data[it.slot]||[];tot+=it.sets;const sets=[];for(let j=0;j<it.sets;j++){const x=d[j]||{};if(x.done)dn++;sets.push({w:x.w!=null&&x.w!==''?+x.w:null,r:x.r!=null&&x.r!==''?+x.r:null,done:!!x.done})}
+        items.push({id:it.id,sets});
+        if(it.db){const ws=sets.filter(x=>x.done&&x.w).map(x=>x.w);if(ws.length){const ok=sets.every(x=>x.done&&(x.r??it.v)>=(it.hi||it.v));state.lastW[it.id]={w:Math.max(...ws),ok,rpe:rpeSel,date:cur.date}}}}));
+      state.logs.push({id:Date.now(),date:cur.date,type:cur.type,minutes:mins,rpe:rpeSel,load:mins*rpeSel,done:dn,total:tot,items,notes:$('#fn').value.trim(),ph:cur.ph});
+      delete state.drafts[cur.date+'|'+cur.type];save();closeSheet();stopTimer();deskMode=false;render();toast('บันทึกแล้ว 💪');break}
+    case 'grpe':gRpe=+b.dataset.v;b.parentNode.querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));break;
+    case 'gmist':{const m=b.dataset.m;gMist.has(m)?gMist.delete(m):gMist.add(m);b.classList.toggle('on');break}
+    case 'gsave':{
+      if(!gRpe){toast('เลือก RPE ก่อน');break}const mins=+$('#gm').value||0,w=+$('#gw').value||0,l=+$('#gl').value||0;
+      state.logs.push({id:Date.now(),date:sel,type:'game',minutes:mins,games:w+l,wins:w,losses:l,partner:$('#gp').value.trim(),mist:[...gMist],rpe:gRpe,load:mins*gRpe,feel:$('#gf').value,notes:$('#gn').value.trim()});
+      save();gRpe=0;gMist=new Set();render();toast('บันทึกเกมแล้ว 🏸');break}
+    case 'cycle':state.settings.start=mon(today());save();render();toast('เริ่มรอบใหม่แล้ว');break;
+    case 'tournclr':state.settings.tourn='';save();render();break;
+    case 'preset':state.week={...PRESETS[b.dataset.p].w,5:'game'};save();render();toast('ใช้ตาราง: '+PRESETS[b.dataset.p].n);break;
+    case 'libcat':{const c=b.dataset.c;libCat=libCat===c?'':c;render();break}
+    case 'del':if(b.classList.contains('arm')){state.logs=state.logs.filter(l=>String(l.id)!==b.dataset.id);save();render()}else{b.classList.add('arm');b.textContent='ยืนยัน?';setTimeout(()=>{b.classList.remove('arm');b.textContent='ลบ'},2500)}break;
+    case 'dl':dlBackup();break;
+    case 'copy':{const t=$('#exp');const ok=()=>{state.settings.lastBackup=today();save();toast('คัดลอกแล้ว')};try{navigator.clipboard.writeText(t.value).then(ok).catch(()=>{t.select();toast('กดค้างที่ข้อความเพื่อคัดลอก')})}catch(err){t.select();toast('กดค้างที่ข้อความเพื่อคัดลอก')}break}
+    case 'import':loadBackup($('#imp').value);break;
+    case 'reset':if(b.dataset.arm){state=defState();save();render();toast('ล้างข้อมูลแล้ว')}else{b.dataset.arm=1;b.textContent='แตะอีกครั้งเพื่อยืนยันการล้าง';setTimeout(()=>{if(b.isConnected){delete b.dataset.arm;b.textContent='ล้างข้อมูลทั้งหมด'}},3000)}break;
+  }
+});
+document.addEventListener('input',e=>{
+  const t=e.target;if(t.id==='libq'){$('#liblist').innerHTML=libList(t.value);return}
+  if(!t.dataset.in)return;const k=t.closest('.ex').dataset.k;const x=setArr(k,+t.dataset.i);x[t.dataset.in]=t.value;save();
+});
+document.addEventListener('change',e=>{
+  const t=e.target,c=t.dataset.ch;if(!c)return;
+  const st=state.settings;
+  if(c==='swapday'){const dow=pd(sel).getDay();if(t.value===state.week[dow])delete state.overrides[sel];else state.overrides[sel]=t.value;save();render()}
+  else if(c==='week'){state.week[t.dataset.d]=t.value;save();render()}
+  else if(c==='level'||c==='goal'){st[c]=t.value;save();toast('บันทึกแล้ว')}
+  else if(c==='db'){st.dumbbells=t.value;save();toast('บันทึกแล้ว')}
+  else if(c==='start'&&t.value){st.start=t.value;save();toast('บันทึกแล้ว')}
+  else if(c==='tourn'){st.tourn=t.value;save();render()}
+  else if(c==='rtspd'){st.rtSpd=t.value;save()}
+  else if(c==='voice'){st.voice=t.checked;save()}
+  else if(c==='sleepH'||c==='rhr'){const h=state.health[sel]||(state.health[sel]={});const v=parseFloat(t.value);
+    if(c==='sleepH'){if(v>0){h.sleep=v;(state.checkins[sel]=state.checkins[sel]||{}).sleep=sleepScore(v)}else delete h.sleep}
+    else{if(v>0)h.rhr=v;else delete h.rhr}
+    save();keepScroll(render)}
+  else if(c==='impfile'){const f=t.files&&t.files[0];if(!f)return;const r=new FileReader();r.onload=()=>loadBackup(r.result);r.readAsText(f)}
+});
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&T)tick()});
+
+/* ================= เริ่มต้น ================= */
+importHealth();
+try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist().catch(()=>{})}catch(e){}
+if('serviceWorker' in navigator&&document.querySelector('link[rel="manifest"]')){try{navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}}
+render();
+
+</script>
+</body>
+</html>
