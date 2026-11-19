@@ -1,11 +1,13 @@
 /* Smash Fit service worker — ทำให้แอปเปิดได้แม้ไม่มีเน็ต
    เวลาอัปเดตแอป: build.py จะเปลี่ยน VERSION ให้อัตโนมัติ */
-const VERSION='20261118203417';
+const VERSION='20261119070625';
 const CACHE='smashfit-'+VERSION;
-const CORE=['./','./index.html','./manifest.webmanifest','./icons/icon-192.png','./icons/icon-512.png','./icons/apple-touch-icon.png','./anatomy3d.js','./vendor/three.module.min.js'];
+const CORE=['./','./index.html','./manifest.webmanifest','./icons/icon-192.png','./icons/icon-512.png','./icons/apple-touch-icon.png','./anatomy3d.js','./anatomyReal.js','./vendor/three.module.min.js','./vendor/GLTFLoader.js','./vendor/BufferGeometryUtils.js'];
+// โมเดลกายวิภาค (~5 MB): โหลดครั้งแรกที่เปิดหุ่น แล้วเก็บถาวรใน smashfit-model ไม่โหลดซ้ำตอนอัปเดตแอป (เปลี่ยนโมเดล = เปลี่ยนเลขในชื่อไฟล์)
+const MODEL_CACHE='smashfit-model';
 self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE).then(c=>c.addAll(CORE)).then(()=>self.skipWaiting()))});
 // ล้างแคชเวอร์ชันเก่า แต่เก็บ smashfit-voice (เสียงพากย์) และฟอนต์ไว้ถาวร ไม่ต้องโหลดใหม่ทุกครั้งที่อัปเดตแอป
-const KEEP=k=>k===CACHE||k==='smashfit-voice'||k.endsWith('-fonts');
+const KEEP=k=>k===CACHE||k==='smashfit-voice'||k===MODEL_CACHE||k.endsWith('-fonts');
 self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k.startsWith('smashfit-')&&!KEEP(k)).map(k=>caches.delete(k)))).then(()=>self.clients.claim()))});
 self.addEventListener('fetch',e=>{
   const req=e.request;if(req.method!=='GET')return;
@@ -29,6 +31,12 @@ self.addEventListener('fetch',e=>{
   // ไฟล์เสียงพากย์: ใช้ของที่เก็บไว้ใน smashfit-voice ก่อนเสมอ (หน้าแอปเป็นคนเก็บ)
   if(url.pathname.includes('/audio/')&&url.pathname.endsWith('.mp3')){
     e.respondWith(caches.open('smashfit-voice').then(c=>c.match(req)).then(hit=>hit||caches.match(req)).then(hit=>hit||fetch(req)));
+    return;
+  }
+  if(/\/anatomy-\d+\.glb$/.test(url.pathname)){
+    e.respondWith(caches.open(MODEL_CACHE).then(c=>c.match(req).then(hit=>hit||fetch(req).then(r=>{if(r.ok){const cp=r.clone();
+      // ลบโมเดลเวอร์ชันเก่าออก เก็บแค่ไฟล์ปัจจุบัน
+      c.keys().then(ks=>ks.forEach(k=>{if(k.url!==req.url)c.delete(k)}));c.put(req,cp)}return r}))));
     return;
   }
   // ไฟล์อื่นในเว็บ (ไอคอน): ใช้ของในเครื่องก่อน ถ้ายังไม่มีโหลดแล้วเก็บไว้ใช้ตอนออฟไลน์

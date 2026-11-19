@@ -1456,10 +1456,14 @@ function exSheet(id){
 }
 
 /* ================= หุ่น 3D (anatomy) =================
-   โหลด web/anatomy3d.js + three.js เมื่อใช้ครั้งแรก · ถ้าเครื่องไม่รองรับ WebGL หรือโหลดไม่ได้ ใช้หุ่น 2D เดิม */
+   โหลดเมื่อใช้ครั้งแรก: หุ่นกายวิภาคจริง (web/anatomyReal.js + anatomy-1.glb ~5 MB) ระหว่างโหลดแสดงหุ่น 2D
+   ถ้าโหลดโมเดลไม่ได้ ใช้หุ่น 3D แบบเรียบ (anatomy3d.js) · ถ้าเครื่องไม่รองรับ WebGL ใช้หุ่น 2D เดิม */
 let A3=null,A3fail=false,A3p=null;const A3V={};
 function load3D(){if(A3||A3fail)return Promise.resolve(A3);
-  if(!A3p)A3p=import('./anatomy3d.js').then(m=>{if(!m.supported())throw new Error('no webgl');A3=m;return m}).catch(()=>{A3fail=true;return null});return A3p}
+  const ok=m=>{if(!m.supported())throw new Error('no webgl');return m};
+  if(!A3p)A3p=import('./anatomyReal.js').then(ok).then(m=>m.ready().then(()=>m))
+    .catch(()=>import('./anatomy3d.js').then(ok))
+    .then(m=>{A3=m;return m}).catch(()=>{A3fail=true;return null});return A3p}
 function mountFig(box,id,slot){
   if(!box)return null;
   if(A3&&A3V[slot]!==false){
@@ -1752,6 +1756,14 @@ function vSet(){
   h+=`<p class="foot">ข้อมูลเก็บในเครื่องนี้เท่านั้น ไม่มีบัญชีหรือเซิร์ฟเวอร์ ควรสำรองทุก 1–2 สัปดาห์</p>`;
   h+=sec('ใช้งานเหมือนแอปบน iPhone')+`<div class="grp"><div class="rowx"><ol style="margin:0;padding-left:20px;font-size:15px;line-height:1.6"><li>เปิดหน้านี้ใน Safari</li><li>แตะปุ่มแชร์ แล้วเลือก "เพิ่มไปยังหน้าจอโฮม"</li><li>เปิดจากไอคอนทุกครั้ง ข้อมูลจะอยู่ที่เดียวกัน</li></ol></div>${row({i:'phone',t:'ดูหน้าต้อนรับอีกครั้ง',act:'onbshow'})}</div>`;
   h+=`<div class="grp">${row({t:'ล้างข้อมูลทั้งหมด',act:'reset',cls:'danger',chev:false})}</div>`;
+  // เครดิต: โมเดลกายวิภาคเป็น CC BY-SA ต้องระบุที่มาและสัญญาอนุญาต
+  h+=sec('เครดิต')+`<div class="grp"><div class="rowx" style="font-size:13px;line-height:1.6;color:var(--tx2)">
+   หุ่นกายวิภาค 3D ดัดแปลงจาก <a href="https://www.z-anatomy.com/" target="_blank" rel="noopener">Z-Anatomy</a> ซึ่งพัฒนาต่อจาก
+   <a href="https://lifesciencedb.jp/bp3d/" target="_blank" rel="noopener">BodyParts3D</a> © The Database Center for Life Science (DBCLS)
+   ใช้ภายใต้สัญญาอนุญาต <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">CC BY-SA 4.0</a> /
+   <a href="https://creativecommons.org/licenses/by-sa/2.1/jp/" target="_blank" rel="noopener">CC BY-SA 2.1 JP</a>
+   (เลือกเฉพาะกล้ามเนื้อชั้นนอก ลดจำนวนโพลีกอน และใส่โครงกระดูกสำหรับขยับ) ไฟล์โมเดลที่ดัดแปลงแล้วเผยแพร่ภายใต้ CC BY-SA 4.0
+   · แสดงผล 3D ด้วย <a href="https://threejs.org/" target="_blank" rel="noopener">three.js</a> (MIT)</div></div>`;
   return h;
 }
 

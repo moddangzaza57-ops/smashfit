@@ -1,0 +1,14 @@
+anatomy-1.glb — Smash Fit anatomy figure
+
+This 3D model is an adaptation of:
+  - Z-Anatomy (https://www.z-anatomy.com/), licensed CC BY-SA 4.0
+  - which is based on BodyParts3D, (c) The Database Center for Life Science (DBCLS),
+    licensed CC BY-SA 2.1 Japan (https://lifesciencedb.jp/bp3d/)
+
+Changes made: selected superficial muscles plus head/hand/foot skin regions, grouped them into
+19 muscle groups, reduced the polygon count, added a skeleton and computed skin weights so the
+figure can be posed. Built with tools/anatomy/build_rig.py.
+
+This adapted model (anatomy-1.glb) is licensed under
+Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)
+https://creativecommons.org/licenses/by-sa/4.0/
